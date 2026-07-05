@@ -1,0 +1,1137 @@
+<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>AWS OmniStay - Hướng dẫn setup AWS Console</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --bg: #f5f7fb;
+      --panel: #ffffff;
+      --text: #1f2937;
+      --muted: #5f6b7a;
+      --line: #d8dee8;
+      --aws-blue: #146eb4;
+      --aws-dark: #17324d;
+      --aws-orange: #ff9900;
+      --ok: #0f766e;
+      --danger: #b42318;
+      --soft-blue: #eef6ff;
+      --soft-orange: #fff7e6;
+      --soft-green: #ecfdf5;
+      --shadow: 0 12px 30px rgba(31, 41, 55, 0.08);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--text);
+      overflow-x: hidden;
+      font-family: Arial, Helvetica, sans-serif;
+      line-height: 1.58;
+    }
+
+    a {
+      color: var(--aws-blue);
+    }
+
+    code {
+      padding: 2px 5px;
+      border-radius: 4px;
+      background: #eef2f7;
+      font-size: 0.95em;
+      overflow-wrap: anywhere;
+    }
+
+    .wrap {
+      width: min(1180px, calc(100% - 32px));
+      margin: 0 auto;
+    }
+
+    header {
+      background: var(--panel);
+      border-bottom: 1px solid var(--line);
+    }
+
+    .hero {
+      padding: 36px 0 28px;
+    }
+
+    .eyebrow {
+      margin: 0 0 8px;
+      color: var(--aws-blue);
+      font-size: 13px;
+      font-weight: 800;
+      letter-spacing: 0;
+      text-transform: uppercase;
+    }
+
+    h1,
+    h2,
+    h3 {
+      color: var(--aws-dark);
+      letter-spacing: 0;
+      line-height: 1.15;
+    }
+
+    h1 {
+      max-width: 960px;
+      margin: 0 0 12px;
+      font-size: clamp(30px, 4vw, 46px);
+    }
+
+    h2 {
+      margin: 34px 0 14px;
+      font-size: 25px;
+    }
+
+    h3 {
+      margin: 0 0 10px;
+      font-size: 18px;
+    }
+
+    p {
+      margin: 0 0 12px;
+    }
+
+    .subtitle {
+      max-width: 980px;
+      color: var(--muted);
+      font-size: 17px;
+    }
+
+    .meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 18px;
+    }
+
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      min-height: 30px;
+      padding: 4px 10px;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      background: #f9fafb;
+      color: var(--muted);
+      font-size: 13px;
+      white-space: nowrap;
+    }
+
+    main {
+      padding: 24px 0 48px;
+    }
+
+    .notice {
+      margin: 18px 0 24px;
+      padding: 14px 16px;
+      border-left: 4px solid var(--aws-orange);
+      background: var(--soft-orange);
+      border-radius: 0 8px 8px 0;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 12px;
+      margin: 18px 0;
+    }
+
+    .stat,
+    .card,
+    .step,
+    .table-box {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      box-shadow: var(--shadow);
+    }
+
+    .stat {
+      min-height: 118px;
+      padding: 16px;
+    }
+
+    .stat strong {
+      display: block;
+      margin-bottom: 6px;
+      color: var(--aws-dark);
+      font-size: 20px;
+    }
+
+    .stat span {
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .toc {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 10px;
+      margin: 16px 0 24px;
+    }
+
+    .toc a {
+      display: block;
+      padding: 10px 12px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: var(--panel);
+      color: var(--aws-dark);
+      font-weight: 700;
+      text-decoration: none;
+    }
+
+    .step {
+      margin: 14px 0;
+      overflow: hidden;
+    }
+
+    .step-head {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 16px;
+      border-bottom: 1px solid var(--line);
+      background: var(--soft-blue);
+    }
+
+    .step-body {
+      display: grid;
+      grid-template-columns: minmax(0, 1.1fr) minmax(280px, 0.9fr);
+      gap: 18px;
+      padding: 16px;
+    }
+
+    .tag {
+      display: inline-flex;
+      align-items: center;
+      min-height: 28px;
+      padding: 4px 9px;
+      border-radius: 999px;
+      background: var(--aws-dark);
+      color: #ffffff;
+      font-size: 12px;
+      font-weight: 700;
+      white-space: nowrap;
+    }
+
+    .tag.optional {
+      background: var(--muted);
+    }
+
+    .tag.cost {
+      background: var(--ok);
+    }
+
+    ol,
+    ul {
+      margin: 8px 0 0;
+      padding-left: 22px;
+    }
+
+    li {
+      margin: 6px 0;
+    }
+
+    .side {
+      display: grid;
+      gap: 10px;
+      align-content: start;
+    }
+
+    .card {
+      padding: 14px;
+      box-shadow: none;
+    }
+
+    .card h4 {
+      margin: 0 0 8px;
+      color: var(--aws-dark);
+      font-size: 14px;
+      text-transform: uppercase;
+    }
+
+    .card p,
+    .card li {
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .good {
+      border-left: 4px solid var(--ok);
+      background: var(--soft-green);
+    }
+
+    .warn {
+      border-left: 4px solid var(--aws-orange);
+      background: var(--soft-orange);
+    }
+
+    .danger {
+      border-left: 4px solid var(--danger);
+      background: #fff1f0;
+    }
+
+    .table-box {
+      overflow-x: auto;
+      margin: 16px 0;
+    }
+
+    table {
+      width: 100%;
+      min-width: 980px;
+      border-collapse: collapse;
+      background: var(--panel);
+    }
+
+    th,
+    td {
+      padding: 12px 14px;
+      border-bottom: 1px solid var(--line);
+      vertical-align: top;
+      text-align: left;
+      overflow-wrap: anywhere;
+    }
+
+    td code,
+    th code,
+    p code,
+    li code {
+      white-space: normal;
+      overflow-wrap: anywhere;
+    }
+
+    th {
+      background: #edf4fb;
+      color: var(--aws-dark);
+      font-size: 13px;
+      text-transform: uppercase;
+    }
+
+    tbody tr:last-child td {
+      border-bottom: 0;
+    }
+
+    .checklist {
+      columns: 2;
+      column-gap: 36px;
+    }
+
+    .small {
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    footer {
+      border-top: 1px solid var(--line);
+      background: var(--panel);
+      padding: 22px 0;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    @media (max-width: 900px) {
+      .grid,
+      .toc {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .step-body {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 620px) {
+      .wrap {
+        width: min(100% - 22px, 1180px);
+      }
+
+      .grid,
+      .toc {
+        grid-template-columns: 1fr;
+      }
+
+      .step-head {
+        display: grid;
+      }
+
+      .checklist {
+        columns: 1;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="wrap hero">
+      <p class="eyebrow">AWS OmniStay</p>
+      <h1>Hướng dẫn setup dịch vụ AWS bằng Console</h1>
+      <p class="subtitle">
+        Tài liệu này hướng dẫn cấu hình các dịch vụ AWS trên giao diện web AWS Console cho dự án đặt phòng khách sạn OmniStay.
+        Nội dung bám theo <code>hotel-booking-aws-plan.md</code> và <code>services-aws.html</code>, phục vụ demo và chụp màn hình cho mentor.
+      </p>
+      <div class="meta">
+        <span class="pill">Không dùng Terraform</span>
+        <span class="pill">Không dùng CDK trong bước setup Console này</span>
+        <span class="pill">Region gợi ý: ap-southeast-1</span>
+        <span class="pill">Cập nhật: 05/07/2026</span>
+      </div>
+    </div>
+  </header>
+
+  <main class="wrap">
+    <section class="notice">
+      <strong>Nguyên tắc quan trọng:</strong>
+      làm tới đâu chụp màn hình tới đó. Trước khi tạo tài nguyên tốn phí, bật AWS Budget.
+      Sau buổi lab, kiểm tra Billing và cleanup ALB, NAT Gateway, EC2, RDS, ElastiCache nếu không dùng nữa.
+    </section>
+
+    <section>
+      <h2>1. Tổng quan dịch vụ cần cấu hình</h2>
+      <div class="grid">
+        <div class="stat">
+          <strong>Cloud tối thiểu</strong>
+          <span>S3, CloudFront, ALB, EC2, RDS, ElastiCache, IAM, CloudWatch.</span>
+        </div>
+        <div class="stat">
+          <strong>Database</strong>
+          <span>Amazon RDS for MySQL 8.0, Single-AZ cho demo tiết kiệm.</span>
+        </div>
+        <div class="stat">
+          <strong>Cache</strong>
+          <span>Amazon ElastiCache Redis OSS hoặc Valkey, node nhỏ phù hợp ngân sách.</span>
+        </div>
+        <div class="stat">
+          <strong>Frontend</strong>
+          <span>S3 private bucket, CloudFront Origin Access Control, không public bucket.</span>
+        </div>
+      </div>
+
+      <div class="toc" aria-label="Mục lục">
+        <a href="#prepare">Chuẩn bị</a>
+        <a href="#network">VPC và mạng</a>
+        <a href="#security-groups">Security Groups</a>
+        <a href="#rds">RDS MySQL</a>
+        <a href="#cache">ElastiCache</a>
+        <a href="#iam">IAM và secrets</a>
+        <a href="#s3">S3 bucket</a>
+        <a href="#cloudfront">CloudFront OAC</a>
+        <a href="#compute">ALB, EC2, ASG</a>
+        <a href="#cloudwatch">CloudWatch</a>
+        <a href="#demo">Demo checklist</a>
+        <a href="#cleanup">Cleanup</a>
+      </div>
+    </section>
+
+    <section>
+      <h2>2. Bảng thông tin cần ghi lại</h2>
+      <div class="table-box">
+        <table>
+          <thead>
+            <tr>
+              <th>Thông tin</th>
+              <th>Giá trị cần lưu</th>
+              <th>Dùng ở đâu</th>
+              <th>Ảnh cần chụp</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Region</td>
+              <td><code>ap-southeast-1</code> hoặc region bạn chọn</td>
+              <td>Tất cả dịch vụ AWS trong bài demo</td>
+              <td>Góc phải trên AWS Console</td>
+            </tr>
+            <tr>
+              <td>VPC ID</td>
+              <td><code>vpc-...</code></td>
+              <td>Subnet, ALB, EC2, RDS, Redis</td>
+              <td>Trang VPC details</td>
+            </tr>
+            <tr>
+              <td>Security Group IDs</td>
+              <td><code>SG-ALB</code>, <code>SG-EC2</code>, <code>SG-RDS</code>, <code>SG-Redis</code></td>
+              <td>Kiểm soát traffic giữa các layer</td>
+              <td>Inbound rules của từng SG</td>
+            </tr>
+            <tr>
+              <td>RDS endpoint</td>
+              <td><code>...rds.amazonaws.com:3306</code></td>
+              <td>Backend API kết nối MySQL</td>
+              <td>RDS Connectivity & security</td>
+            </tr>
+            <tr>
+              <td>Redis endpoint</td>
+              <td><code>...cache.amazonaws.com:6379</code></td>
+              <td>Backend API cache search</td>
+              <td>ElastiCache cluster endpoint</td>
+            </tr>
+            <tr>
+              <td>ALB DNS</td>
+              <td><code>...elb.amazonaws.com</code></td>
+              <td>CloudFront behavior <code>/api/*</code></td>
+              <td>Load balancer details</td>
+            </tr>
+            <tr>
+              <td>CloudFront domain</td>
+              <td><code>https://d....cloudfront.net</code></td>
+              <td>URL demo frontend</td>
+              <td>Distribution deployed</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section id="prepare" class="step">
+      <div class="step-head">
+        <div>
+          <p class="eyebrow">Bước 1</p>
+          <h3>Chuẩn bị tài khoản, region và AWS Budgets</h3>
+        </div>
+        <span class="tag cost">Bắt buộc</span>
+      </div>
+      <div class="step-body">
+        <div>
+          <ol>
+            <li>Đăng nhập AWS Console bằng IAM user hoặc IAM Identity Center, không dùng root account nếu có thể.</li>
+            <li>Chọn region cố định cho toàn bộ bài demo, gợi ý <code>ap-southeast-1</code>.</li>
+            <li>Vào <strong>Billing and Cost Management</strong> → <strong>Budgets</strong> → <strong>Create budget</strong>.</li>
+            <li>Chọn Cost budget, đặt ngưỡng demo ví dụ <code>5 USD</code> hoặc <code>10 USD</code>.</li>
+            <li>Thêm email nhận cảnh báo ở mức 50%, 80%, 100%.</li>
+          </ol>
+        </div>
+        <div class="side">
+          <div class="card good">
+            <h4>Kết quả cần có</h4>
+            <p>AWS Budget đã active và có email cảnh báo chi phí.</p>
+          </div>
+          <div class="card">
+            <h4>Ảnh cần chụp</h4>
+            <ul>
+              <li>Trang Budget summary.</li>
+              <li>Màn hình region đang chọn.</li>
+              <li>Billing dashboard sau khi tạo budget.</li>
+            </ul>
+          </div>
+          <div class="card warn">
+            <h4>Lưu ý chi phí</h4>
+            <p>ALB, RDS, ElastiCache, NAT Gateway và public IPv4 có thể phát sinh phí theo giờ.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="network" class="step">
+      <div class="step-head">
+        <div>
+          <p class="eyebrow">Bước 2</p>
+          <h3>Tạo VPC, Subnets, Route Tables và Internet Gateway</h3>
+        </div>
+        <span class="tag">Network</span>
+      </div>
+      <div class="step-body">
+        <div>
+          <ol>
+            <li>Vào <strong>VPC</strong> → <strong>Your VPCs</strong> → <strong>Create VPC</strong>.</li>
+            <li>Chọn <strong>VPC only</strong>, đặt tên <code>omnistay-vpc</code>, IPv4 CIDR <code>10.0.0.0/16</code>.</li>
+            <li>Tạo 2 public subnets cho ALB và EC2 demo:
+              <ul>
+                <li><code>10.0.1.0/24</code> - public-a</li>
+                <li><code>10.0.2.0/24</code> - public-b</li>
+              </ul>
+            </li>
+            <li>Tạo 2 private app subnets nếu muốn production-like sau này:
+              <ul>
+                <li><code>10.0.10.0/24</code> - private-app-a</li>
+                <li><code>10.0.11.0/24</code> - private-app-b</li>
+              </ul>
+            </li>
+            <li>Tạo 2 private DB subnets cho RDS và Redis:
+              <ul>
+                <li><code>10.0.20.0/24</code> - private-db-a</li>
+                <li><code>10.0.21.0/24</code> - private-db-b</li>
+              </ul>
+            </li>
+            <li>Vào <strong>Internet Gateways</strong> → tạo <code>omnistay-igw</code> → attach vào VPC.</li>
+            <li>Tạo public route table, thêm route <code>0.0.0.0/0</code> trỏ tới Internet Gateway, associate với 2 public subnets.</li>
+            <li>Không tạo NAT Gateway trong demo low-cost trừ khi mentor yêu cầu EC2 chạy private subnet.</li>
+          </ol>
+        </div>
+        <div class="side">
+          <div class="card good">
+            <h4>Kết quả cần có</h4>
+            <p>1 VPC, 6 subnet, public route table có route ra Internet Gateway.</p>
+          </div>
+          <div class="card">
+            <h4>Ảnh cần chụp</h4>
+            <ul>
+              <li>VPC details với CIDR <code>10.0.0.0/16</code>.</li>
+              <li>Danh sách subnets theo 2 AZ.</li>
+              <li>Route table public có route tới IGW.</li>
+            </ul>
+          </div>
+          <div class="card warn">
+            <h4>Quyết định demo</h4>
+            <p>Để tiết kiệm, EC2 app có thể nằm public subnet nhưng chỉ nhận inbound từ ALB.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="security-groups" class="step">
+      <div class="step-head">
+        <div>
+          <p class="eyebrow">Bước 3</p>
+          <h3>Tạo Security Groups theo từng layer</h3>
+        </div>
+        <span class="tag">Security</span>
+      </div>
+      <div class="step-body">
+        <div>
+          <ol>
+            <li>Vào <strong>EC2</strong> → <strong>Security Groups</strong> → <strong>Create security group</strong>.</li>
+            <li>Tạo <code>SG-ALB</code>: inbound HTTP port <code>80</code> từ <code>0.0.0.0/0</code>. Nếu dùng HTTPS/domain sau này, thêm port <code>443</code>.</li>
+            <li>Tạo <code>SG-EC2</code>: inbound port <code>8080</code> chỉ từ source là <code>SG-ALB</code>.</li>
+            <li>Tạo <code>SG-RDS</code>: inbound MySQL port <code>3306</code> chỉ từ source là <code>SG-EC2</code>.</li>
+            <li>Tạo <code>SG-Redis</code>: inbound Redis port <code>6379</code> chỉ từ source là <code>SG-EC2</code>.</li>
+            <li>Không mở SSH public nếu không cần. Nếu cần debug, dùng SSM Session Manager hoặc chỉ mở SSH tạm thời từ IP cá nhân rồi đóng lại.</li>
+          </ol>
+        </div>
+        <div class="side">
+          <div class="card good">
+            <h4>Kết quả cần có</h4>
+            <p>Traffic đi đúng chuỗi: Internet → ALB → EC2 → RDS/Redis.</p>
+          </div>
+          <div class="card">
+            <h4>Ảnh cần chụp</h4>
+            <ul>
+              <li>Inbound rules của <code>SG-ALB</code>.</li>
+              <li>Inbound rules của <code>SG-EC2</code> với source là SG.</li>
+              <li>Inbound rules của <code>SG-RDS</code> và <code>SG-Redis</code>.</li>
+            </ul>
+          </div>
+          <div class="card danger">
+            <h4>Không làm</h4>
+            <p>Không mở RDS port 3306 hoặc Redis port 6379 từ <code>0.0.0.0/0</code>.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="rds" class="step">
+      <div class="step-head">
+        <div>
+          <p class="eyebrow">Bước 4</p>
+          <h3>Tạo Amazon RDS for MySQL</h3>
+        </div>
+        <span class="tag">Database</span>
+      </div>
+      <div class="step-body">
+        <div>
+          <ol>
+            <li>Vào <strong>RDS</strong> → <strong>Subnet groups</strong> → tạo subnet group <code>omnistay-db-subnet-group</code> gồm 2 private DB subnets.</li>
+            <li>Vào <strong>RDS</strong> → <strong>Databases</strong> → <strong>Create database</strong>.</li>
+            <li>Chọn <strong>Standard create</strong>, engine <strong>MySQL</strong>, version MySQL 8.0.</li>
+            <li>Templates: chọn Free tier nếu tài khoản còn hỗ trợ, hoặc Dev/Test cấu hình nhỏ.</li>
+            <li>DB identifier: <code>omnistay-mysql</code>, master username: <code>admin</code>.</li>
+            <li>Đặt mật khẩu mạnh, lưu vào SSM Parameter Store hoặc Secrets Manager. Không lưu mật khẩu trong README, code hoặc ảnh chụp.</li>
+            <li>Instance class: chọn loại nhỏ phù hợp ngân sách, ví dụ <code>db.t3.micro</code> nếu còn phù hợp region/tài khoản.</li>
+            <li>VPC: chọn <code>omnistay-vpc</code>, subnet group: <code>omnistay-db-subnet-group</code>.</li>
+            <li>Public access: <strong>No</strong>.</li>
+            <li>Security group: chọn <code>SG-RDS</code>.</li>
+            <li>Database name: <code>hotel_booking</code>.</li>
+            <li>Sau khi status <strong>Available</strong>, lưu endpoint dạng <code>host:3306</code>.</li>
+          </ol>
+        </div>
+        <div class="side">
+          <div class="card good">
+            <h4>Kết quả cần có</h4>
+            <p>RDS MySQL available, private, chỉ EC2 app truy cập được qua <code>SG-RDS</code>.</p>
+          </div>
+          <div class="card">
+            <h4>Ảnh cần chụp</h4>
+            <ul>
+              <li>Database status <strong>Available</strong>.</li>
+              <li>Connectivity & security: endpoint, port, VPC, subnet group.</li>
+              <li>Security group gắn với RDS.</li>
+              <li>Backup/snapshot setting nếu bật.</li>
+            </ul>
+          </div>
+          <div class="card warn">
+            <h4>Lưu ý</h4>
+            <p>Single-AZ tiết kiệm cho demo. Multi-AZ dùng để thuyết minh HA nhưng có thể tăng chi phí.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="cache" class="step">
+      <div class="step-head">
+        <div>
+          <p class="eyebrow">Bước 5</p>
+          <h3>Tạo Amazon ElastiCache Redis OSS hoặc Valkey</h3>
+        </div>
+        <span class="tag">Cache</span>
+      </div>
+      <div class="step-body">
+        <div>
+          <ol>
+            <li>Vào <strong>ElastiCache</strong> → tạo subnet group cho cache, chọn 2 private DB subnets.</li>
+            <li>Vào <strong>ElastiCache</strong> → <strong>Create cluster</strong>.</li>
+            <li>Chọn Redis OSS hoặc Valkey theo ngân sách. Plan cho phép Redis OSS hoặc Valkey.</li>
+            <li>Cluster mode: disabled cho demo đơn giản.</li>
+            <li>Node type: chọn node nhỏ phù hợp ngân sách, ví dụ <code>cache.t3.micro</code> nếu khả dụng.</li>
+            <li>Replicas: <code>0</code> cho demo tiết kiệm; thêm replica nếu cần thuyết minh HA.</li>
+            <li>VPC: <code>omnistay-vpc</code>, subnet group: cache subnet group vừa tạo.</li>
+            <li>Security group: chọn <code>SG-Redis</code>.</li>
+            <li>Sau khi status <strong>Available</strong>, lưu primary endpoint và port <code>6379</code>.</li>
+          </ol>
+        </div>
+        <div class="side">
+          <div class="card good">
+            <h4>Kết quả cần có</h4>
+            <p>Redis/Valkey cluster available trong private subnet, backend EC2 có thể kết nối.</p>
+          </div>
+          <div class="card">
+            <h4>Ảnh cần chụp</h4>
+            <ul>
+              <li>Cluster status available.</li>
+              <li>Primary endpoint.</li>
+              <li>Subnet group và security group.</li>
+              <li>Metric cache trong CloudWatch nếu có request.</li>
+            </ul>
+          </div>
+          <div class="card warn">
+            <h4>Demo cache</h4>
+            <p>Search lần đầu là cache MISS, search lại cùng điều kiện là cache HIT. Đây là bằng chứng dùng ElastiCache.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="iam" class="step">
+      <div class="step-head">
+        <div>
+          <p class="eyebrow">Bước 6</p>
+          <h3>Tạo IAM Role và lưu cấu hình bằng SSM hoặc Secrets Manager</h3>
+        </div>
+        <span class="tag">Identity</span>
+      </div>
+      <div class="step-body">
+        <div>
+          <ol>
+            <li>Vào <strong>IAM</strong> → <strong>Roles</strong> → <strong>Create role</strong>.</li>
+            <li>Trusted entity: AWS service, use case: EC2.</li>
+            <li>Role name: <code>omnistay-ec2-role</code>.</li>
+            <li>Gắn quyền tối thiểu:
+              <ul>
+                <li>Đọc object trong S3 artifact bucket.</li>
+                <li>Đọc SSM Parameter Store hoặc Secrets Manager.</li>
+                <li>Ghi CloudWatch Logs.</li>
+                <li>SSM Managed Instance Core nếu muốn dùng Session Manager.</li>
+              </ul>
+            </li>
+            <li>Vào <strong>Systems Manager</strong> → <strong>Parameter Store</strong> hoặc <strong>Secrets Manager</strong>.</li>
+            <li>Tạo parameter/secret cho DB password, RDS connection string, Redis endpoint, app environment.</li>
+            <li>Đặt dạng SecureString nếu dùng Parameter Store cho giá trị nhạy cảm.</li>
+          </ol>
+        </div>
+        <div class="side">
+          <div class="card good">
+            <h4>Kết quả cần có</h4>
+            <p>EC2 đọc được cấu hình runtime mà không cần hard-code password hoặc access key trong code.</p>
+          </div>
+          <div class="card">
+            <h4>Ảnh cần chụp</h4>
+            <ul>
+              <li>IAM role attached policies.</li>
+              <li>EC2 trust relationship.</li>
+              <li>Danh sách parameters/secrets, che value nhạy cảm.</li>
+            </ul>
+          </div>
+          <div class="card danger">
+            <h4>Không làm</h4>
+            <p>Không đưa AWS access key, DB password, Redis endpoint private vào GitHub công khai.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="s3" class="step">
+      <div class="step-head">
+        <div>
+          <p class="eyebrow">Bước 7</p>
+          <h3>Tạo Amazon S3 bucket cho frontend và artifact</h3>
+        </div>
+        <span class="tag">Storage</span>
+      </div>
+      <div class="step-body">
+        <div>
+          <ol>
+            <li>Vào <strong>S3</strong> → <strong>Create bucket</strong>.</li>
+            <li>Tạo frontend bucket, ví dụ <code>omnistay-frontend-2026-&lt;random&gt;</code>.</li>
+            <li>Region: cùng region đã chọn.</li>
+            <li>Object ownership: ACLs disabled.</li>
+            <li>Block Public Access: bật toàn bộ.</li>
+            <li>Không bật Static Website Hosting cho bucket này vì CloudFront OAC cần S3 REST origin.</li>
+            <li>Upload thư mục frontend đã build/tĩnh vào bucket, gồm <code>public/index.html</code>, <code>public/config.js</code>, <code>src/*.js</code>, <code>src/*.css</code>.</li>
+            <li>Nếu dùng artifact riêng cho backend, tạo bucket hoặc prefix riêng, ví dụ <code>artifacts/api/app.zip</code>.</li>
+          </ol>
+        </div>
+        <div class="side">
+          <div class="card good">
+            <h4>Kết quả cần có</h4>
+            <p>S3 bucket private, không public, CloudFront sẽ là đường truy cập chính.</p>
+          </div>
+          <div class="card">
+            <h4>Ảnh cần chụp</h4>
+            <ul>
+              <li>Bucket Block Public Access bật.</li>
+              <li>Danh sách objects frontend.</li>
+              <li>Bucket policy sau khi CloudFront OAC được gắn.</li>
+            </ul>
+          </div>
+          <div class="card warn">
+            <h4>Config frontend</h4>
+            <p>Khi chạy qua CloudFront, <code>config.js</code> nên đặt <code>API_BASE: "/api"</code>.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="cloudfront" class="step">
+      <div class="step-head">
+        <div>
+          <p class="eyebrow">Bước 8</p>
+          <h3>Tạo CloudFront Distribution với Origin Access Control</h3>
+        </div>
+        <span class="tag">CDN</span>
+      </div>
+      <div class="step-body">
+        <div>
+          <ol>
+            <li>Vào <strong>CloudFront</strong> → <strong>Create distribution</strong>.</li>
+            <li>Origin domain: chọn S3 bucket frontend dạng REST endpoint, không dùng website endpoint.</li>
+            <li>Origin access: chọn <strong>Origin access control settings</strong> → tạo OAC mới.</li>
+            <li>Viewer protocol policy: Redirect HTTP to HTTPS nếu muốn demo HTTPS ở CloudFront.</li>
+            <li>Default root object: <code>public/index.html</code>.</li>
+            <li>Sau khi tạo distribution, CloudFront sẽ đề xuất bucket policy. Copy policy đó vào S3 bucket policy.</li>
+            <li>Thêm origin thứ hai là ALB DNS cho backend API.</li>
+            <li>Thêm behavior <code>/api/*</code>:
+              <ul>
+                <li>Origin: ALB.</li>
+                <li>Allowed methods: GET, HEAD, OPTIONS, PUT, POST, PATCH, DELETE.</li>
+                <li>Cache policy: caching disabled hoặc TTL thấp cho API.</li>
+                <li>Origin request policy: forward headers/query string cần thiết.</li>
+              </ul>
+            </li>
+          </ol>
+        </div>
+        <div class="side">
+          <div class="card good">
+            <h4>Kết quả cần có</h4>
+            <p>CloudFront phục vụ frontend từ S3 private và forward <code>/api/*</code> về ALB.</p>
+          </div>
+          <div class="card">
+            <h4>Ảnh cần chụp</h4>
+            <ul>
+              <li>Distribution status Deployed.</li>
+              <li>Origins: S3 + ALB.</li>
+              <li>Behavior mặc định và behavior <code>/api/*</code>.</li>
+              <li>OAC settings.</li>
+              <li>S3 bucket policy cho CloudFront.</li>
+            </ul>
+          </div>
+          <div class="card danger">
+            <h4>Không làm</h4>
+            <p>Không public S3 bucket và không dùng S3 Static Website Hosting nếu mục tiêu là OAC.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="compute" class="step">
+      <div class="step-head">
+        <div>
+          <p class="eyebrow">Bước 9</p>
+          <h3>Tạo ALB, EC2 Launch Template và Auto Scaling Group</h3>
+        </div>
+        <span class="tag">Compute</span>
+      </div>
+      <div class="step-body">
+        <div>
+          <ol>
+            <li>Vào <strong>EC2</strong> → <strong>Target Groups</strong> → tạo target group:
+              <ul>
+                <li>Target type: Instances.</li>
+                <li>Protocol: HTTP.</li>
+                <li>Port: <code>8080</code>.</li>
+                <li>Health check path: <code>/health</code>.</li>
+              </ul>
+            </li>
+            <li>Vào <strong>Load Balancers</strong> → tạo Application Load Balancer:
+              <ul>
+                <li>Scheme: Internet-facing.</li>
+                <li>Subnets: 2 public subnets.</li>
+                <li>Security group: <code>SG-ALB</code>.</li>
+                <li>Listener HTTP 80 forward tới target group.</li>
+              </ul>
+            </li>
+            <li>Vào <strong>Launch Templates</strong> → tạo template cho EC2 app:
+              <ul>
+                <li>AMI: Amazon Linux 2023 hoặc AMI phù hợp .NET runtime.</li>
+                <li>Instance type: nhỏ phù hợp ngân sách, ví dụ <code>t3.micro</code> nếu khả dụng.</li>
+                <li>IAM instance profile: <code>omnistay-ec2-role</code>.</li>
+                <li>Security group: <code>SG-EC2</code>.</li>
+                <li>User Data: cài runtime, tải artifact từ S3, đọc SSM/Secrets, start service API.</li>
+              </ul>
+            </li>
+            <li>Vào <strong>Auto Scaling Groups</strong> → tạo ASG:
+              <ul>
+                <li>Launch template: template vừa tạo.</li>
+                <li>VPC/subnets: public app subnets cho demo low-cost.</li>
+                <li>Attach to existing target group.</li>
+                <li>Desired: <code>1</code>, Min: <code>1</code>, Max: <code>4</code>.</li>
+                <li>Scaling policy: Target tracking CPU 70%.</li>
+              </ul>
+            </li>
+            <li>Đợi target group hiện trạng thái <strong>Healthy</strong>.</li>
+          </ol>
+        </div>
+        <div class="side">
+          <div class="card good">
+            <h4>Kết quả cần có</h4>
+            <p>ALB nhận request, target group healthy, ASG tự quản lý EC2 chạy API.</p>
+          </div>
+          <div class="card">
+            <h4>Ảnh cần chụp</h4>
+            <ul>
+              <li>ALB DNS và listener.</li>
+              <li>Target group health check path <code>/health</code>.</li>
+              <li>Target healthy.</li>
+              <li>Launch template IAM role và security group.</li>
+              <li>ASG desired/min/max và scaling policy.</li>
+            </ul>
+          </div>
+          <div class="card warn">
+            <h4>Kiểm tra nhanh</h4>
+            <p>Mở <code>http://ALB-DNS/health</code>. Nếu không trả 200, kiểm tra service API, port 8080 và SG.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="cloudwatch" class="step">
+      <div class="step-head">
+        <div>
+          <p class="eyebrow">Bước 10</p>
+          <h3>Cấu hình CloudWatch logs, metrics, dashboard và alarms</h3>
+        </div>
+        <span class="tag">Monitoring</span>
+      </div>
+      <div class="step-body">
+        <div>
+          <ol>
+            <li>Vào <strong>CloudWatch</strong> → <strong>Log groups</strong>, kiểm tra log group của API nếu EC2 đã gửi logs.</li>
+            <li>Vào <strong>Dashboards</strong> → <strong>Create dashboard</strong> tên <code>omnistay-dashboard</code>.</li>
+            <li>Thêm widgets:
+              <ul>
+                <li>ALB RequestCount, TargetResponseTime, HTTPCode_Target_5XX_Count.</li>
+                <li>EC2 CPUUtilization và ASG GroupDesiredCapacity/GroupInServiceInstances.</li>
+                <li>RDS CPUUtilization, DatabaseConnections, FreeStorageSpace.</li>
+                <li>ElastiCache CPUUtilization, CurrConnections, CacheHits, CacheMisses nếu có metric.</li>
+              </ul>
+            </li>
+            <li>Tạo alarm demo:
+              <ul>
+                <li>ASG scale-out dựa trên CPU 70%.</li>
+                <li>ALB 5xx tăng bất thường.</li>
+                <li>RDS CPU cao hoặc storage thấp nếu muốn.</li>
+              </ul>
+            </li>
+          </ol>
+        </div>
+        <div class="side">
+          <div class="card good">
+            <h4>Kết quả cần có</h4>
+            <p>Dashboard chứng minh hệ thống quan sát được và Auto Scaling có metric.</p>
+          </div>
+          <div class="card">
+            <h4>Ảnh cần chụp</h4>
+            <ul>
+              <li>CloudWatch dashboard đầy đủ widgets.</li>
+              <li>Log group có log API.</li>
+              <li>Alarm hoặc scaling policy liên quan CPU.</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="optional" class="step">
+      <div class="step-head">
+        <div>
+          <p class="eyebrow">Bước tùy chọn</p>
+          <h3>NAT Gateway, VPC Endpoints, Route 53, ACM và SES</h3>
+        </div>
+        <span class="tag optional">Production-like</span>
+      </div>
+      <div class="step-body">
+        <div>
+          <ol>
+            <li><strong>NAT Gateway:</strong> chỉ tạo nếu EC2 app nằm private subnet và cần outbound internet để tải package/artifact. Lưu ý NAT Gateway tốn phí theo giờ.</li>
+            <li><strong>VPC Endpoints:</strong> dùng thay NAT cho S3, SSM, CloudWatch Logs nếu muốn private traffic. S3 Gateway endpoint thường tiết kiệm hơn interface endpoint.</li>
+            <li><strong>Route 53:</strong> dùng nếu có domain riêng. Có thể bỏ qua và dùng CloudFront domain mặc định.</li>
+            <li><strong>AWS Certificate Manager:</strong> tạo certificate public nếu dùng domain HTTPS riêng cho CloudFront hoặc ALB.</li>
+            <li><strong>Amazon SES:</strong> tùy chọn gửi email xác nhận booking. Không cần cho demo hạ tầng tối thiểu.</li>
+          </ol>
+        </div>
+        <div class="side">
+          <div class="card warn">
+            <h4>Chi phí</h4>
+            <p>NAT Gateway, Route 53 hosted zone và một số endpoints có phí riêng. Chỉ bật khi cần demo production-like.</p>
+          </div>
+          <div class="card">
+            <h4>Ảnh cần chụp nếu dùng</h4>
+            <ul>
+              <li>NAT Gateway available.</li>
+              <li>VPC endpoints route/DNS.</li>
+              <li>Route 53 record trỏ CloudFront.</li>
+              <li>ACM certificate issued.</li>
+              <li>SES verified identity.</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="demo">
+      <h2>3. Checklist demo và ảnh chụp cho mentor</h2>
+      <div class="table-box">
+        <table>
+          <thead>
+            <tr>
+              <th>Hạng mục</th>
+              <th>Bằng chứng cần có</th>
+              <th>Ảnh nên chụp</th>
+              <th>Ghi chú demo</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>AWS Budget</td>
+              <td>Budget đã tạo và có email cảnh báo.</td>
+              <td>Budget summary.</td>
+              <td>Làm đầu tiên để tránh vượt chi phí.</td>
+            </tr>
+            <tr>
+              <td>VPC/Subnets</td>
+              <td>VPC 10.0.0.0/16, public/private subnets ở 2 AZ.</td>
+              <td>VPC resource map hoặc subnet list.</td>
+              <td>Giải thích public ALB, private RDS/Redis.</td>
+            </tr>
+            <tr>
+              <td>Security Groups</td>
+              <td>Luồng SG-ALB → SG-EC2 → SG-RDS/SG-Redis.</td>
+              <td>Inbound rules từng SG.</td>
+              <td>Nhấn mạnh không public DB/cache.</td>
+            </tr>
+            <tr>
+              <td>RDS MySQL</td>
+              <td>DB available, endpoint private, MySQL 8.0.</td>
+              <td>Connectivity & security.</td>
+              <td>Dữ liệu booking lưu ở RDS.</td>
+            </tr>
+            <tr>
+              <td>ElastiCache</td>
+              <td>Redis/Valkey available, endpoint private.</td>
+              <td>Cluster endpoint và metrics.</td>
+              <td>Search lần 1 MISS, lần 2 HIT.</td>
+            </tr>
+            <tr>
+              <td>S3 + CloudFront OAC</td>
+              <td>S3 private, CloudFront đọc qua OAC.</td>
+              <td>Block Public Access, OAC, bucket policy.</td>
+              <td>Không dùng website endpoint.</td>
+            </tr>
+            <tr>
+              <td>ALB + ASG</td>
+              <td>Target healthy, ASG có instance InService.</td>
+              <td>Target group health và ASG capacity.</td>
+              <td>Health check path <code>/health</code>.</td>
+            </tr>
+            <tr>
+              <td>CloudWatch</td>
+              <td>Dashboard có ALB, EC2/ASG, RDS, cache.</td>
+              <td>Dashboard và alarms.</td>
+              <td>Dùng để thuyết minh quan sát hệ thống.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h3>Luồng demo đề xuất</h3>
+      <ol>
+        <li>Mở CloudFront URL để thấy frontend tải từ CDN.</li>
+        <li>Tìm phòng Đà Nẵng và xem kết quả.</li>
+        <li>Mở DevTools hoặc UI diagnostics để thấy API gọi qua <code>/api</code>.</li>
+        <li>Gọi <code>/api/health</code> hoặc <code>/health</code> để chứng minh ALB health check.</li>
+        <li>Search cùng điều kiện hai lần để chứng minh Redis cache MISS/HIT.</li>
+        <li>Tạo booking và kiểm tra phòng còn trống thay đổi.</li>
+        <li>Mở CloudWatch dashboard để xem request/latency/CPU.</li>
+        <li>Nếu có thời gian, terminate 1 EC2 trong ASG và quan sát ASG thay instance.</li>
+      </ol>
+    </section>
+
+    <section id="cleanup">
+      <h2>4. Cleanup sau buổi lab</h2>
+      <div class="notice">
+        <strong>Không bỏ qua bước này.</strong>
+        Sau khi demo xong, kiểm tra Billing và xóa hoặc stop tài nguyên tốn phí.
+      </div>
+
+      <ul class="checklist">
+        <li>Delete CloudFront distribution nếu không dùng nữa. Có thể mất thời gian disable trước khi delete.</li>
+        <li>Delete ALB và target group.</li>
+        <li>Scale ASG về 0 hoặc delete ASG.</li>
+        <li>Terminate EC2 không còn dùng.</li>
+        <li>Stop RDS nếu còn cần dữ liệu, hoặc snapshot rồi delete nếu kết thúc lab.</li>
+        <li>Delete ElastiCache Redis/Valkey cluster.</li>
+        <li>Delete NAT Gateway nếu đã tạo.</li>
+        <li>Delete unattached Elastic IP nếu có.</li>
+        <li>Xóa S3 objects trước khi delete bucket.</li>
+        <li>Kiểm tra CloudWatch log retention để tránh giữ log quá lâu.</li>
+        <li>Giữ AWS Budget để còn cảnh báo chi phí.</li>
+      </ul>
+    </section>
+
+    <section>
+      <h2>5. Nguồn đối chiếu trong dự án</h2>
+      <ul>
+        <li><code>/home/binhminh/Developer/hotel-booking-aws-plan.md</code> - kế hoạch kiến trúc và checklist triển khai.</li>
+        <li><code>/home/binhminh/Developer/hoangminh/services-aws.html</code> - bảng dịch vụ, vai trò, ưu điểm và chi phí tham khảo.</li>
+        <li>AWS Console - nơi thực hiện cấu hình trong tài liệu này.</li>
+      </ul>
+      <p class="small">
+        Tài liệu này không phải báo giá chính thức. Trước khi bật tài nguyên AWS, nên kiểm tra lại AWS Pricing Calculator và Free Tier/credit của tài khoản.
+      </p>
+    </section>
+  </main>
+
+  <footer>
+    <div class="wrap">
+      AWS OmniStay - Hướng dẫn setup AWS Console cho demo hệ thống đặt phòng khách sạn chịu tải cao.
+    </div>
+  </footer>
+</body>
+</html>

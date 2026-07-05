@@ -1,0 +1,120 @@
+<!doctype html>
+<html lang="vi">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>OmniStay</title>
+    <link rel="stylesheet" href="../src/styles.css" />
+  </head>
+  <body>
+    <header class="topbar">
+      <div>
+        <p class="eyebrow">AWS OmniStay</p>
+        <h1>Đặt phòng khách sạn</h1>
+      </div>
+      <div class="status" id="apiStatus">API</div>
+    </header>
+
+    <main class="shell">
+      <section class="search-panel" aria-label="Tìm phòng">
+        <form id="searchForm" class="search-form">
+          <label>
+            Thành phố
+            <select id="cityInput" name="city">
+              <option>Da Nang</option>
+              <option>Ho Chi Minh</option>
+              <option>Ha Noi</option>
+              <option>Nha Trang</option>
+              <option>Da Lat</option>
+              <option>Phu Quoc</option>
+              <option>Hue</option>
+              <option>Sa Pa</option>
+              <option>Quy Nhon</option>
+              <option>Hoi An</option>
+            </select>
+          </label>
+
+          <div class="field-row">
+            <label>
+              Nhận phòng
+              <input id="checkInInput" name="checkIn" type="date" required />
+            </label>
+            <label>
+              Trả phòng
+              <input id="checkOutInput" name="checkOut" type="date" required />
+            </label>
+          </div>
+
+          <label>
+            Số khách
+            <input id="guestsInput" name="guests" type="number" min="1" max="10" value="2" required />
+          </label>
+
+          <button type="submit" class="primary-button">Tìm phòng</button>
+        </form>
+
+        <div class="summary-strip">
+          <div>
+            <span id="resultCount">0</span>
+            <small>phòng phù hợp</small>
+          </div>
+          <div>
+            <span id="selectedCity">-</span>
+            <small>điểm đến</small>
+          </div>
+        </div>
+      </section>
+
+      <section class="results-panel" aria-label="Kết quả tìm kiếm">
+        <div class="section-heading">
+          <div>
+            <p class="eyebrow">Kết quả</p>
+            <h2>Phòng còn trống</h2>
+          </div>
+        </div>
+        <div id="resultsList" class="results-list"></div>
+      </section>
+
+      <aside class="detail-panel" aria-label="Chi tiết và đặt phòng">
+        <div id="hotelDetail" class="hotel-detail empty-state">
+          Chọn một phòng để xem chi tiết.
+        </div>
+
+        <div class="room-panel">
+          <div class="section-heading compact">
+            <div>
+              <p class="eyebrow">Loại phòng</p>
+              <h2>Danh sách phòng</h2>
+            </div>
+          </div>
+          <div id="roomsList" class="rooms-list"></div>
+        </div>
+
+        <form id="bookingForm" class="booking-form" hidden>
+          <div class="section-heading compact">
+            <div>
+              <p class="eyebrow">Đặt phòng</p>
+              <h2 id="bookingTitle">Thông tin khách</h2>
+            </div>
+          </div>
+
+          <label>
+            Họ tên
+            <input id="guestNameInput" name="guestName" autocomplete="name" required />
+          </label>
+          <label>
+            Email
+            <input id="guestEmailInput" name="guestEmail" type="email" autocomplete="email" required />
+          </label>
+          <button type="submit" class="primary-button">Xác nhận đặt</button>
+        </form>
+
+        <div id="bookingResult" class="booking-result" hidden></div>
+      </aside>
+    </main>
+
+    <script src="./config.js"></script>
+    <script src="../src/api.js"></script>
+    <script src="../src/app.js"></script>
+  </body>
+</html>

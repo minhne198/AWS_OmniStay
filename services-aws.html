@@ -1,0 +1,507 @@
+<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>AWS OmniStay - Tổng hợp dịch vụ AWS</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --bg: #f6f7f9;
+      --panel: #ffffff;
+      --text: #1f2937;
+      --muted: #5f6b7a;
+      --line: #d9dee7;
+      --brand: #146eb4;
+      --brand-dark: #0f4f8a;
+      --accent: #ff9900;
+      --ok: #0f766e;
+      --warn: #a15c07;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--text);
+      font-family: Arial, Helvetica, sans-serif;
+      line-height: 1.55;
+    }
+
+    header {
+      background: var(--panel);
+      border-bottom: 1px solid var(--line);
+    }
+
+    .wrap {
+      width: min(1180px, calc(100% - 32px));
+      margin: 0 auto;
+    }
+
+    .hero {
+      padding: 34px 0 28px;
+    }
+
+    h1 {
+      margin: 0 0 10px;
+      color: var(--brand-dark);
+      font-size: clamp(28px, 4vw, 44px);
+      line-height: 1.08;
+    }
+
+    h2 {
+      margin: 34px 0 14px;
+      color: var(--brand-dark);
+      font-size: 24px;
+    }
+
+    h3 {
+      margin: 24px 0 10px;
+      font-size: 18px;
+    }
+
+    p {
+      margin: 0 0 12px;
+    }
+
+    .subtitle {
+      max-width: 920px;
+      color: var(--muted);
+      font-size: 17px;
+    }
+
+    .meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 18px;
+    }
+
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      min-height: 30px;
+      padding: 4px 10px;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      background: #f9fafb;
+      color: var(--muted);
+      font-size: 13px;
+      white-space: nowrap;
+    }
+
+    main {
+      padding: 24px 0 46px;
+    }
+
+    .note {
+      border-left: 4px solid var(--accent);
+      background: #fff8e7;
+      padding: 14px 16px;
+      margin: 18px 0 22px;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 12px;
+      margin: 18px 0 8px;
+    }
+
+    .stat {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 16px;
+      min-height: 112px;
+    }
+
+    .stat strong {
+      display: block;
+      margin-bottom: 6px;
+      color: var(--brand-dark);
+      font-size: 20px;
+    }
+
+    .stat span {
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .table-box {
+      overflow-x: auto;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: var(--panel);
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      min-width: 980px;
+    }
+
+    th,
+    td {
+      padding: 12px 14px;
+      border-bottom: 1px solid var(--line);
+      vertical-align: top;
+      text-align: left;
+    }
+
+    th {
+      background: #edf4fb;
+      color: #17324d;
+      font-size: 13px;
+      text-transform: uppercase;
+      letter-spacing: 0.02em;
+    }
+
+    tbody tr:last-child td {
+      border-bottom: 0;
+    }
+
+    td:first-child {
+      font-weight: 700;
+      color: var(--brand-dark);
+    }
+
+    .price {
+      color: var(--ok);
+      font-weight: 700;
+      white-space: nowrap;
+    }
+
+    .warn {
+      color: var(--warn);
+      font-weight: 700;
+    }
+
+    .small {
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    ul {
+      margin-top: 8px;
+      padding-left: 20px;
+    }
+
+    code {
+      padding: 2px 5px;
+      border-radius: 4px;
+      background: #eef2f7;
+      font-size: 0.95em;
+    }
+
+    footer {
+      border-top: 1px solid var(--line);
+      background: var(--panel);
+      padding: 22px 0;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    a {
+      color: var(--brand);
+    }
+
+    @media (max-width: 880px) {
+      .grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+    }
+
+    @media (max-width: 560px) {
+      .wrap {
+        width: min(100% - 22px, 1180px);
+      }
+
+      .grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="wrap hero">
+      <h1>Tổng hợp dịch vụ AWS cho AWS OmniStay</h1>
+      <p class="subtitle">
+        File này tóm tắt các dịch vụ AWS dự kiến dùng cho hệ thống đặt phòng khách sạn có
+        tính sẵn sàng cao, tự động co giãn, bộ nhớ đệm, giám sát và kiểm soát chi phí.
+      </p>
+      <div class="meta">
+        <span class="pill">Region giá tham khảo: ap-southeast-1 / Singapore</span>
+        <span class="pill">Cập nhật: 05/07/2026</span>
+        <span class="pill">Đơn vị: USD, chưa gồm thuế</span>
+      </div>
+    </div>
+  </header>
+
+  <main class="wrap">
+    <section class="note">
+      <strong>Lưu ý về giá:</strong>
+      Đơn giá bên dưới được lấy theo AWS Price List public data và các trang pricing của AWS.
+      Giá AWS thay đổi theo region, loại tài khoản, Free Tier/credit, data transfer, storage và thuế.
+      Trước khi deploy thật, cần kiểm tra lại bằng AWS Pricing Calculator và bật AWS Budget.
+    </section>
+
+    <section>
+      <h2>Ước tính nhanh cho demo tối thiểu</h2>
+      <div class="grid">
+        <div class="stat">
+          <strong>~$0.0844/giờ</strong>
+          <span>1 EC2 t3.micro + ALB + RDS db.t3.micro + ElastiCache Valkey cache.t3.micro, chưa tính EBS/S3/CloudFront.</span>
+        </div>
+        <div class="stat">
+          <strong>+ $0.059/giờ</strong>
+          <span>Thêm NAT Gateway nếu chạy EC2 trong private subnet và cần outbound internet.</span>
+        </div>
+        <div class="stat">
+          <strong>+ $0.005/giờ</strong>
+          <span>Mỗi public IPv4 đang gán hoặc idle đều có phí theo giờ.</span>
+        </div>
+        <div class="stat">
+          <strong>0 USD</strong>
+          <span>IAM, Auto Scaling, CloudFormation/CDK, CloudFront OAC và Security Groups không tính phí riêng.</span>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <h2>Dịch vụ cốt lõi bắt buộc</h2>
+      <div class="table-box">
+        <table>
+          <thead>
+            <tr>
+              <th>Dịch vụ</th>
+              <th>Vai trò trong hệ thống</th>
+              <th>Đơn giá tham khảo</th>
+              <th>Ưu điểm</th>
+              <th>Ghi chú sử dụng</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Amazon VPC, Subnets, Route Tables, Internet Gateway</td>
+              <td>Tạo mạng riêng, chia public/private subnet, cho ALB ra internet.</td>
+              <td><span class="price">$0</span> cho VPC/subnet/route/IGW cơ bản.</td>
+              <td>Cô lập hệ thống, dễ thiết kế public/private layer đúng kiến trúc cloud.</td>
+              <td>Chi phí phát sinh từ NAT Gateway, VPC endpoints, public IPv4 hoặc data transfer.</td>
+            </tr>
+            <tr>
+              <td>Security Groups</td>
+              <td>Firewall theo từng layer: ALB, EC2, RDS, Redis/Valkey.</td>
+              <td><span class="price">$0</span> cho rule/security group.</td>
+              <td>Quản lý inbound/outbound rõ ràng, dễ giải thích trong demo bảo mật.</td>
+              <td>Chỉ mở EC2 port 8080 từ SG của ALB; RDS/Redis chỉ mở từ SG của EC2.</td>
+            </tr>
+            <tr>
+              <td>Application Load Balancer</td>
+              <td>Nhận HTTP/HTTPS từ người dùng và chia tải vào EC2 trong Auto Scaling Group.</td>
+              <td><span class="price">$0.0252/giờ</span> + <span class="price">$0.008/LCU-giờ</span>.</td>
+              <td>Health check, routing, scale cùng ASG, demo HA khi terminate 1 EC2.</td>
+              <td>Cần target group health check `/health`; ALB tốn phí theo giờ ngay cả khi ít traffic.</td>
+            </tr>
+            <tr>
+              <td>Amazon EC2</td>
+              <td>Chạy backend ASP.NET Core API trên Linux.</td>
+              <td><span class="price">t3.micro Linux: $0.0132/giờ</span>.</td>
+              <td>Dễ demo server truyền thống, cài .NET runtime, quan sát CPU và scale-out.</td>
+              <td>Chưa gồm EBS root volume, public IPv4, data transfer. Nên dùng IAM role thay access key.</td>
+            </tr>
+            <tr>
+              <td>Amazon EBS</td>
+              <td>Ổ đĩa gốc cho EC2 và nơi lưu artifact/app runtime trên instance.</td>
+              <td><span class="price">gp3: $0.096/GB-tháng</span>; IOPS/throughput vượt mức cơ bản tính riêng.</td>
+              <td>Lưu trữ bền vững hơn instance store, dễ snapshot/backup khi cần.</td>
+              <td>Demo nên dùng root volume nhỏ, xóa volume khi terminate nếu không cần giữ.</td>
+            </tr>
+            <tr>
+              <td>EC2 Auto Scaling Group</td>
+              <td>Tự tăng/giảm số EC2 dựa trên CPU hoặc health check.</td>
+              <td><span class="price">$0</span> cho ASG; chỉ trả tiền EC2/ALB/CloudWatch liên quan.</td>
+              <td>Chứng minh auto scaling khi chạy Locust load test.</td>
+              <td>Plan đề xuất min=1, desired=1, max=4 cho demo.</td>
+            </tr>
+            <tr>
+              <td>Amazon RDS for MySQL</td>
+              <td>Database chính lưu user, hotel, room type, booking và revenue data.</td>
+              <td><span class="price">db.t3.micro Single-AZ MySQL: $0.026/giờ</span>.</td>
+              <td>Quản lý database dễ hơn tự cài MySQL trên EC2; có backup, snapshot, monitoring.</td>
+              <td>Single-AZ để tiết kiệm khi demo; Multi-AZ dùng để thuyết minh HA thật nhưng tốn thêm chi phí.</td>
+            </tr>
+            <tr>
+              <td>Amazon ElastiCache Redis OSS / Valkey</td>
+              <td>Cache kết quả tìm kiếm khách sạn và giảm truy vấn lặp lại vào RDS.</td>
+              <td><span class="price">Valkey cache.t3.micro: $0.020/giờ</span>; Redis OSS cache.t3.micro: <span class="price">$0.025/giờ</span>.</td>
+              <td>Độ trễ thấp, demo cache hit/miss rõ ràng, giảm tải database.</td>
+              <td>Nên dùng TTL ngắn, ví dụ 5 phút, cho kết quả search phổ biến.</td>
+            </tr>
+            <tr>
+              <td>Amazon S3</td>
+              <td>Lưu frontend static files và có thể lưu ảnh khách sạn.</td>
+              <td><span class="price">$0.025/GB-tháng</span> S3 Standard first 50 TB; PUT/LIST <span class="price">$0.005/1,000</span>; GET <span class="price">$0.004/10,000</span>.</td>
+              <td>Rẻ, bền, không cần server web riêng, kết hợp CloudFront tốt.</td>
+              <td>Dùng private bucket + Block Public Access; không bật Static Website Hosting nếu dùng OAC.</td>
+            </tr>
+            <tr>
+              <td>Amazon CloudFront</td>
+              <td>CDN cho frontend từ S3 và có thể forward `/api/*` về ALB.</td>
+              <td><span class="price">$0.120/GB</span> data out Asia first 10 TB; HTTPS GET/HEAD <span class="price">$0.012/10,000</span>.</td>
+              <td>HTTPS, cache static file, giảm latency, bảo vệ S3 origin.</td>
+              <td>CloudFront free tier có 1 TB data transfer out/tháng nếu đủ điều kiện tài khoản.</td>
+            </tr>
+            <tr>
+              <td>CloudFront Origin Access Control</td>
+              <td>Cho CloudFront đọc private S3 bucket an toàn.</td>
+              <td><span class="price">$0</span> phí riêng.</td>
+              <td>Không cần public S3 bucket; phù hợp bảo mật và báo cáo kiến trúc.</td>
+              <td>Origin phải là S3 REST endpoint, không dùng S3 website endpoint.</td>
+            </tr>
+            <tr>
+              <td>IAM Roles and Policies</td>
+              <td>Cấp quyền cho EC2 đọc S3, SSM, CloudWatch mà không dùng access key.</td>
+              <td><span class="price">$0</span>.</td>
+              <td>Giảm rủi ro lộ key; dùng chuẩn AWS cho workload trên cloud.</td>
+              <td>Cần role riêng cho EC2, CDK deploy và quyền tối thiểu khi có thể.</td>
+            </tr>
+            <tr>
+              <td>SSM Parameter Store</td>
+              <td>Lưu config/secret runtime như connection string, JWT secret nếu dùng SecureString.</td>
+              <td><span class="price">Standard parameters: $0</span>; Advanced parameter khoảng <span class="price">$0.05/parameter-tháng</span>.</td>
+              <td>Dễ dùng, tích hợp IAM/KMS, phù hợp demo tiết kiệm.</td>
+              <td>Đủ cho phiên bản demo; dùng Secrets Manager nếu cần rotation đầy đủ.</td>
+            </tr>
+            <tr>
+              <td>AWS Secrets Manager</td>
+              <td>Lưu DB password/JWT secret và hỗ trợ rotation.</td>
+              <td><span class="price">$0.40/secret-tháng</span> + <span class="price">$0.05/10,000 API requests</span>.</td>
+              <td>Quản lý secret chuyên nghiệp, audit/rotation tốt hơn file `.env`.</td>
+              <td>Có thể dùng thay SSM cho DB password nếu muốn trình bày bảo mật nâng cao.</td>
+            </tr>
+            <tr>
+              <td>Amazon CloudWatch</td>
+              <td>Logs, metrics, alarms và dashboard cho ALB, EC2, ASG, RDS, cache.</td>
+              <td>Logs ingest <span class="price">$0.70/GB</span>; standard alarm <span class="price">$0.10/alarm-tháng</span>; custom metric <span class="price">$0.30/metric-tháng</span>.</td>
+              <td>Có bằng chứng demo: CPU tăng, ASG scale, ALB latency/5xx, log API.</td>
+              <td>Đặt retention ngắn cho log group để tiết kiệm.</td>
+            </tr>
+            <tr>
+              <td>AWS CDK + AWS CloudFormation</td>
+              <td>Định nghĩa và deploy hạ tầng bằng code TypeScript.</td>
+              <td><span class="price">$0</span> phí riêng cho CDK/CloudFormation cơ bản; trả tiền resource tạo ra.</td>
+              <td>Lặp lại được demo, dễ xóa tạo lại, thể hiện Infrastructure as Code.</td>
+              <td>CDK synth/deploy tạo CloudFormation stacks.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section>
+      <h2>Dịch vụ điều kiện và tùy chọn</h2>
+      <div class="table-box">
+        <table>
+          <thead>
+            <tr>
+              <th>Dịch vụ</th>
+              <th>Khi nào dùng</th>
+              <th>Đơn giá tham khảo</th>
+              <th>Ưu điểm</th>
+              <th>Khuyến nghị cho đồ án</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>NAT Gateway</td>
+              <td>EC2 nằm private subnet nhưng cần tải package, gọi S3/SSM/CloudWatch qua internet.</td>
+              <td><span class="price">$0.059/giờ</span> + <span class="price">$0.059/GB processed</span>.</td>
+              <td>Cấu hình đơn giản, đúng production pattern.</td>
+              <td class="warn">Tốn phí theo giờ. Chỉ bật khi cần demo private subnet đúng chuẩn, xóa sau lab.</td>
+            </tr>
+            <tr>
+              <td>VPC Endpoints</td>
+              <td>Thay NAT cho kết nối private tới S3, SSM, CloudWatch Logs.</td>
+              <td>Interface endpoint <span class="price">$0.013/endpoint-giờ</span> + <span class="price">$0.01/GB</span>; S3 Gateway endpoint <span class="price">$0</span>.</td>
+              <td>Bảo mật hơn NAT, traffic không ra public internet.</td>
+              <td>Nếu muốn tiết kiệm, dùng S3 Gateway endpoint và chỉ tạo interface endpoints thật cần thiết.</td>
+            </tr>
+            <tr>
+              <td>Public IPv4 Address</td>
+              <td>Khi EC2 public subnet hoặc Elastic IP được gán/bỏ trong tài khoản.</td>
+              <td><span class="price">$0.005/giờ/IP</span> cho in-use hoặc idle public IPv4.</td>
+              <td>Đơn giản cho demo public EC2 sau ALB.</td>
+              <td>Không mở SSH public; nếu dùng public subnet, chỉ cho inbound từ ALB.</td>
+            </tr>
+            <tr>
+              <td>Route 53</td>
+              <td>Gắn domain riêng cho CloudFront/API.</td>
+              <td><span class="price">$0.50/hosted zone-tháng</span> first 25 hosted zones; standard query <span class="price">$0.40/1M queries</span>.</td>
+              <td>Domain đẹp, dễ demo production-like.</td>
+              <td>Tùy chọn. Có thể dùng CloudFront domain mặc định để tiết kiệm.</td>
+            </tr>
+            <tr>
+              <td>AWS Certificate Manager</td>
+              <td>Cấp TLS certificate cho CloudFront/ALB khi dùng domain riêng.</td>
+              <td><span class="price">$0</span> cho public certificate dùng với AWS integrated services.</td>
+              <td>Tự gia hạn, HTTPS đúng chuẩn.</td>
+              <td>Bắt buộc nếu dùng domain riêng HTTPS; không dùng Private CA cho demo.</td>
+            </tr>
+            <tr>
+              <td>Amazon SES</td>
+              <td>Gửi email xác nhận booking.</td>
+              <td><span class="price">$0.0001/email recipient</span>, tương đương <span class="price">$0.10/1,000</span>.</td>
+              <td>Tăng tính thực tế cho sản phẩm, có thể demo email confirmation.</td>
+              <td>Tùy chọn nâng cao; cần verify sender/domain trước khi gửi thật.</td>
+            </tr>
+            <tr>
+              <td>AWS Budgets</td>
+              <td>Cảnh báo chi phí AWS trước khi vượt mức demo.</td>
+              <td>Budget notification <span class="price">$0</span>; action-enabled budget có thể <span class="price">$0.10/budget-day</span>.</td>
+              <td>Giảm rủi ro phát sinh hóa đơn, rất nên có trong đồ án.</td>
+              <td>Tạo budget 10 USD, cảnh báo khi forecast vượt 5 USD.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section>
+      <h2>Thứ tự ưu tiên khi triển khai</h2>
+      <ul>
+        <li><strong>Giai đoạn local:</strong> chưa cần AWS, chỉ tạo backend `/health`, database model và frontend tĩnh.</li>
+        <li><strong>Giai đoạn cloud tối thiểu:</strong> S3, CloudFront, ALB, EC2, RDS, ElastiCache, IAM, CloudWatch.</li>
+        <li><strong>Giai đoạn demo HA/scale:</strong> Auto Scaling Group, CloudWatch alarms, Locust load test.</li>
+        <li><strong>Giai đoạn production-like:</strong> NAT hoặc VPC endpoints, Route 53, ACM, Secrets Manager, SES.</li>
+      </ul>
+    </section>
+
+    <section>
+      <h2>Nguồn giá tham khảo</h2>
+      <p class="small">
+        Giá được đối chiếu từ AWS Price List API cho các offer:
+        AmazonEC2, AWSELB, AmazonRDS, AmazonElastiCache, AmazonS3, AmazonCloudFront,
+        AmazonVPC, AmazonCloudWatch, AWSSecretsManager, AWSSystemsManager, AmazonRoute53,
+        AmazonSES, AWSBudgets và AWSCertificateManager.
+      </p>
+      <ul class="small">
+        <li><a href="https://pricing.us-east-1.amazonaws.com/offers/v1.0/aws/index.json">AWS Price List API offer index</a></li>
+        <li><a href="https://aws.amazon.com/free/">AWS Free Tier</a></li>
+        <li><a href="https://aws.amazon.com/pricing/calculator/">AWS Pricing Calculator</a></li>
+        <li><a href="https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/private-content-restricting-access-to-s3.html">CloudFront OAC for S3</a></li>
+      </ul>
+    </section>
+  </main>
+
+  <footer>
+    <div class="wrap">
+      Tổng hợp chi phí và dịch vụ AWS OmniStay. Đây là tài liệu lập kế hoạch, không phải báo giá chính thức.
+    </div>
+  </footer>
+</body>
+</html>

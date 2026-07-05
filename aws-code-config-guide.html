@@ -1,0 +1,916 @@
+<!doctype html>
+<html lang="vi">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>AWS OmniStay - Hướng dẫn cấu hình code với AWS services</title>
+    <style>
+      :root {
+        color-scheme: light;
+        --bg: #f7f8fb;
+        --surface: #ffffff;
+        --surface-muted: #eef4f7;
+        --ink: #15222e;
+        --muted: #5b6977;
+        --line: #d8e0e7;
+        --accent: #0b6bcb;
+        --accent-soft: #e6f1ff;
+        --success: #0d7a4f;
+        --warning: #9a5b00;
+        --danger: #ad2f2f;
+        --code: #101820;
+        --code-ink: #eef5ff;
+        --shadow: 0 16px 40px rgba(21, 34, 46, 0.08);
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        background: var(--bg);
+        color: var(--ink);
+        overflow-x: hidden;
+        font-family:
+          Inter,
+          ui-sans-serif,
+          system-ui,
+          -apple-system,
+          BlinkMacSystemFont,
+          "Segoe UI",
+          sans-serif;
+        line-height: 1.6;
+      }
+
+      a {
+        color: var(--accent);
+      }
+
+      code,
+      pre {
+        font-family:
+          "SFMono-Regular",
+          Consolas,
+          "Liberation Mono",
+          monospace;
+      }
+
+      .page {
+        max-width: 1180px;
+        margin: 0 auto;
+        padding: 28px 20px 56px;
+      }
+
+      .hero {
+        padding: 36px;
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        background: var(--surface);
+        box-shadow: var(--shadow);
+      }
+
+      .eyebrow {
+        margin: 0 0 8px;
+        color: var(--accent);
+        font-size: 13px;
+        font-weight: 800;
+        letter-spacing: 0;
+        text-transform: uppercase;
+      }
+
+      h1,
+      h2,
+      h3 {
+        margin: 0;
+        line-height: 1.2;
+        letter-spacing: 0;
+      }
+
+      h1 {
+        max-width: 850px;
+        font-size: clamp(34px, 5vw, 58px);
+      }
+
+      h2 {
+        font-size: 28px;
+      }
+
+      h3 {
+        font-size: 19px;
+      }
+
+      p {
+        margin: 10px 0 0;
+      }
+
+      .lead {
+        max-width: 850px;
+        color: var(--muted);
+        font-size: 18px;
+      }
+
+      .meta {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        margin-top: 24px;
+      }
+
+      .pill {
+        display: inline-flex;
+        align-items: center;
+        min-height: 34px;
+        padding: 6px 12px;
+        border: 1px solid var(--line);
+        border-radius: 999px;
+        background: var(--surface-muted);
+        color: var(--ink);
+        font-size: 14px;
+        font-weight: 700;
+      }
+
+      .layout {
+        display: grid;
+        grid-template-columns: minmax(0, 270px) minmax(0, 1fr);
+        gap: 24px;
+        margin-top: 24px;
+      }
+
+      .toc {
+        position: sticky;
+        top: 20px;
+        align-self: start;
+        padding: 18px;
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        background: var(--surface);
+      }
+
+      .toc strong {
+        display: block;
+        margin-bottom: 10px;
+      }
+
+      .toc a {
+        display: block;
+        padding: 8px 0;
+        border-top: 1px solid var(--line);
+        color: var(--muted);
+        font-size: 14px;
+        text-decoration: none;
+      }
+
+      .toc a:hover {
+        color: var(--accent);
+      }
+
+      .content {
+        display: grid;
+        gap: 18px;
+      }
+
+      .section {
+        padding: 26px;
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        background: var(--surface);
+      }
+
+      .section-title {
+        display: flex;
+        align-items: flex-start;
+        justify-content: space-between;
+        gap: 16px;
+        margin-bottom: 16px;
+      }
+
+      .badge {
+        display: inline-flex;
+        align-items: center;
+        min-height: 30px;
+        padding: 4px 10px;
+        border-radius: 999px;
+        background: var(--accent-soft);
+        color: var(--accent);
+        font-size: 13px;
+        font-weight: 800;
+        white-space: nowrap;
+      }
+
+      .grid {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 14px;
+      }
+
+      .box {
+        padding: 16px;
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        background: #fbfcfe;
+      }
+
+      .box strong {
+        display: block;
+        margin-bottom: 6px;
+      }
+
+      ul,
+      ol {
+        margin: 10px 0 0;
+        padding-left: 22px;
+      }
+
+      li + li {
+        margin-top: 8px;
+      }
+
+      table {
+        width: 100%;
+        margin-top: 14px;
+        border-collapse: collapse;
+        table-layout: fixed;
+        overflow: hidden;
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        font-size: 14px;
+      }
+
+      th,
+      td {
+        padding: 12px;
+        border-bottom: 1px solid var(--line);
+        text-align: left;
+        vertical-align: top;
+        overflow-wrap: anywhere;
+      }
+
+      td code,
+      th code,
+      p code,
+      li code {
+        white-space: normal;
+        overflow-wrap: anywhere;
+      }
+
+      th {
+        background: var(--surface-muted);
+        color: var(--ink);
+        font-weight: 800;
+      }
+
+      tr:last-child td {
+        border-bottom: 0;
+      }
+
+      .note,
+      .warning,
+      .success {
+        margin-top: 14px;
+        padding: 14px 16px;
+        border-radius: 8px;
+        border: 1px solid;
+      }
+
+      .note {
+        border-color: #b8d7fb;
+        background: #edf6ff;
+      }
+
+      .warning {
+        border-color: #f0ca89;
+        background: #fff6e6;
+        color: #573500;
+      }
+
+      .success {
+        border-color: #9cd9bd;
+        background: #edf9f3;
+        color: #074f35;
+      }
+
+      pre {
+        margin: 14px 0 0;
+        padding: 16px;
+        overflow-x: auto;
+        border-radius: 8px;
+        background: var(--code);
+        color: var(--code-ink);
+        font-size: 13px;
+        line-height: 1.55;
+      }
+
+      pre code {
+        white-space: pre;
+      }
+
+      .filename {
+        display: inline-flex;
+        margin-top: 12px;
+        padding: 4px 8px;
+        border-radius: 6px;
+        background: var(--surface-muted);
+        color: var(--muted);
+        font-size: 13px;
+        font-weight: 800;
+      }
+
+      .status-list {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 12px;
+        margin-top: 14px;
+      }
+
+      .status-item {
+        padding: 14px;
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        background: #fbfcfe;
+      }
+
+      .status-item span {
+        display: block;
+        color: var(--muted);
+        font-size: 13px;
+      }
+
+      .status-item strong {
+        display: block;
+        margin-top: 4px;
+      }
+
+      @media (max-width: 900px) {
+        .layout {
+          grid-template-columns: 1fr;
+        }
+
+        .toc {
+          position: static;
+        }
+
+        .grid,
+        .status-list {
+          grid-template-columns: 1fr;
+        }
+      }
+
+      @media (max-width: 560px) {
+        .page {
+          padding: 16px 12px 40px;
+        }
+
+        .hero,
+        .section {
+          padding: 20px;
+        }
+
+        h1 {
+          font-size: 34px;
+        }
+
+        h2 {
+          font-size: 24px;
+        }
+
+        .section-title {
+          display: block;
+        }
+
+        .badge {
+          margin-top: 10px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="page">
+      <header class="hero">
+        <p class="eyebrow">AWS OmniStay</p>
+        <h1>Hướng dẫn cấu hình code để dùng AWS services</h1>
+        <p class="lead">
+          File này dùng sau khi đã tạo dịch vụ trên AWS Console. Mục tiêu là nối frontend/backend hiện có với
+          Amazon RDS MySQL, ElastiCache Redis/Valkey, S3, CloudFront, ALB, EC2, IAM, SSM/Secrets Manager và
+          CloudWatch. Không cấu hình Terraform hoặc CDK trong tài liệu này.
+        </p>
+        <div class="meta">
+          <span class="pill">Ngôn ngữ: tiếng Việt có dấu</span>
+          <span class="pill">Backend: ASP.NET Core</span>
+          <span class="pill">Frontend: static HTML/JS</span>
+          <span class="pill">Region mẫu: ap-southeast-1</span>
+          <span class="pill">Cập nhật: 05/07/2026</span>
+        </div>
+      </header>
+
+      <div class="layout">
+        <nav class="toc" aria-label="Mục lục">
+          <strong>Mục lục</strong>
+          <a href="#overview">1. Luồng cấu hình</a>
+          <a href="#backend-env">2. Biến môi trường backend</a>
+          <a href="#ssm-secrets">3. SSM và Secrets Manager</a>
+          <a href="#ec2-systemd">4. Cấu hình EC2 systemd</a>
+          <a href="#frontend-config">5. Cấu hình frontend</a>
+          <a href="#cloudfront-alb">6. CloudFront và ALB</a>
+          <a href="#health-check">7. Health check và bằng chứng</a>
+          <a href="#cloudwatch">8. CloudWatch logs</a>
+          <a href="#screenshots">9. Checklist ảnh chụp</a>
+          <a href="#troubleshooting">10. Lỗi thường gặp</a>
+        </nav>
+
+        <main class="content">
+          <section id="overview" class="section">
+            <div class="section-title">
+              <div>
+                <p class="eyebrow">Bước tổng quan</p>
+                <h2>Luồng cấu hình từ AWS Console sang code</h2>
+              </div>
+              <span class="badge">Không dùng Terraform</span>
+            </div>
+
+            <div class="grid">
+              <div class="box">
+                <strong>1. Lấy endpoint từ AWS Console</strong>
+                <p>Ghi lại RDS endpoint, Redis primary endpoint, ALB DNS, CloudFront domain và bucket S3 frontend.</p>
+              </div>
+              <div class="box">
+                <strong>2. Lưu thông tin nhạy cảm</strong>
+                <p>DB password và connection string nên đặt trong SSM Parameter Store hoặc Secrets Manager.</p>
+              </div>
+              <div class="box">
+                <strong>3. Gắn cấu hình vào EC2</strong>
+                <p>Backend đọc cấu hình bằng biến môi trường ASP.NET Core, không hard-code trong source.</p>
+              </div>
+              <div class="box">
+                <strong>4. Cấu hình frontend</strong>
+                <p>Khi chạy qua CloudFront cùng domain, đặt <code>API_BASE</code> là <code>/api</code>.</p>
+              </div>
+            </div>
+
+            <div class="success">
+              Code hiện tại đã hỗ trợ chạy local bằng InMemory database và chạy AWS bằng RDS MySQL/Redis thông qua cấu hình.
+              Vì vậy có thể code trước, còn thao tác tạo AWS Console và chụp màn hình thực hiện sau.
+            </div>
+          </section>
+
+          <section id="backend-env" class="section">
+            <div class="section-title">
+              <div>
+                <p class="eyebrow">Backend</p>
+                <h2>Biến môi trường cần cấu hình cho API</h2>
+              </div>
+              <span class="badge">EC2 + RDS + Redis</span>
+            </div>
+
+            <p>
+              Backend dùng <code>Database:Provider</code> để chọn database provider. Local/test mặc định là
+              <code>InMemory</code>. Khi deploy lên AWS, đổi sang <code>MySql</code> và cung cấp connection string RDS.
+            </p>
+
+            <table>
+              <thead>
+                <tr>
+                  <th>Biến môi trường</th>
+                  <th>Giá trị mẫu</th>
+                  <th>Vai trò</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><code>ASPNETCORE_ENVIRONMENT</code></td>
+                  <td><code>Production</code></td>
+                  <td>Chạy backend theo môi trường production.</td>
+                </tr>
+                <tr>
+                  <td><code>ASPNETCORE_URLS</code></td>
+                  <td><code>http://0.0.0.0:8080</code></td>
+                  <td>API lắng nghe port 8080 để ALB forward traffic.</td>
+                </tr>
+                <tr>
+                  <td><code>Database__Provider</code></td>
+                  <td><code>MySql</code></td>
+                  <td>Bắt backend dùng Amazon RDS MySQL thay vì InMemory.</td>
+                </tr>
+                <tr>
+                  <td><code>ConnectionStrings__HotelBookingDb</code></td>
+                  <td><code>server=&lt;rds-endpoint&gt;;port=3306;database=hotel_booking;user=&lt;user&gt;;password=&lt;password&gt;;SslMode=Required</code></td>
+                  <td>Connection string tới RDS MySQL.</td>
+                </tr>
+                <tr>
+                  <td><code>ConnectionStrings__Redis</code></td>
+                  <td><code>&lt;redis-primary-endpoint&gt;:6379,abortConnect=false</code></td>
+                  <td>Kết nối ElastiCache Redis/Valkey để cache kết quả search.</td>
+                </tr>
+                <tr>
+                  <td><code>Cache__SearchTtlSeconds</code></td>
+                  <td><code>120</code></td>
+                  <td>Thời gian giữ cache kết quả tìm phòng.</td>
+                </tr>
+                <tr>
+                  <td><code>AWS__Region</code></td>
+                  <td><code>ap-southeast-1</code></td>
+                  <td>Hiển thị region trong endpoint <code>/health/aws</code>.</td>
+                </tr>
+                <tr>
+                  <td><code>AWS__S3FrontendBucket</code></td>
+                  <td><code>omnistay-frontend-&lt;account-id&gt;</code></td>
+                  <td>Ghi nhận bucket frontend để demo/health check.</td>
+                </tr>
+                <tr>
+                  <td><code>AWS__CloudFrontDomain</code></td>
+                  <td><code>dxxxxx.cloudfront.net</code></td>
+                  <td>Ghi nhận CloudFront domain để demo/health check.</td>
+                </tr>
+                <tr>
+                  <td><code>Cors__AllowedOrigins__0</code></td>
+                  <td><code>https://dxxxxx.cloudfront.net</code></td>
+                  <td>Chỉ cần khi frontend và API khác origin. Nếu CloudFront route <code>/api/*</code> cùng domain thì không bắt buộc.</td>
+                </tr>
+              </tbody>
+            </table>
+
+            <span class="filename">Ví dụ .env cho EC2, không commit file này</span>
+            <pre><code>ASPNETCORE_ENVIRONMENT=Production
+ASPNETCORE_URLS=http://0.0.0.0:8080
+Database__Provider=MySql
+ConnectionStrings__HotelBookingDb=server=omnistay-mysql.xxxxxx.ap-southeast-1.rds.amazonaws.com;port=3306;database=hotel_booking;user=admin;password=CHANGE_ME_FROM_SECRET;SslMode=Required
+ConnectionStrings__Redis=omnistay-cache.xxxxxx.cache.amazonaws.com:6379,abortConnect=false
+Cache__SearchTtlSeconds=120
+AWS__Region=ap-southeast-1
+AWS__S3FrontendBucket=omnistay-frontend-123456789012
+AWS__CloudFrontDomain=dxxxxx.cloudfront.net</code></pre>
+
+            <div class="warning">
+              Không đưa mật khẩu database, AWS access key, secret key hoặc connection string thật lên GitHub. Khi chụp màn hình,
+              che password và secret value.
+            </div>
+          </section>
+
+          <section id="ssm-secrets" class="section">
+            <div class="section-title">
+              <div>
+                <p class="eyebrow">Secrets</p>
+                <h2>Lưu cấu hình trong SSM Parameter Store hoặc Secrets Manager</h2>
+              </div>
+              <span class="badge">IAM role đọc secret</span>
+            </div>
+
+            <p>
+              Để thể hiện sử dụng AWS service rõ ràng, nên lưu các giá trị runtime trong AWS thay vì file local trên EC2.
+              EC2 instance role đọc parameter/secret khi khởi động app.
+            </p>
+
+            <table>
+              <thead>
+                <tr>
+                  <th>Tên parameter/secret đề xuất</th>
+                  <th>Loại</th>
+                  <th>Nội dung</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><code>/omnistay/prod/db-connection</code></td>
+                  <td>SecureString hoặc Secrets Manager</td>
+                  <td>Connection string RDS MySQL đầy đủ.</td>
+                </tr>
+                <tr>
+                  <td><code>/omnistay/prod/redis</code></td>
+                  <td>String</td>
+                  <td>Redis endpoint dạng <code>host:6379,abortConnect=false</code>.</td>
+                </tr>
+                <tr>
+                  <td><code>/omnistay/prod/cloudfront-domain</code></td>
+                  <td>String</td>
+                  <td>CloudFront domain dùng để set health metadata hoặc CORS.</td>
+                </tr>
+                <tr>
+                  <td><code>/omnistay/prod/frontend-bucket</code></td>
+                  <td>String</td>
+                  <td>Tên S3 bucket chứa frontend.</td>
+                </tr>
+              </tbody>
+            </table>
+
+            <div class="note">
+              IAM role gắn vào EC2 cần quyền tối thiểu: <code>ssm:GetParameter</code>, <code>secretsmanager:GetSecretValue</code>
+              cho đúng ARN, quyền ghi CloudWatch Logs, và quyền đọc S3 artifact nếu backend được tải từ S3.
+            </div>
+          </section>
+
+          <section id="ec2-systemd" class="section">
+            <div class="section-title">
+              <div>
+                <p class="eyebrow">EC2</p>
+                <h2>Ví dụ cấu hình systemd cho backend</h2>
+              </div>
+              <span class="badge">Port 8080</span>
+            </div>
+
+            <p>
+              ALB target group nên forward HTTP port <code>8080</code> tới EC2 và health check endpoint
+              <code>/health</code>. Backend ghi log ra stdout/stderr để CloudWatch agent hoặc journald thu thập.
+            </p>
+
+            <span class="filename">/etc/systemd/system/omnistay-api.service</span>
+            <pre><code>[Unit]
+Description=AWS OmniStay API
+After=network.target
+
+[Service]
+WorkingDirectory=/opt/omnistay/api
+ExecStart=/usr/bin/dotnet /opt/omnistay/api/HotelBooking.Api.dll
+Restart=always
+RestartSec=10
+Environment=ASPNETCORE_ENVIRONMENT=Production
+Environment=ASPNETCORE_URLS=http://0.0.0.0:8080
+Environment=Database__Provider=MySql
+Environment=ConnectionStrings__HotelBookingDb=server=RDS_ENDPOINT;port=3306;database=hotel_booking;user=admin;password=READ_FROM_SECRET;SslMode=Required
+Environment=ConnectionStrings__Redis=REDIS_ENDPOINT:6379,abortConnect=false
+Environment=Cache__SearchTtlSeconds=120
+Environment=AWS__Region=ap-southeast-1
+Environment=AWS__S3FrontendBucket=omnistay-frontend-ACCOUNT
+Environment=AWS__CloudFrontDomain=dxxxxx.cloudfront.net
+
+[Install]
+WantedBy=multi-user.target</code></pre>
+
+            <div class="warning">
+              File service ở trên là mẫu dễ hiểu để demo. Khi làm thật, không nên đặt password trực tiếp trong systemd file.
+              Hãy lấy giá trị từ SSM/Secrets trong user data hoặc script bootstrap, rồi export vào environment file có quyền đọc hạn chế.
+            </div>
+
+            <span class="filename">Lệnh kiểm tra trên EC2</span>
+            <pre><code>sudo systemctl daemon-reload
+sudo systemctl enable omnistay-api
+sudo systemctl restart omnistay-api
+sudo systemctl status omnistay-api
+curl http://localhost:8080/health
+curl http://localhost:8080/health/aws</code></pre>
+          </section>
+
+          <section id="frontend-config" class="section">
+            <div class="section-title">
+              <div>
+                <p class="eyebrow">Frontend</p>
+                <h2>Cấu hình <code>config.js</code> cho local và AWS</h2>
+              </div>
+              <span class="badge">S3 + CloudFront</span>
+            </div>
+
+            <p>
+              Frontend không hard-code endpoint trong source chính. File <code>frontend/public/config.js</code> quyết định
+              API base URL. Repo đã có thêm file mẫu <code>frontend/public/config.aws.example.js</code>.
+            </p>
+
+            <span class="filename">Local development</span>
+            <pre><code>window.__APP_CONFIG__ = {
+  API_BASE: 'http://localhost:5000/api'
+};</code></pre>
+
+            <span class="filename">AWS production qua CloudFront cùng domain</span>
+            <pre><code>window.__APP_CONFIG__ = {
+  API_BASE: '/api'
+};</code></pre>
+
+            <span class="filename">AWS production nếu gọi ALB trực tiếp</span>
+            <pre><code>window.__APP_CONFIG__ = {
+  API_BASE: 'http://omnistay-alb-123456.ap-southeast-1.elb.amazonaws.com/api'
+};</code></pre>
+
+            <div class="note">
+              Cách tốt nhất cho demo là dùng CloudFront phục vụ frontend từ S3 và thêm behavior <code>/api/*</code>
+              forward về ALB. Khi đó trình duyệt chỉ thấy một domain CloudFront, ít gặp lỗi CORS hơn và thể hiện được CloudFront.
+            </div>
+          </section>
+
+          <section id="cloudfront-alb" class="section">
+            <div class="section-title">
+              <div>
+                <p class="eyebrow">Routing</p>
+                <h2>Nối CloudFront, ALB và API route</h2>
+              </div>
+              <span class="badge">/api/*</span>
+            </div>
+
+            <ol>
+              <li>CloudFront default behavior trỏ tới S3 private bucket qua Origin Access Control.</li>
+              <li>Thêm origin thứ hai là ALB DNS, protocol HTTP, port 80.</li>
+              <li>Thêm behavior path pattern <code>/api/*</code>, origin là ALB.</li>
+              <li>Allowed HTTP methods: GET, HEAD, OPTIONS, PUT, POST, PATCH, DELETE nếu muốn đầy đủ cho API.</li>
+              <li>Cache policy cho <code>/api/*</code>: nên dùng policy không cache hoặc TTL thấp để booking/search cập nhật đúng.</li>
+              <li>Origin request policy: forward query string để endpoint search nhận city/checkIn/checkOut/guests.</li>
+            </ol>
+
+            <div class="success">
+              Luồng chạy đúng: Browser → CloudFront → S3 cho frontend, và Browser → CloudFront <code>/api/*</code> →
+              ALB → EC2 backend → RDS/Redis.
+            </div>
+          </section>
+
+          <section id="health-check" class="section">
+            <div class="section-title">
+              <div>
+                <p class="eyebrow">Bằng chứng runtime</p>
+                <h2>Health check cần chụp màn hình</h2>
+              </div>
+              <span class="badge">API evidence</span>
+            </div>
+
+            <p>
+              Backend có hai endpoint kiểm tra. Endpoint <code>/health</code> dùng cho ALB target group. Endpoint
+              <code>/health/aws</code> dùng để chứng minh code đã đọc cấu hình AWS runtime.
+            </p>
+
+            <span class="filename">Kiểm tra qua ALB hoặc CloudFront</span>
+            <pre><code>curl http://ALB_DNS/health
+curl http://ALB_DNS/health/aws
+curl https://CLOUDFRONT_DOMAIN/health/aws</code></pre>
+
+            <span class="filename">Output mẫu của /health/aws</span>
+            <pre><code>{
+  "environment": "Production",
+  "region": "ap-southeast-1",
+  "databaseProvider": "MySql",
+  "redisConfigured": true,
+  "redisConnected": true,
+  "searchCacheTtlSeconds": 120,
+  "s3FrontendBucket": "omnistay-frontend-123456789012",
+  "cloudFrontDomain": "dxxxxx.cloudfront.net",
+  "apiBasePath": "/api"
+}</code></pre>
+
+            <div class="warning">
+              Nếu <code>databaseProvider</code> vẫn là <code>InMemory</code> trên AWS thì backend chưa dùng RDS MySQL.
+              Nếu <code>redisConfigured</code> là <code>false</code> thì chưa truyền Redis endpoint vào app.
+            </div>
+          </section>
+
+          <section id="cloudwatch" class="section">
+            <div class="section-title">
+              <div>
+                <p class="eyebrow">Observability</p>
+                <h2>CloudWatch logs cần xem khi demo</h2>
+              </div>
+              <span class="badge">Cache HIT/MISS</span>
+            </div>
+
+            <p>
+              Khi Redis hoạt động, backend ghi log cache ở luồng search. Search cùng một điều kiện hai lần để thấy
+              lần đầu MISS và lần sau HIT.
+            </p>
+
+            <span class="filename">Log message cần tìm</span>
+            <pre><code>Hotel search cache MISS for Da Nang 2026-08-15 2026-08-18 2
+Hotel search cache HIT for Da Nang 2026-08-15 2026-08-18 2</code></pre>
+
+            <table>
+              <thead>
+                <tr>
+                  <th>Dịch vụ</th>
+                  <th>Bằng chứng trong CloudWatch/AWS Console</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>ALB</td>
+                  <td>RequestCount, TargetResponseTime, HealthyHostCount.</td>
+                </tr>
+                <tr>
+                  <td>EC2/ASG</td>
+                  <td>CPUUtilization, instance healthy trong target group.</td>
+                </tr>
+                <tr>
+                  <td>RDS MySQL</td>
+                  <td>DatabaseConnections, CPUUtilization, FreeStorageSpace.</td>
+                </tr>
+                <tr>
+                  <td>ElastiCache</td>
+                  <td>CacheHits, CacheMisses, CurrConnections, CPUUtilization.</td>
+                </tr>
+                <tr>
+                  <td>CloudFront</td>
+                  <td>Requests, cache behavior <code>/api/*</code>, distribution domain hoạt động.</td>
+                </tr>
+              </tbody>
+            </table>
+          </section>
+
+          <section id="screenshots" class="section">
+            <div class="section-title">
+              <div>
+                <p class="eyebrow">Mentor evidence</p>
+                <h2>Checklist ảnh chụp cấu hình code với AWS</h2>
+              </div>
+              <span class="badge">Chụp màn hình</span>
+            </div>
+
+            <table>
+              <thead>
+                <tr>
+                  <th>Mục</th>
+                  <th>Ảnh cần chụp</th>
+                  <th>Ý nghĩa</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>Backend config</td>
+                  <td>EC2 systemd status hoặc environment file đã che secret.</td>
+                  <td>Chứng minh code đọc cấu hình AWS runtime.</td>
+                </tr>
+                <tr>
+                  <td>RDS</td>
+                  <td>RDS endpoint và security group inbound từ SG-EC2.</td>
+                  <td>Chứng minh backend dùng database AWS.</td>
+                </tr>
+                <tr>
+                  <td>Redis</td>
+                  <td>ElastiCache primary endpoint và CloudWatch CacheHits/CacheMisses.</td>
+                  <td>Chứng minh search cache dùng Redis/Valkey.</td>
+                </tr>
+                <tr>
+                  <td>Health API</td>
+                  <td>Trình duyệt/curl gọi <code>/health/aws</code> thấy <code>MySql</code> và Redis connected.</td>
+                  <td>Chứng minh code đã nhận cấu hình service.</td>
+                </tr>
+                <tr>
+                  <td>Frontend config</td>
+                  <td><code>config.js</code> trên S3 có <code>API_BASE: "/api"</code>.</td>
+                  <td>Chứng minh frontend gọi backend qua CloudFront.</td>
+                </tr>
+                <tr>
+                  <td>CloudFront</td>
+                  <td>Behavior <code>/api/*</code> trỏ về ALB origin.</td>
+                  <td>Chứng minh CloudFront route cả frontend và API.</td>
+                </tr>
+                <tr>
+                  <td>CloudWatch logs</td>
+                  <td>Log cache MISS/HIT hoặc request log API.</td>
+                  <td>Chứng minh app chạy thật trên AWS và có quan sát hệ thống.</td>
+                </tr>
+              </tbody>
+            </table>
+          </section>
+
+          <section id="troubleshooting" class="section">
+            <div class="section-title">
+              <div>
+                <p class="eyebrow">Debug</p>
+                <h2>Lỗi thường gặp khi nối code với AWS services</h2>
+              </div>
+              <span class="badge">Runbook nhanh</span>
+            </div>
+
+            <table>
+              <thead>
+                <tr>
+                  <th>Lỗi</th>
+                  <th>Nguyên nhân thường gặp</th>
+                  <th>Cách xử lý</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><code>/health/aws</code> trả <code>InMemory</code></td>
+                  <td>Chưa set <code>Database__Provider=MySql</code>.</td>
+                  <td>Kiểm tra systemd environment, restart service.</td>
+                </tr>
+                <tr>
+                  <td>API không kết nối RDS</td>
+                  <td>Sai connection string, DB chưa tạo, SG-RDS chưa cho SG-EC2 port 3306.</td>
+                  <td>Kiểm tra RDS endpoint, security group, subnet, secret value.</td>
+                </tr>
+                <tr>
+                  <td>Redis không connected</td>
+                  <td>Sai endpoint hoặc SG-Redis chưa cho SG-EC2 port 6379.</td>
+                  <td>Kiểm tra ElastiCache endpoint, security group và private subnet.</td>
+                </tr>
+                <tr>
+                  <td>Frontend báo lỗi gọi API</td>
+                  <td><code>API_BASE</code> sai hoặc CloudFront chưa có behavior <code>/api/*</code>.</td>
+                  <td>Kiểm tra <code>config.js</code>, CloudFront behavior, ALB target group healthy.</td>
+                </tr>
+                <tr>
+                  <td>ALB target unhealthy</td>
+                  <td>Port sai, app chưa chạy, health check path sai.</td>
+                  <td>Đặt target group port 8080, path <code>/health</code>, kiểm tra <code>systemctl status</code>.</td>
+                </tr>
+                <tr>
+                  <td>Không thấy CloudWatch log</td>
+                  <td>CloudWatch agent/IAM role chưa cấu hình hoặc log group sai.</td>
+                  <td>Kiểm tra IAM role, CloudWatch agent config, journald/stdout source.</td>
+                </tr>
+              </tbody>
+            </table>
+
+            <div class="success">
+              Khi ba điểm sau cùng đúng, demo đã thể hiện được dịch vụ AWS chính: frontend tải qua CloudFront/S3,
+              backend chạy sau ALB/EC2/ASG, dữ liệu đi vào RDS MySQL và search dùng Redis/Valkey cache.
+            </div>
+          </section>
+        </main>
+      </div>
+    </div>
+  </body>
+</html>
