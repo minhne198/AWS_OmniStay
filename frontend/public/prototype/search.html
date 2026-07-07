@@ -1,0 +1,476 @@
+<!DOCTYPE html>
+
+<html lang="vi"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Kết quả tìm kiếm - GlobalStay</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@600;700&amp;family=Inter:wght@400;500;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "primary": "#0054b5",
+                        "surface-container-low": "#f3f3f3",
+                        "on-secondary-fixed-variant": "#5e4100",
+                        "error-container": "#ffdad6",
+                        "surface-container": "#eeeeee",
+                        "surface-dim": "#dadada",
+                        "text-main": "#2A2A2E",
+                        "primary-fixed-dim": "#adc6ff",
+                        "primary-fixed": "#d8e2ff",
+                        "inverse-primary": "#adc6ff",
+                        "highlight-gold": "#FFB700",
+                        "surface": "#f9f9f9",
+                        "on-error": "#ffffff",
+                        "secondary-fixed": "#ffdea9",
+                        "surface-variant": "#e2e2e2",
+                        "on-background": "#1a1c1c",
+                        "tertiary": "#3055a1",
+                        "surface-container-high": "#e8e8e8",
+                        "error": "#ba1a1a",
+                        "on-surface-variant": "#414754",
+                        "secondary": "#7d5800",
+                        "on-tertiary-container": "#f4f5ff",
+                        "surface-tint": "#005ac1",
+                        "success-green": "#008009",
+                        "surface-bright": "#f9f9f9",
+                        "inverse-surface": "#2f3131",
+                        "on-surface": "#1a1c1c",
+                        "tertiary-fixed-dim": "#b0c6ff",
+                        "tertiary-fixed": "#d9e2ff",
+                        "primary-container": "#006ce4",
+                        "outline-variant": "#c1c6d6",
+                        "on-secondary-container": "#6b4b00",
+                        "on-error-container": "#93000a",
+                        "surface-container-lowest": "#ffffff",
+                        "on-primary": "#ffffff",
+                        "inverse-on-surface": "#f1f1f1",
+                        "on-tertiary-fixed": "#001945",
+                        "on-secondary": "#ffffff",
+                        "on-primary-fixed-variant": "#004494",
+                        "tertiary-container": "#4b6ebb",
+                        "secondary-container": "#ffb700",
+                        "outline": "#727785",
+                        "secondary-fixed-dim": "#ffba26",
+                        "on-tertiary": "#ffffff",
+                        "on-primary-container": "#f4f5ff",
+                        "on-tertiary-fixed-variant": "#1a438e",
+                        "background": "#f9f9f9",
+                        "booking-blue": "#003580",
+                        "on-secondary-fixed": "#271900",
+                        "on-primary-fixed": "#001a41",
+                        "surface-container-highest": "#e2e2e2",
+                        "action-blue": "#006CE4"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.125rem",
+                        "lg": "0.25rem",
+                        "xl": "0.5rem",
+                        "full": "0.75rem"
+                    },
+                    "spacing": {
+                        "unit": "4px",
+                        "gutter": "24px",
+                        "max-width": "1280px",
+                        "margin-mobile": "16px",
+                        "margin-desktop": "64px"
+                    },
+                    "fontFamily": {
+                        "body-md": ["Inter"],
+                        "body-sm": ["Inter"],
+                        "headline-lg-mobile": ["Hanken Grotesk"],
+                        "headline-lg": ["Hanken Grotesk"],
+                        "body-lg": ["Inter"],
+                        "display-lg": ["Hanken Grotesk"],
+                        "label-sm": ["Inter"],
+                        "label-md": ["Inter"],
+                        "headline-md": ["Hanken Grotesk"]
+                    },
+                    "fontSize": {
+                        "body-md": ["16px", { "lineHeight": "24px", "fontWeight": "400" }],
+                        "body-sm": ["14px", { "lineHeight": "20px", "fontWeight": "400" }],
+                        "headline-lg-mobile": ["24px", { "lineHeight": "32px", "fontWeight": "700" }],
+                        "headline-lg": ["32px", { "lineHeight": "40px", "fontWeight": "700" }],
+                        "body-lg": ["18px", { "lineHeight": "28px", "fontWeight": "400" }],
+                        "display-lg": ["48px", { "lineHeight": "56px", "letterSpacing": "-0.02em", "fontWeight": "700" }],
+                        "label-sm": ["12px", { "lineHeight": "16px", "fontWeight": "500" }],
+                        "label-md": ["14px", { "lineHeight": "16px", "letterSpacing": "0.01em", "fontWeight": "600" }],
+                        "headline-md": ["24px", { "lineHeight": "32px", "fontWeight": "600" }]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        body { background-color: #F5F5F5; }
+        .hotel-card:hover {
+            box-shadow: 0px 4px 12px rgba(0,0,0,0.08);
+            transform: translateY(-2px);
+        }
+    </style>
+</head>
+<body class="font-body-md text-body-md text-on-surface antialiased bg-background">
+<!-- TopNavBar -->
+<nav class="bg-booking-blue dark:bg-inverse-surface border-b border-outline-variant shadow-sm docked full-width top-0 flex justify-between items-center w-full px-margin-mobile md:px-margin-desktop h-16 sticky top-0 z-50">
+<div class="flex items-center gap-8">
+<a class="text-headline-md font-headline-md font-bold text-on-primary" href="#">GlobalStay</a>
+<div class="hidden md:flex gap-6">
+<a class="text-highlight-gold font-bold border-b-2 border-highlight-gold pb-1 text-label-md font-label-md opacity-80 scale-95 transition-transform" href="#">Destinations</a>
+<a class="text-on-primary hover:text-highlight-gold transition-colors text-label-md font-label-md hover:bg-primary-container dark:hover:bg-primary-fixed-dim transition-all px-2 py-1 rounded" href="#">Deals</a>
+<a class="text-on-primary hover:text-highlight-gold transition-colors text-label-md font-label-md hover:bg-primary-container dark:hover:bg-primary-fixed-dim transition-all px-2 py-1 rounded" href="#">My Bookings</a>
+<a class="text-on-primary hover:text-highlight-gold transition-colors text-label-md font-label-md hover:bg-primary-container dark:hover:bg-primary-fixed-dim transition-all px-2 py-1 rounded" href="#">Cloud Status</a>
+</div>
+</div>
+<div class="flex items-center gap-4">
+<button class="hidden md:block text-on-primary font-label-md text-label-md border border-on-primary px-4 py-2 rounded hover:bg-primary-container transition-colors">Sign In</button>
+<button class="hidden md:block text-on-primary font-label-md text-label-md hover:text-highlight-gold transition-colors">Support</button>
+<button class="text-on-primary p-2 rounded-full hover:bg-primary-container transition-colors"><span aria-label="language" class="material-symbols-outlined">language</span></button>
+<button class="text-on-primary p-2 rounded-full hover:bg-primary-container transition-colors"><span aria-label="person" class="material-symbols-outlined">person</span></button>
+</div>
+</nav>
+<!-- Search Bar Section -->
+<div class="bg-surface-container-highest py-6 border-b border-outline-variant">
+<div class="max-w-[1280px] mx-auto px-margin-mobile md:px-margin-desktop">
+<div class="bg-surface-container-lowest rounded-xl shadow-[0px_12px_32px_rgba(0,0,0,0.12)] p-4 flex flex-col md:flex-row gap-4 items-center">
+<div class="flex-1 w-full border border-outline rounded-lg flex items-center px-4 py-3 focus-within:border-primary focus-within:ring-1 focus-within:ring-primary transition-all">
+<span class="material-symbols-outlined text-on-surface-variant mr-3">location_on</span>
+<input class="w-full bg-transparent border-none outline-none font-body-md text-body-md text-on-surface placeholder:text-on-surface-variant" placeholder="Đà Nẵng, Việt Nam" type="text" value="Đà Nẵng, Việt Nam"/>
+</div>
+<div class="hidden md:block w-px h-10 bg-outline-variant"></div>
+<div class="flex-1 w-full border border-outline rounded-lg flex items-center px-4 py-3 focus-within:border-primary focus-within:ring-1 focus-within:ring-primary transition-all">
+<span class="material-symbols-outlined text-on-surface-variant mr-3">calendar_month</span>
+<input class="w-full bg-transparent border-none outline-none font-body-md text-body-md text-on-surface placeholder:text-on-surface-variant" placeholder="15 Thg 10 - 20 Thg 10" type="text" value="15 Thg 10 - 20 Thg 10"/>
+</div>
+<div class="hidden md:block w-px h-10 bg-outline-variant"></div>
+<div class="flex-1 w-full border border-outline rounded-lg flex items-center px-4 py-3 focus-within:border-primary focus-within:ring-1 focus-within:ring-primary transition-all">
+<span class="material-symbols-outlined text-on-surface-variant mr-3">person</span>
+<input class="w-full bg-transparent border-none outline-none font-body-md text-body-md text-on-surface placeholder:text-on-surface-variant" placeholder="2 người lớn · 1 phòng" type="text" value="2 người lớn · 1 phòng"/>
+</div>
+<button class="w-full md:w-auto bg-primary text-on-primary font-label-md text-label-md px-8 py-4 rounded-lg hover:bg-tertiary transition-colors shrink-0">Tìm kiếm</button>
+</div>
+</div>
+</div>
+<!-- Main Content Layout -->
+<main class="max-w-[1280px] mx-auto px-margin-mobile md:px-margin-desktop py-8 grid grid-cols-1 md:grid-cols-12 gap-gutter">
+<!-- Filters Sidebar (3 columns) -->
+<aside class="md:col-span-3 space-y-6">
+<!-- Map Preview -->
+<div class="rounded-xl overflow-hidden border border-surface-variant relative cursor-pointer group">
+<img class="w-full h-32 object-cover transition-transform duration-500 group-hover:scale-105" data-alt="A detailed, modern map interface showing coastal Da Nang city with pin drops for hotels. The style is clean, corporate, and trustworthy, using light mode colors with blue accents for water and green for parks. The map is viewed from a slight overhead angle, bright and clear." data-location="Đà Nẵng" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAd311ZDkeW6FgmRhOgFFm6j42IZIs--rtyxck9XfXEqEXDKNDzXyCcDoYnwLZBZZ3s2jjJVDcxxLZqoH0Eq1ps2w-WUDseC9pdp7l6o4nLFx3bJzBukCn91aDINwJ3RZ_qfT2NE3_MkTRkBy8nVIzGtFYLB0QWlVZ0jOJTmctIYH34bPniVa_MFQDsAgELMn-ZGXuudKbrTI98VipF2SfbHbnSL8AwyvBeO9bqGi532FVeL1Lukg5RfACfEgiot0o5dSWLrKNb0e_S"/>
+<div class="absolute inset-0 bg-black/20 flex items-center justify-center group-hover:bg-black/30 transition-colors">
+<button class="bg-surface-container-lowest text-primary font-label-md text-label-md px-4 py-2 rounded shadow-sm hover:bg-surface-container-low transition-colors flex items-center gap-2">
+<span class="material-symbols-outlined text-[18px]">map</span> Hiển thị bản đồ
+                    </button>
+</div>
+</div>
+<!-- Filter Categories -->
+<div class="bg-surface-container-lowest rounded-xl border border-surface-variant p-6 space-y-8">
+<h2 class="font-headline-md text-headline-md text-on-surface border-b border-outline-variant pb-4">Lọc theo</h2>
+<!-- Price Range -->
+<div class="space-y-4">
+<h3 class="font-label-md text-label-md text-on-surface">Mức giá (mỗi đêm)</h3>
+<div class="flex flex-col gap-3">
+<label class="flex items-center gap-3 cursor-pointer">
+<input class="w-5 h-5 rounded border-outline text-primary focus:ring-primary" type="checkbox"/>
+<span class="font-body-md text-body-md text-on-surface-variant">Dưới 1.000.000 ₫</span>
+</label>
+<label class="flex items-center gap-3 cursor-pointer">
+<input checked="" class="w-5 h-5 rounded border-outline text-primary focus:ring-primary" type="checkbox"/>
+<span class="font-body-md text-body-md text-on-surface-variant">1.000.000 ₫ - 3.000.000 ₫</span>
+</label>
+<label class="flex items-center gap-3 cursor-pointer">
+<input class="w-5 h-5 rounded border-outline text-primary focus:ring-primary" type="checkbox"/>
+<span class="font-body-md text-body-md text-on-surface-variant">3.000.000 ₫ - 5.000.000 ₫</span>
+</label>
+<label class="flex items-center gap-3 cursor-pointer">
+<input class="w-5 h-5 rounded border-outline text-primary focus:ring-primary" type="checkbox"/>
+<span class="font-body-md text-body-md text-on-surface-variant">Trên 5.000.000 ₫</span>
+</label>
+</div>
+</div>
+<!-- Star Rating -->
+<div class="space-y-4">
+<h3 class="font-label-md text-label-md text-on-surface">Hạng sao</h3>
+<div class="flex flex-col gap-3">
+<label class="flex items-center gap-3 cursor-pointer">
+<input checked="" class="w-5 h-5 rounded border-outline text-primary focus:ring-primary" type="checkbox"/>
+<span class="font-body-md text-body-md text-on-surface-variant flex items-center">5 sao <span class="material-symbols-outlined text-highlight-gold text-[16px] ml-1" style="font-variation-settings: 'FILL' 1;">star</span></span>
+</label>
+<label class="flex items-center gap-3 cursor-pointer">
+<input checked="" class="w-5 h-5 rounded border-outline text-primary focus:ring-primary" type="checkbox"/>
+<span class="font-body-md text-body-md text-on-surface-variant flex items-center">4 sao <span class="material-symbols-outlined text-highlight-gold text-[16px] ml-1" style="font-variation-settings: 'FILL' 1;">star</span></span>
+</label>
+<label class="flex items-center gap-3 cursor-pointer">
+<input class="w-5 h-5 rounded border-outline text-primary focus:ring-primary" type="checkbox"/>
+<span class="font-body-md text-body-md text-on-surface-variant flex items-center">3 sao <span class="material-symbols-outlined text-highlight-gold text-[16px] ml-1" style="font-variation-settings: 'FILL' 1;">star</span></span>
+</label>
+</div>
+</div>
+<!-- Amenities -->
+<div class="space-y-4">
+<h3 class="font-label-md text-label-md text-on-surface">Tiện nghi</h3>
+<div class="flex flex-col gap-3">
+<label class="flex items-center gap-3 cursor-pointer">
+<input checked="" class="w-5 h-5 rounded border-outline text-primary focus:ring-primary" type="checkbox"/>
+<span class="font-body-md text-body-md text-on-surface-variant">Hồ bơi</span>
+</label>
+<label class="flex items-center gap-3 cursor-pointer">
+<input checked="" class="w-5 h-5 rounded border-outline text-primary focus:ring-primary" type="checkbox"/>
+<span class="font-body-md text-body-md text-on-surface-variant">Bữa sáng miễn phí</span>
+</label>
+<label class="flex items-center gap-3 cursor-pointer">
+<input class="w-5 h-5 rounded border-outline text-primary focus:ring-primary" type="checkbox"/>
+<span class="font-body-md text-body-md text-on-surface-variant">Phòng gym</span>
+</label>
+<label class="flex items-center gap-3 cursor-pointer">
+<input class="w-5 h-5 rounded border-outline text-primary focus:ring-primary" type="checkbox"/>
+<span class="font-body-md text-body-md text-on-surface-variant">Xe đưa đón sân bay</span>
+</label>
+</div>
+</div>
+</div>
+</aside>
+<!-- Search Results (9 columns) -->
+<section class="md:col-span-9 space-y-6">
+<div class="flex justify-between items-end mb-2">
+<div>
+<h1 class="font-headline-lg text-headline-lg-mobile md:text-headline-lg text-on-surface">Đà Nẵng: Tìm thấy 142 chỗ nghỉ</h1>
+<p class="font-body-md text-body-md text-on-surface-variant mt-1">Hiển thị kết quả phù hợp nhất</p>
+</div>
+<div class="hidden sm:flex items-center gap-2">
+<span class="font-body-sm text-body-sm text-on-surface-variant">Sắp xếp theo:</span>
+<select class="font-label-md text-label-md text-on-surface bg-transparent border-none py-1 pr-8 cursor-pointer focus:ring-0">
+<option>Đề xuất</option>
+<option>Giá (thấp đến cao)</option>
+<option>Giá (cao đến thấp)</option>
+<option>Đánh giá sao</option>
+</select>
+</div>
+</div>
+<!-- Hotel Card 1 -->
+<div class="hotel-card bg-surface-container-lowest rounded-xl border border-surface-variant overflow-hidden flex flex-col sm:flex-row transition-all duration-300">
+<div class="sm:w-[30%] relative h-48 sm:h-auto">
+<img class="w-full h-full object-cover" data-alt="A luxurious coastal resort swimming pool area in Da Nang during late afternoon. Infinity pool overlooking the ocean, elegant white lounge chairs, tropical palm trees, clear blue sky. High-end corporate travel aesthetic, bright and inviting." src="https://lh3.googleusercontent.com/aida-public/AB6AXuD6-nrh0a8ey1zbAAgbtEDToKyAVS2lSzySctRgzAGaYlPU55pZ1pJZXqQHO9wZUz542ekh8HN4K62ahSiZT7AjJuZ8u2vQLtpbGeAM8u2Xe4x0msFvYjmwA8q77rMo3j4yd_UuQTNs8XCaNbdmbYALcQk6ybeV6HRjVo3CMBJfaChhuNNGAP-1FMWdCb_ZsMryG2LO3PXvekGl5qlwS0me5qZiGdTt1VA69B_BupyvIAnHnejF2FePyB9NvXRdLihoWizoXYR82u3t"/>
+<button class="absolute top-3 right-3 p-2 bg-surface-container-lowest/80 backdrop-blur rounded-full hover:bg-surface-container-lowest transition-colors group">
+<span class="material-symbols-outlined text-on-surface-variant group-hover:text-error transition-colors">favorite</span>
+</button>
+<div class="absolute top-3 left-3 bg-highlight-gold text-on-secondary-fixed font-label-sm text-label-sm px-2 py-1 rounded shadow-sm">
+                        Top Rated
+                    </div>
+</div>
+<div class="p-5 flex-1 flex flex-col">
+<div class="flex justify-between items-start gap-4">
+<div>
+<div class="flex items-center gap-1 mb-1">
+<h2 class="font-headline-md text-[20px] leading-tight text-on-surface font-bold text-primary">InterContinental Danang Sun Peninsula Resort</h2>
+<span class="flex text-highlight-gold ml-2">
+<span class="material-symbols-outlined text-[16px]" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined text-[16px]" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined text-[16px]" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined text-[16px]" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined text-[16px]" style="font-variation-settings: 'FILL' 1;">star</span>
+</span>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant flex items-center gap-1 hover:underline cursor-pointer">
+<span class="material-symbols-outlined text-[16px]">location_on</span> Bán đảo Sơn Trà, Đà Nẵng
+                            </p>
+</div>
+<div class="flex flex-col items-end shrink-0">
+<div class="flex items-center gap-2">
+<div class="text-right">
+<div class="font-label-md text-label-md text-on-surface">Tuyệt vời</div>
+<div class="font-body-sm text-[11px] text-on-surface-variant">1,245 đánh giá</div>
+</div>
+<div class="bg-tertiary text-on-primary font-headline-md text-[16px] w-10 h-10 rounded-lg flex items-center justify-center rounded-tr-none">
+                                    9.4
+                                </div>
+</div>
+</div>
+</div>
+<div class="mt-4 flex flex-wrap gap-2">
+<span class="px-2 py-1 border border-outline-variant rounded font-label-sm text-[11px] text-on-surface-variant flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px]">pool</span> Hồ bơi
+                        </span>
+<span class="px-2 py-1 border border-outline-variant rounded font-label-sm text-[11px] text-on-surface-variant flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px]">spa</span> Spa
+                        </span>
+<span class="px-2 py-1 border border-outline-variant rounded font-label-sm text-[11px] text-on-surface-variant flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px]">restaurant</span> Nhà hàng
+                        </span>
+</div>
+<div class="mt-auto pt-4 flex flex-col sm:flex-row justify-between items-end gap-4 border-t border-surface-variant mt-4">
+<div class="text-success-green font-label-sm text-label-sm flex items-center gap-1">
+<span class="material-symbols-outlined text-[16px]">check_circle</span> Còn 2 phòng trống với giá này
+                        </div>
+<div class="text-right">
+<div class="font-body-sm text-body-sm text-on-surface-variant line-through mb-1">12.500.000 ₫</div>
+<div class="font-headline-lg text-[24px] leading-none text-on-surface font-bold mb-1">9.850.000 ₫</div>
+<div class="font-body-sm text-[11px] text-on-surface-variant mb-3">Đã bao gồm thuế và phí</div>
+<button class="bg-primary text-on-primary font-label-md text-label-md px-6 py-2 rounded hover:bg-tertiary transition-colors w-full sm:w-auto">
+                                Xem phòng
+                            </button>
+</div>
+</div>
+</div>
+</div>
+<!-- Hotel Card 2 -->
+<div class="hotel-card bg-surface-container-lowest rounded-xl border border-surface-variant overflow-hidden flex flex-col sm:flex-row transition-all duration-300">
+<div class="sm:w-[30%] relative h-48 sm:h-auto">
+<img class="w-full h-full object-cover" data-alt="A modern, high-rise hotel exterior in Da Nang city center at dusk. The building is illuminated with warm lights, contrasting against the deep blue sky. Corporate and professional aesthetic, reliable and clean." src="https://lh3.googleusercontent.com/aida-public/AB6AXuD9-KmY_BnIYX_aW0SG9_2CXANqzcobagN4UWaKY4hO6TNL-G0jH5KyGwrdYVRKLQrizxdIOdjodYznlFO8CmMAnDjbBTeUZr0K4_X0HNC8HEh95DdUW2O4Il_-aMPRvZbKs0zxT9xB_uBG77rFohv7MtFFIjFJY8tbRRj7sKMAvh1cLhjJrboXW6TAb9WWpsGlYerD8yhJVLZ1LrpqnGdzkbxheStK650YWFNF1GufhGqF2Q7Np3CId3rIuSX4979vIM8ghvnwaE1A"/>
+<button class="absolute top-3 right-3 p-2 bg-surface-container-lowest/80 backdrop-blur rounded-full hover:bg-surface-container-lowest transition-colors group">
+<span class="material-symbols-outlined text-on-surface-variant group-hover:text-error transition-colors">favorite</span>
+</button>
+<div class="absolute top-3 left-3 bg-highlight-gold text-on-secondary-fixed font-label-sm text-label-sm px-2 py-1 rounded shadow-sm">
+                        Great Value
+                    </div>
+</div>
+<div class="p-5 flex-1 flex flex-col">
+<div class="flex justify-between items-start gap-4">
+<div>
+<div class="flex items-center gap-1 mb-1">
+<h2 class="font-headline-md text-[20px] leading-tight text-on-surface font-bold text-primary">Novotel Danang Premier Han River</h2>
+<span class="flex text-highlight-gold ml-2">
+<span class="material-symbols-outlined text-[16px]" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined text-[16px]" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined text-[16px]" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined text-[16px]" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined text-[16px]">star</span>
+</span>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant flex items-center gap-1 hover:underline cursor-pointer">
+<span class="material-symbols-outlined text-[16px]">location_on</span> Quận Hải Châu, Đà Nẵng
+                            </p>
+</div>
+<div class="flex flex-col items-end shrink-0">
+<div class="flex items-center gap-2">
+<div class="text-right">
+<div class="font-label-md text-label-md text-on-surface">Rất tốt</div>
+<div class="font-body-sm text-[11px] text-on-surface-variant">856 đánh giá</div>
+</div>
+<div class="bg-tertiary text-on-primary font-headline-md text-[16px] w-10 h-10 rounded-lg flex items-center justify-center rounded-tr-none">
+                                    8.8
+                                </div>
+</div>
+</div>
+</div>
+<div class="mt-4 flex flex-wrap gap-2">
+<span class="px-2 py-1 border border-outline-variant rounded font-label-sm text-[11px] text-on-surface-variant flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px]">local_cafe</span> Bữa sáng miễn phí
+                        </span>
+<span class="px-2 py-1 border border-outline-variant rounded font-label-sm text-[11px] text-on-surface-variant flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px]">fitness_center</span> Phòng gym
+                        </span>
+<span class="px-2 py-1 border border-outline-variant rounded font-label-sm text-[11px] text-on-surface-variant flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px]">local_bar</span> Bar tầng thượng
+                        </span>
+</div>
+<div class="mt-auto pt-4 flex flex-col sm:flex-row justify-between items-end gap-4 border-t border-surface-variant mt-4">
+<div class="text-success-green font-label-sm text-label-sm flex items-center gap-1">
+<span class="material-symbols-outlined text-[16px]">cancel</span> Hủy miễn phí
+                        </div>
+<div class="text-right">
+<div class="font-body-sm text-body-sm text-on-surface-variant line-through mb-1">3.200.000 ₫</div>
+<div class="font-headline-lg text-[24px] leading-none text-on-surface font-bold mb-1">2.450.000 ₫</div>
+<div class="font-body-sm text-[11px] text-on-surface-variant mb-3">Đã bao gồm thuế và phí</div>
+<button class="bg-primary text-on-primary font-label-md text-label-md px-6 py-2 rounded hover:bg-tertiary transition-colors w-full sm:w-auto">
+                                Xem phòng
+                            </button>
+</div>
+</div>
+</div>
+</div>
+<!-- Hotel Card 3 -->
+<div class="hotel-card bg-surface-container-lowest rounded-xl border border-surface-variant overflow-hidden flex flex-col sm:flex-row transition-all duration-300">
+<div class="sm:w-[30%] relative h-48 sm:h-auto">
+<img class="w-full h-full object-cover" data-alt="A bright, airy boutique hotel room in Da Nang. Minimalist design with light wood furniture, white linens, and a small balcony overlooking the city. Natural daylight streaming in, clean and modern corporate aesthetic." src="https://lh3.googleusercontent.com/aida-public/AB6AXuChWCQO38aEgsOm-WrCGZDg5aoQmyVlKjKRV_KuLjJjDkNLbEHT5WleU-lcQ0KxmOXs2WzHep3BeyMCv296LMm4zfh77h38ex9-nWhwiTLMLrVjxAmgvzCH41qjJE5C6-JIXjPII_t_CkYjSUQj4gSGvaVBOyoludRp3N0JDdeiTip0VnYSsGvtpotlCStwPk33D-ejltIjh9HYwBy_m5oqiMeSUvySIFOUmE00RJz-ssEKJXy6QsyuVip593OeKW8ofW7syAcK82-f"/>
+<button class="absolute top-3 right-3 p-2 bg-surface-container-lowest/80 backdrop-blur rounded-full hover:bg-surface-container-lowest transition-colors group">
+<span class="material-symbols-outlined text-on-surface-variant group-hover:text-error transition-colors">favorite</span>
+</button>
+</div>
+<div class="p-5 flex-1 flex flex-col">
+<div class="flex justify-between items-start gap-4">
+<div>
+<div class="flex items-center gap-1 mb-1">
+<h2 class="font-headline-md text-[20px] leading-tight text-on-surface font-bold text-primary">A La Carte Da Nang Beach</h2>
+<span class="flex text-highlight-gold ml-2">
+<span class="material-symbols-outlined text-[16px]" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined text-[16px]" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined text-[16px]" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined text-[16px]" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined text-[16px]">star</span>
+</span>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant flex items-center gap-1 hover:underline cursor-pointer">
+<span class="material-symbols-outlined text-[16px]">location_on</span> Bãi biển Mỹ Khê, Đà Nẵng
+                            </p>
+</div>
+<div class="flex flex-col items-end shrink-0">
+<div class="flex items-center gap-2">
+<div class="text-right">
+<div class="font-label-md text-label-md text-on-surface">Tốt</div>
+<div class="font-body-sm text-[11px] text-on-surface-variant">420 đánh giá</div>
+</div>
+<div class="bg-tertiary text-on-primary font-headline-md text-[16px] w-10 h-10 rounded-lg flex items-center justify-center rounded-tr-none">
+                                    8.2
+                                </div>
+</div>
+</div>
+</div>
+<div class="mt-4 flex flex-wrap gap-2">
+<span class="px-2 py-1 border border-outline-variant rounded font-label-sm text-[11px] text-on-surface-variant flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px]">kitchen</span> Bếp nhỏ
+                        </span>
+<span class="px-2 py-1 border border-outline-variant rounded font-label-sm text-[11px] text-on-surface-variant flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px]">balcony</span> Ban công
+                        </span>
+</div>
+<div class="mt-auto pt-4 flex flex-col sm:flex-row justify-between items-end gap-4 border-t border-surface-variant mt-4">
+<div class="text-on-surface-variant font-label-sm text-label-sm flex items-center gap-1">
+</div>
+<div class="text-right">
+<div class="font-headline-lg text-[24px] leading-none text-on-surface font-bold mb-1">1.850.000 ₫</div>
+<div class="font-body-sm text-[11px] text-on-surface-variant mb-3">Đã bao gồm thuế và phí</div>
+<button class="bg-primary text-on-primary font-label-md text-label-md px-6 py-2 rounded hover:bg-tertiary transition-colors w-full sm:w-auto">
+                                Xem phòng
+                            </button>
+</div>
+</div>
+</div>
+</div>
+<!-- Pagination -->
+<div class="flex justify-center mt-8">
+<nav class="flex items-center gap-2">
+<button class="w-10 h-10 flex items-center justify-center rounded border border-outline-variant text-on-surface-variant hover:bg-surface-container-low transition-colors disabled:opacity-50" disabled="">
+<span class="material-symbols-outlined">chevron_left</span>
+</button>
+<button class="w-10 h-10 flex items-center justify-center rounded border border-primary bg-primary text-on-primary font-label-md text-label-md transition-colors">1</button>
+<button class="w-10 h-10 flex items-center justify-center rounded border border-outline-variant text-on-surface-variant hover:bg-surface-container-low font-label-md text-label-md transition-colors">2</button>
+<button class="w-10 h-10 flex items-center justify-center rounded border border-outline-variant text-on-surface-variant hover:bg-surface-container-low font-label-md text-label-md transition-colors">3</button>
+<span class="text-on-surface-variant px-2">...</span>
+<button class="w-10 h-10 flex items-center justify-center rounded border border-outline-variant text-on-surface-variant hover:bg-surface-container-low font-label-md text-label-md transition-colors">12</button>
+<button class="w-10 h-10 flex items-center justify-center rounded border border-outline-variant text-on-surface-variant hover:bg-surface-container-low transition-colors">
+<span class="material-symbols-outlined">chevron_right</span>
+</button>
+</nav>
+</div>
+</section>
+</main>
+<!-- Footer -->
+<footer class="bg-surface-container-highest dark:bg-inverse-surface border-t border-outline-variant full-width bottom w-full py-8 px-margin-mobile md:px-margin-desktop mt-auto flex flex-col md:flex-row justify-between items-center gap-4 transition-colors duration-200">
+<div class="text-body-lg font-headline-md text-primary font-bold">GlobalStay</div>
+<div class="flex flex-wrap justify-center gap-6">
+<a class="text-on-surface-variant hover:text-primary hover:underline decoration-primary font-label-sm text-label-sm transition-colors duration-200" href="#">About Us</a>
+<a class="text-on-surface-variant hover:text-primary hover:underline decoration-primary font-label-sm text-label-sm transition-colors duration-200" href="#">Privacy Policy</a>
+<a class="text-on-surface-variant hover:text-primary hover:underline decoration-primary font-label-sm text-label-sm transition-colors duration-200" href="#">Terms of Service</a>
+<a class="text-on-surface-variant hover:text-primary hover:underline decoration-primary font-label-sm text-label-sm transition-colors duration-200" href="#">Partner With Us</a>
+<a class="text-on-surface-variant hover:text-primary hover:underline decoration-primary font-label-sm text-label-sm transition-colors duration-200" href="#">Help Center</a>
+<a class="text-on-surface-variant hover:text-primary hover:underline decoration-primary font-label-sm text-label-sm transition-colors duration-200" href="#">AWS Status</a>
+</div>
+<div class="text-on-surface-variant font-body-sm text-body-sm">© 2024 GlobalStay Hospitality Group. All rights reserved.</div>
+</footer>
+</body></html>

@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+
+<html lang="vi"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>GlobalStay - Đặt Phòng Khách Sạn</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;600;700&amp;family=Inter:wght@400;500;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "primary": "#0054b5",
+                        "surface-container-low": "#f3f3f3",
+                        "on-secondary-fixed-variant": "#5e4100",
+                        "error-container": "#ffdad6",
+                        "surface-container": "#eeeeee",
+                        "surface-dim": "#dadada",
+                        "text-main": "#2A2A2E",
+                        "primary-fixed-dim": "#adc6ff",
+                        "primary-fixed": "#d8e2ff",
+                        "inverse-primary": "#adc6ff",
+                        "highlight-gold": "#FFB700",
+                        "surface": "#f9f9f9",
+                        "on-error": "#ffffff",
+                        "secondary-fixed": "#ffdea9",
+                        "surface-variant": "#e2e2e2",
+                        "on-background": "#1a1c1c",
+                        "tertiary": "#3055a1",
+                        "surface-container-high": "#e8e8e8",
+                        "error": "#ba1a1a",
+                        "on-surface-variant": "#414754",
+                        "secondary": "#7d5800",
+                        "on-tertiary-container": "#f4f5ff",
+                        "surface-tint": "#005ac1",
+                        "success-green": "#008009",
+                        "surface-bright": "#f9f9f9",
+                        "inverse-surface": "#2f3131",
+                        "on-surface": "#1a1c1c",
+                        "tertiary-fixed-dim": "#b0c6ff",
+                        "tertiary-fixed": "#d9e2ff",
+                        "primary-container": "#006ce4",
+                        "outline-variant": "#c1c6d6",
+                        "on-secondary-container": "#6b4b00",
+                        "on-error-container": "#93000a",
+                        "surface-container-lowest": "#ffffff",
+                        "on-primary": "#ffffff",
+                        "inverse-on-surface": "#f1f1f1",
+                        "on-tertiary-fixed": "#001945",
+                        "on-secondary": "#ffffff",
+                        "on-primary-fixed-variant": "#004494",
+                        "tertiary-container": "#4b6ebb",
+                        "secondary-container": "#ffb700",
+                        "outline": "#727785",
+                        "secondary-fixed-dim": "#ffba26",
+                        "on-tertiary": "#ffffff",
+                        "on-primary-container": "#f4f5ff",
+                        "on-tertiary-fixed-variant": "#1a438e",
+                        "background": "#f9f9f9",
+                        "booking-blue": "#003580",
+                        "on-secondary-fixed": "#271900",
+                        "on-primary-fixed": "#001a41",
+                        "surface-container-highest": "#e2e2e2",
+                        "action-blue": "#006CE4"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.125rem",
+                        "lg": "0.25rem",
+                        "xl": "0.5rem",
+                        "full": "0.75rem"
+                    },
+                    "spacing": {
+                        "unit": "4px",
+                        "gutter": "24px",
+                        "max-width": "1280px",
+                        "margin-mobile": "16px",
+                        "margin-desktop": "64px"
+                    },
+                    "fontFamily": {
+                        "body-md": ["Inter"],
+                        "body-sm": ["Inter"],
+                        "headline-lg-mobile": ["Hanken Grotesk"],
+                        "headline-lg": ["Hanken Grotesk"],
+                        "body-lg": ["Inter"],
+                        "display-lg": ["Hanken Grotesk"],
+                        "label-sm": ["Inter"],
+                        "label-md": ["Inter"],
+                        "headline-md": ["Hanken Grotesk"]
+                    },
+                    "fontSize": {
+                        "body-md": ["16px", { "lineHeight": "24px", "fontWeight": "400" }],
+                        "body-sm": ["14px", { "lineHeight": "20px", "fontWeight": "400" }],
+                        "headline-lg-mobile": ["24px", { "lineHeight": "32px", "fontWeight": "700" }],
+                        "headline-lg": ["32px", { "lineHeight": "40px", "fontWeight": "700" }],
+                        "body-lg": ["18px", { "lineHeight": "28px", "fontWeight": "400" }],
+                        "display-lg": ["48px", { "lineHeight": "56px", "letterSpacing": "-0.02em", "fontWeight": "700" }],
+                        "label-sm": ["12px", { "lineHeight": "16px", "fontWeight": "500" }],
+                        "label-md": ["14px", { "lineHeight": "16px", "letterSpacing": "0.01em", "fontWeight": "600" }],
+                        "headline-md": ["24px", { "lineHeight": "32px", "fontWeight": "600" }]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+    </style>
+</head>
+<body class="bg-background text-on-background font-body-md text-body-md antialiased flex flex-col min-h-screen">
+<!-- TopNavBar -->
+<header class="bg-booking-blue dark:bg-inverse-surface border-b border-outline-variant shadow-sm docked full-width top-0 sticky z-50 transition-colors">
+<div class="flex justify-between items-center w-full px-margin-desktop h-16 max-w-[1280px] mx-auto">
+<div class="flex items-center gap-8">
+<a class="text-headline-md font-headline-md font-bold text-on-primary hover:opacity-80 transition-opacity" href="#">GlobalStay</a>
+<nav class="hidden md:flex gap-6 items-center h-full">
+<a class="text-on-primary hover:text-highlight-gold transition-colors hover:bg-primary-container dark:hover:bg-primary-fixed-dim px-3 py-2 rounded" href="#">Destinations</a>
+<a class="text-highlight-gold font-bold border-b-2 border-highlight-gold pb-1 px-3 py-2 rounded" href="#">Deals</a>
+<a class="text-on-primary hover:text-highlight-gold transition-colors hover:bg-primary-container dark:hover:bg-primary-fixed-dim px-3 py-2 rounded" href="#">My Bookings</a>
+<a class="text-on-primary hover:text-highlight-gold transition-colors hover:bg-primary-container dark:hover:bg-primary-fixed-dim px-3 py-2 rounded" href="#">Cloud Status</a>
+</nav>
+</div>
+<div class="flex items-center gap-4">
+<button class="text-on-primary hover:bg-primary-container dark:hover:bg-primary-fixed-dim transition-all p-2 rounded-full hidden md:block">
+<span class="material-symbols-outlined">language</span>
+</button>
+<button class="text-on-primary hover:bg-primary-container dark:hover:bg-primary-fixed-dim transition-all p-2 rounded-full hidden md:block">
+<span class="material-symbols-outlined">person</span>
+</button>
+<button class="text-body-md font-body-md text-on-primary hover:text-highlight-gold transition-colors hidden md:block">Support</button>
+<button class="bg-surface-container-lowest text-primary font-label-md text-label-md px-4 py-2 rounded hover:bg-surface-container transition-colors">Sign In</button>
+</div>
+</div>
+</header>
+<main class="flex-grow">
+<!-- Hero Section & Search -->
+<section class="relative bg-booking-blue pb-24 pt-16 px-margin-mobile md:px-margin-desktop">
+<div class="max-w-[1280px] mx-auto">
+<div class="mb-12">
+<h1 class="text-display-lg font-display-lg text-on-primary mb-4">Find your next stay</h1>
+<p class="text-body-lg font-body-lg text-on-primary opacity-90">Search low prices on hotels, homes and much more...</p>
+</div>
+<!-- Search Bar -->
+<div class="bg-highlight-gold p-[4px] rounded-lg shadow-[0px_12px_32px_rgba(0,0,0,0.12)]">
+<div class="bg-surface-container-lowest rounded flex flex-col md:flex-row divide-y md:divide-y-0 md:divide-x divide-outline-variant">
+<!-- Location -->
+<div class="flex-1 flex items-center p-4 hover:bg-surface-container-low transition-colors cursor-pointer rounded-l">
+<span class="material-symbols-outlined text-outline mr-3">bed</span>
+<div class="flex-col flex">
+<span class="text-label-sm font-label-sm text-outline mb-1">Destination</span>
+<input class="border-0 p-0 text-body-md font-body-md text-on-surface bg-transparent focus:ring-0 placeholder:text-outline-variant outline-none" placeholder="Where are you going?" type="text"/>
+</div>
+</div>
+<!-- Dates -->
+<div class="flex-1 flex items-center p-4 hover:bg-surface-container-low transition-colors cursor-pointer">
+<span class="material-symbols-outlined text-outline mr-3">calendar_month</span>
+<div class="flex-col flex">
+<span class="text-label-sm font-label-sm text-outline mb-1">Check-in — Check-out</span>
+<span class="text-body-md font-body-md text-on-surface">Select dates</span>
+</div>
+</div>
+<!-- Guests -->
+<div class="flex-1 flex items-center p-4 hover:bg-surface-container-low transition-colors cursor-pointer">
+<span class="material-symbols-outlined text-outline mr-3">group</span>
+<div class="flex-col flex">
+<span class="text-label-sm font-label-sm text-outline mb-1">Guests &amp; Rooms</span>
+<span class="text-body-md font-body-md text-on-surface">2 adults · 0 children · 1 room</span>
+</div>
+</div>
+<!-- Search Button -->
+<div class="p-2 md:p-1 flex items-center justify-center bg-surface-container-lowest md:rounded-r rounded-b">
+<button class="bg-action-blue hover:bg-primary-container text-on-primary font-label-md text-label-md px-8 py-4 rounded w-full md:w-auto h-full transition-colors flex items-center justify-center">
+                                Search
+                            </button>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Popular Destinations -->
+<section class="py-16 px-margin-mobile md:px-margin-desktop bg-background">
+<div class="max-w-[1280px] mx-auto">
+<h2 class="text-headline-lg font-headline-lg text-on-surface mb-8">Popular Destinations</h2>
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-gutter">
+<!-- Dest 1 -->
+<div class="relative rounded-lg overflow-hidden group cursor-pointer aspect-[4/3]">
+<img class="object-cover w-full h-full transition-transform duration-500 group-hover:scale-105" data-alt="A sweeping, bright, high-definition photograph of a vibrant modern cityscape at golden hour, featuring sleek glass skyscrapers reflecting warm light. The sky is a gradient of soft blues and oranges. The image feels aspirational, energetic, and clean, perfectly suited for a luxury travel booking platform." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBJwUgDRzOLVHTAEO738YP_-fmRuWOOrtkuQ3ljWh35ebK8DYxBN4vsUgX-JMTr-UtlDVAcNgifbl3wpYKhpYhmOCu20l6kXoiRpBdjHQETUzroQT7p_haGMVrq89_Ym7_X1VNDkReyyAIbmIH2xLSKUsDYLYmGxggh6e-COJ-oQRnPjZrH3eQm48AJld8uDcj6seF_oxdPu2AC-fCGnWISs76nidzqOFXON9_D-bccobU2oF8f_tr3QBh1xGs8q5nZVE0HwH-RS6Zr"/>
+<div class="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent"></div>
+<div class="absolute bottom-4 left-4">
+<h3 class="text-headline-md font-headline-md text-on-primary">Tokyo</h3>
+<p class="text-body-sm font-body-sm text-on-primary opacity-90">1,200+ properties</p>
+</div>
+</div>
+<!-- Dest 2 -->
+<div class="relative rounded-lg overflow-hidden group cursor-pointer aspect-[4/3]">
+<img class="object-cover w-full h-full transition-transform duration-500 group-hover:scale-105" data-alt="A pristine, wide-angle photograph of a tranquil tropical beach with white sand and crystal-clear turquoise water. Palm trees gently sway in the foreground under a bright, cloudless sky. The aesthetic is serene, inviting, and premium, evoking a sense of relaxation for a high-end travel website." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCUzWyRTrJofNn3K50-vL_QLQFXl4Luju39q3TwZfyqlddE0cM8mGa_K1UDrSHQWmoQI8fJE7gGcnUcH0n0b6xZGGHLQM2udI8ClFMIofGKHDzip0TCDWgYvgvQtj5DF2Hg6d1ub8ySOtGyLRCcWkkuqYDw6Gb4JkkUeXOA0LsfJ0dL2I3RuEbdnZLBIVJoZSdNkNPbAtqfY19-fsyyxXeOWgLmG_29ft6JCksnbl88pkVKx02iAs3cRYURlOnzFQPTVwitv56ic5uw"/>
+<div class="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent"></div>
+<div class="absolute bottom-4 left-4">
+<h3 class="text-headline-md font-headline-md text-on-primary">Bali</h3>
+<p class="text-body-sm font-body-sm text-on-primary opacity-90">850+ properties</p>
+</div>
+</div>
+<!-- Dest 3 -->
+<div class="relative rounded-lg overflow-hidden group cursor-pointer aspect-[4/3]">
+<img class="object-cover w-full h-full transition-transform duration-500 group-hover:scale-105" data-alt="A sharp, detailed photograph of a historic European city street with cobblestones, elegant classical architecture, and warm streetlamp lighting starting to turn on at dusk. The mood is romantic, cultured, and sophisticated, aligning with a premium travel booking brand identity." src="https://lh3.googleusercontent.com/aida-public/AB6AXuB6D9fe1ehu0daeeeYKdB9mNrvy6RUXBrmdoLtvru1uYbiBL29WepfyS9aHxBiRuj2w4cSqjV2hYFIHsw97Ic-ZMDJWi06G20f_nj7X5RUQdNjgdknBRvouEkHp6nNT3AcGJhZtJhUuUMsJsdQquMxyGticjhuUCIYlmVcqaSvcF9nJX_ZLgIwpr9FjIHsHFOJphuNY2azxEkEJCdeJ8XbjVI3nQlNoDQHWg01Xwh7n3A64AnYTAIv_70UQKpWF7lQ18O8WiBXPzBWB"/>
+<div class="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent"></div>
+<div class="absolute bottom-4 left-4">
+<h3 class="text-headline-md font-headline-md text-on-primary">Paris</h3>
+<p class="text-body-sm font-body-sm text-on-primary opacity-90">2,100+ properties</p>
+</div>
+</div>
+<!-- Dest 4 -->
+<div class="relative rounded-lg overflow-hidden group cursor-pointer aspect-[4/3]">
+<img class="object-cover w-full h-full transition-transform duration-500 group-hover:scale-105" data-alt="A vibrant photograph of a bustling night market or neon-lit street scene in a modern Asian metropolis. The lighting is dynamic with bright neon colors popping against the dark background. The image feels exciting, urban, and modern, designed to attract adventurous travelers on a booking platform." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBpFv-PTL31Y5zomwyqh0MSUcWYnWj09yxcUjTxBlIz_CXKZWhiyMoujw3eD0xcQ4U-gHMnopztRsNNtioCTMnuu7qDtcnU_NkfB4QUft-Pjk1pTfHeTqZrK7U5UWrpBfgJ0XMNKTTgox-tUxRNoK6qUY2poXjN_CInk9Xl--jqfCsh3HLM2L-129teE2hMOIkIgV32X-EI2bkT2qcDVXpNLkqZSeYFo0uXW_7D-AaFtEXPv7VhPbzVnkhDDcNhM0BnXpYyLLHwmbhZ"/>
+<div class="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent"></div>
+<div class="absolute bottom-4 left-4">
+<h3 class="text-headline-md font-headline-md text-on-primary">Seoul</h3>
+<p class="text-body-sm font-body-sm text-on-primary opacity-90">930+ properties</p>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Special Offers -->
+<section class="py-16 px-margin-mobile md:px-margin-desktop bg-surface-container-low">
+<div class="max-w-[1280px] mx-auto">
+<h2 class="text-headline-lg font-headline-lg text-on-surface mb-8">Special Offers</h2>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-gutter">
+<!-- Offer 1 -->
+<div class="bg-surface-container-lowest rounded-xl border border-outline-variant overflow-hidden flex flex-col md:flex-row hover:shadow-[0px_4px_12px_rgba(0,0,0,0.08)] transition-shadow">
+<div class="w-full md:w-1/3 h-48 md:h-auto">
+<img class="w-full h-full object-cover" data-alt="A bright, airy photograph of a luxury hotel suite interior. The room features a plush king-sized bed with crisp white linens, modern minimalist furniture, and large floor-to-ceiling windows overlooking a city skyline. The lighting is soft and natural, emphasizing cleanliness and high-end comfort." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBG3nL9X4HgaBLc74q34XE5-DgOmnI4tLTJsyCyY7Jaw3QwlRU9N9rAKZDETmdcMx_CjiGUXvIASOqqX4AtcH7Kjn1MZZk9IDYvGjbTtW0N0EAAtiQiS7wXBj1sTOEnS3Ln4J3YNYCI6shrcElV1bdsIHwb4sVQuUN5qum5YwrgEvJ_msGje3FWdAkoxVPRJgPU7w8e4dGubJiw9VGaDDeh_EOAKN61oSKSz_vJv025HXOvF1f8kpvAGJXj48NSfSCamgF5HncA8dH_"/>
+</div>
+<div class="p-6 flex flex-col justify-between flex-1">
+<div>
+<h3 class="text-headline-md font-headline-md text-on-surface mb-2">Escape for a while</h3>
+<p class="text-body-sm font-body-sm text-on-surface-variant mb-4">Enjoy the freedom of a monthly stay on GlobalStay. Find extended stays with great discounts.</p>
+</div>
+<button class="bg-action-blue text-on-primary font-label-md text-label-md px-4 py-2 rounded self-start hover:bg-primary-container transition-colors">Discover monthly stays</button>
+</div>
+</div>
+<!-- Offer 2 -->
+<div class="bg-surface-container-lowest rounded-xl border border-outline-variant overflow-hidden flex flex-col md:flex-row hover:shadow-[0px_4px_12px_rgba(0,0,0,0.08)] transition-shadow">
+<div class="w-full md:w-1/3 h-48 md:h-auto">
+<img class="w-full h-full object-cover" data-alt="A photograph of a family enjoying a sunny outdoor swimming pool at a resort. The water is sparkling blue, and the atmosphere is joyful and relaxed. The scene is brightly lit, conveying a fun, family-friendly vacation vibe suitable for a promotional travel offer." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAeMgRrFn8AbglJuWZ5sVXvJvEmmdYAR9lkq9kbUcWO8lcfykwHmbBEhMDc6kujyfBkYa45VULXiKUgc6o98H8GAcVVnEVonP_3mqIwFzyagFmRSB_OBUDLcpnGRzGg_c2ZRYzv9RhX1BsH9TKEMOry1DbU-KGTz8UBL-YceGjMC-6akdPx_qUBHgcluSozpPMd4xyVQulRCvSd80R1a9TrpwMzrfB6fRV7uv13Izm24PdOLuFhue3Qp52epPBPeqr95tJJxlncZguf"/>
+</div>
+<div class="p-6 flex flex-col justify-between flex-1">
+<div>
+<h3 class="text-headline-md font-headline-md text-on-surface mb-2">Save 15% or more</h3>
+<p class="text-body-sm font-body-sm text-on-surface-variant mb-4">Plan your dream trip with a Getaway Deal. Book before the season ends to lock in these rates.</p>
+</div>
+<button class="bg-action-blue text-on-primary font-label-md text-label-md px-4 py-2 rounded self-start hover:bg-primary-container transition-colors">Explore deals</button>
+</div>
+</div>
+</div>
+</div>
+</section>
+</main>
+<!-- Footer -->
+<footer class="bg-surface-container-highest dark:bg-inverse-surface border-t border-outline-variant w-full py-8 px-margin-desktop mt-auto flex flex-col md:flex-row justify-between items-center gap-4 transition-colors duration-200">
+<div class="flex items-center">
+<span class="text-body-lg font-headline-md text-primary font-bold">GlobalStay</span>
+</div>
+<div class="flex flex-wrap gap-6 justify-center">
+<a class="text-on-surface-variant hover:text-primary hover:underline decoration-primary text-label-sm font-label-sm transition-colors duration-200" href="#">About Us</a>
+<a class="text-on-surface-variant hover:text-primary hover:underline decoration-primary text-label-sm font-label-sm transition-colors duration-200" href="#">Privacy Policy</a>
+<a class="text-on-surface-variant hover:text-primary hover:underline decoration-primary text-label-sm font-label-sm transition-colors duration-200" href="#">Terms of Service</a>
+<a class="text-on-surface-variant hover:text-primary hover:underline decoration-primary text-label-sm font-label-sm transition-colors duration-200" href="#">Partner With Us</a>
+<a class="text-on-surface-variant hover:text-primary hover:underline decoration-primary text-label-sm font-label-sm transition-colors duration-200" href="#">Help Center</a>
+<a class="text-on-surface-variant hover:text-primary hover:underline decoration-primary text-label-sm font-label-sm transition-colors duration-200" href="#">AWS Status</a>
+</div>
+<div>
+<span class="text-body-sm font-body-sm text-on-surface-variant">© 2024 GlobalStay Hospitality Group. All rights reserved.</span>
+</div>
+</footer>
+</body></html>

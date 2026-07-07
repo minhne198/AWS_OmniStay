@@ -1,0 +1,422 @@
+<!DOCTYPE html>
+
+<html lang="vi"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>GlobalStay - Thanh toán an toàn</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:ital,wght@0,100..900;1,100..900&amp;family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              "colors": {
+                      "primary": "#0054b5",
+                      "surface-container-low": "#f3f3f3",
+                      "on-secondary-fixed-variant": "#5e4100",
+                      "error-container": "#ffdad6",
+                      "surface-container": "#eeeeee",
+                      "surface-dim": "#dadada",
+                      "text-main": "#2A2A2E",
+                      "primary-fixed-dim": "#adc6ff",
+                      "primary-fixed": "#d8e2ff",
+                      "inverse-primary": "#adc6ff",
+                      "highlight-gold": "#FFB700",
+                      "surface": "#f9f9f9",
+                      "on-error": "#ffffff",
+                      "secondary-fixed": "#ffdea9",
+                      "surface-variant": "#e2e2e2",
+                      "on-background": "#1a1c1c",
+                      "tertiary": "#3055a1",
+                      "surface-container-high": "#e8e8e8",
+                      "error": "#ba1a1a",
+                      "on-surface-variant": "#414754",
+                      "secondary": "#7d5800",
+                      "on-tertiary-container": "#f4f5ff",
+                      "surface-tint": "#005ac1",
+                      "success-green": "#008009",
+                      "surface-bright": "#f9f9f9",
+                      "inverse-surface": "#2f3131",
+                      "on-surface": "#1a1c1c",
+                      "tertiary-fixed-dim": "#b0c6ff",
+                      "tertiary-fixed": "#d9e2ff",
+                      "primary-container": "#006ce4",
+                      "outline-variant": "#c1c6d6",
+                      "on-secondary-container": "#6b4b00",
+                      "on-error-container": "#93000a",
+                      "surface-container-lowest": "#ffffff",
+                      "on-primary": "#ffffff",
+                      "inverse-on-surface": "#f1f1f1",
+                      "on-tertiary-fixed": "#001945",
+                      "on-secondary": "#ffffff",
+                      "on-primary-fixed-variant": "#004494",
+                      "tertiary-container": "#4b6ebb",
+                      "secondary-container": "#ffb700",
+                      "outline": "#727785",
+                      "secondary-fixed-dim": "#ffba26",
+                      "on-tertiary": "#ffffff",
+                      "on-primary-container": "#f4f5ff",
+                      "on-tertiary-fixed-variant": "#1a438e",
+                      "background": "#f9f9f9",
+                      "booking-blue": "#003580",
+                      "on-secondary-fixed": "#271900",
+                      "on-primary-fixed": "#001a41",
+                      "surface-container-highest": "#e2e2e2",
+                      "action-blue": "#006CE4"
+              },
+              "borderRadius": {
+                      "DEFAULT": "0.125rem",
+                      "lg": "0.25rem",
+                      "xl": "0.5rem",
+                      "full": "0.75rem"
+              },
+              "spacing": {
+                      "unit": "4px",
+                      "gutter": "24px",
+                      "max-width": "1280px",
+                      "margin-mobile": "16px",
+                      "margin-desktop": "64px"
+              },
+              "fontFamily": {
+                      "body-md": [
+                              "Inter"
+                      ],
+                      "body-sm": [
+                              "Inter"
+                      ],
+                      "headline-lg-mobile": [
+                              "Hanken Grotesk"
+                      ],
+                      "headline-lg": [
+                              "Hanken Grotesk"
+                      ],
+                      "body-lg": [
+                              "Inter"
+                      ],
+                      "display-lg": [
+                              "Hanken Grotesk"
+                      ],
+                      "label-sm": [
+                              "Inter"
+                      ],
+                      "label-md": [
+                              "Inter"
+                      ],
+                      "headline-md": [
+                              "Hanken Grotesk"
+                      ]
+              },
+              "fontSize": {
+                      "body-md": [
+                              "16px",
+                              {
+                                      "lineHeight": "24px",
+                                      "fontWeight": "400"
+                              }
+                      ],
+                      "body-sm": [
+                              "14px",
+                              {
+                                      "lineHeight": "20px",
+                                      "fontWeight": "400"
+                              }
+                      ],
+                      "headline-lg-mobile": [
+                              "24px",
+                              {
+                                      "lineHeight": "32px",
+                                      "fontWeight": "700"
+                              }
+                      ],
+                      "headline-lg": [
+                              "32px",
+                              {
+                                      "lineHeight": "40px",
+                                      "fontWeight": "700"
+                              }
+                      ],
+                      "body-lg": [
+                              "18px",
+                              {
+                                      "lineHeight": "28px",
+                                      "fontWeight": "400"
+                              }
+                      ],
+                      "display-lg": [
+                              "48px",
+                              {
+                                      "lineHeight": "56px",
+                                      "letterSpacing": "-0.02em",
+                                      "fontWeight": "700"
+                              }
+                      ],
+                      "label-sm": [
+                              "12px",
+                              {
+                                      "lineHeight": "16px",
+                                      "fontWeight": "500"
+                              }
+                      ],
+                      "label-md": [
+                              "14px",
+                              {
+                                      "lineHeight": "16px",
+                                      "letterSpacing": "0.01em",
+                                      "fontWeight": "600"
+                              }
+                      ],
+                      "headline-md": [
+                              "24px",
+                              {
+                                      "lineHeight": "32px",
+                                      "fontWeight": "600"
+                              }
+                      ]
+              }
+      },
+          },
+        }
+    </script>
+<style>
+        .glass-card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.05);
+        }
+        .bento-hover {
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+        .bento-hover:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 24px -8px rgba(0, 0, 0, 0.1);
+        }
+        input:focus, textarea:focus {
+            outline: none;
+            border-color: #005ac1;
+            box-shadow: 0 0 0 1px #005ac1;
+        }
+    </style>
+</head>
+<body class="bg-background text-on-surface antialiased flex flex-col min-h-screen">
+<!-- Top Navigation (Suppressed due to Transactional Flow, replaced with simple header) -->
+<header class="bg-booking-blue w-full px-margin-desktop h-16 flex items-center justify-between sticky top-0 z-50">
+<div class="flex items-center gap-4">
+<span class="text-headline-md font-headline-md font-bold text-on-primary">GlobalStay</span>
+<span class="material-symbols-outlined text-on-primary">lock</span>
+<span class="text-body-sm font-body-sm text-on-primary opacity-80 hidden md:block">Thanh toán an toàn</span>
+</div>
+<button class="text-label-md font-label-md text-on-primary hover:text-highlight-gold transition-colors flex items-center gap-1">
+<span class="material-symbols-outlined text-[18px]">close</span> Hủy
+        </button>
+</header>
+<!-- Main Content -->
+<main class="flex-grow w-full max-w-[1280px] mx-auto px-margin-mobile md:px-margin-desktop py-8 md:py-12">
+<!-- Header -->
+<div class="mb-8 md:mb-12">
+<h1 class="text-headline-lg-mobile md:text-headline-lg font-headline-lg-mobile md:font-headline-lg text-primary mb-2">Hoàn tất đặt phòng</h1>
+<p class="text-body-md font-body-md text-on-surface-variant">Vui lòng kiểm tra thông tin và hoàn tất thanh toán.</p>
+</div>
+<!-- Grid Layout -->
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-gutter items-start">
+<!-- Left Column: Forms (8 cols) -->
+<div class="lg:col-span-8 flex flex-col gap-8">
+<!-- Section 1: Guest Information -->
+<section class="bg-surface-container-lowest border border-outline-variant rounded-xl p-6 md:p-8 shadow-sm">
+<h2 class="text-headline-md font-headline-md text-on-surface mb-6 flex items-center gap-2">
+<span class="material-symbols-outlined text-primary" style="font-variation-settings: 'FILL' 1;">person</span>
+                        Thông tin khách hàng
+                    </h2>
+<form class="grid grid-cols-1 md:grid-cols-2 gap-6">
+<div class="flex flex-col gap-2">
+<label class="text-label-md font-label-md text-on-surface" for="firstName">Tên <span class="text-error">*</span></label>
+<input class="h-12 border border-outline-variant rounded-lg px-4 text-body-md font-body-md placeholder:text-on-surface-variant/50 transition-colors" id="firstName" placeholder="Vd: Nguyễn Văn" type="text"/>
+</div>
+<div class="flex flex-col gap-2">
+<label class="text-label-md font-label-md text-on-surface" for="lastName">Họ <span class="text-error">*</span></label>
+<input class="h-12 border border-outline-variant rounded-lg px-4 text-body-md font-body-md placeholder:text-on-surface-variant/50 transition-colors" id="lastName" placeholder="Vd: A" type="text"/>
+</div>
+<div class="flex flex-col gap-2 md:col-span-2">
+<label class="text-label-md font-label-md text-on-surface" for="email">Email <span class="text-error">*</span></label>
+<input class="h-12 border border-outline-variant rounded-lg px-4 text-body-md font-body-md placeholder:text-on-surface-variant/50 transition-colors" id="email" placeholder="email@example.com" type="email"/>
+<span class="text-body-sm font-body-sm text-on-surface-variant">Email xác nhận sẽ được gửi đến địa chỉ này.</span>
+</div>
+<div class="flex flex-col gap-2 md:col-span-2">
+<label class="text-label-md font-label-md text-on-surface" for="phone">Số điện thoại <span class="text-error">*</span></label>
+<div class="flex">
+<select class="h-12 border border-outline-variant border-r-0 rounded-l-lg px-3 bg-surface text-body-md font-body-md w-[100px]">
+<option>+84</option>
+<option>+1</option>
+</select>
+<input class="h-12 border border-outline-variant rounded-r-lg px-4 text-body-md font-body-md flex-grow placeholder:text-on-surface-variant/50 transition-colors" id="phone" placeholder="0912 345 678" type="tel"/>
+</div>
+</div>
+<div class="flex flex-col gap-2 md:col-span-2 mt-4">
+<label class="text-label-md font-label-md text-on-surface" for="specialRequests">Yêu cầu đặc biệt (Không bắt buộc)</label>
+<textarea class="border border-outline-variant rounded-lg p-4 text-body-md font-body-md placeholder:text-on-surface-variant/50 transition-colors resize-none" id="specialRequests" placeholder="Ví dụ: Phòng tầng cao, nhận phòng sớm..." rows="3"></textarea>
+<span class="text-body-sm font-body-sm text-on-surface-variant">Các yêu cầu đặc biệt không được đảm bảo nhưng chỗ nghỉ sẽ cố gắng sắp xếp.</span>
+</div>
+</form>
+</section>
+<!-- Section 2: Payment Method -->
+<section class="bg-surface-container-lowest border border-outline-variant rounded-xl p-6 md:p-8 shadow-sm">
+<h2 class="text-headline-md font-headline-md text-on-surface mb-6 flex items-center gap-2">
+<span class="material-symbols-outlined text-primary" style="font-variation-settings: 'FILL' 1;">credit_card</span>
+                        Phương thức thanh toán
+                    </h2>
+<div class="flex flex-col gap-4">
+<!-- Option 1: Credit Card -->
+<label class="relative flex items-start gap-4 p-4 border border-primary rounded-lg cursor-pointer bg-primary-fixed/20 bento-hover">
+<div class="flex items-center h-6">
+<input checked="" class="w-5 h-5 text-primary focus:ring-primary border-outline" name="payment" type="radio"/>
+</div>
+<div class="flex-grow">
+<div class="flex justify-between items-center mb-1">
+<span class="text-label-md font-label-md text-on-surface">Thẻ Tín dụng / Ghi nợ</span>
+<div class="flex gap-1">
+<div class="w-8 h-5 bg-surface-variant rounded flex items-center justify-center text-[10px] font-bold text-on-surface-variant">VISA</div>
+<div class="w-8 h-5 bg-surface-variant rounded flex items-center justify-center text-[10px] font-bold text-on-surface-variant">MC</div>
+</div>
+</div>
+<!-- Card Form (Visible when selected) -->
+<div class="mt-4 grid grid-cols-2 gap-4">
+<div class="col-span-2 flex flex-col gap-2">
+<label class="text-label-sm font-label-sm text-on-surface">Tên trên thẻ</label>
+<input class="h-10 border border-outline-variant rounded px-3 text-body-md font-body-md" placeholder="NGUYEN VAN A" type="text"/>
+</div>
+<div class="col-span-2 flex flex-col gap-2">
+<label class="text-label-sm font-label-sm text-on-surface">Số thẻ</label>
+<input class="h-10 border border-outline-variant rounded px-3 text-body-md font-body-md" placeholder="**** **** **** ****" type="text"/>
+</div>
+<div class="flex flex-col gap-2">
+<label class="text-label-sm font-label-sm text-on-surface">Ngày hết hạn</label>
+<input class="h-10 border border-outline-variant rounded px-3 text-body-md font-body-md" placeholder="MM/YY" type="text"/>
+</div>
+<div class="flex flex-col gap-2">
+<label class="text-label-sm font-label-sm text-on-surface">CVC</label>
+<input class="h-10 border border-outline-variant rounded px-3 text-body-md font-body-md" placeholder="123" type="text"/>
+</div>
+</div>
+</div>
+</label>
+<!-- Option 2: Digital Wallet -->
+<label class="relative flex items-start gap-4 p-4 border border-outline-variant rounded-lg cursor-pointer hover:bg-surface-container-low transition-colors bento-hover">
+<div class="flex items-center h-6">
+<input class="w-5 h-5 text-primary focus:ring-primary border-outline" name="payment" type="radio"/>
+</div>
+<div class="flex-grow flex justify-between items-center">
+<span class="text-label-md font-label-md text-on-surface">Ví điện tử MoMo</span>
+<div class="w-8 h-5 bg-[#A50064] rounded flex items-center justify-center text-[10px] font-bold text-white">M</div>
+</div>
+</label>
+<!-- Option 3: Bank Transfer -->
+<label class="relative flex items-start gap-4 p-4 border border-outline-variant rounded-lg cursor-pointer hover:bg-surface-container-low transition-colors bento-hover">
+<div class="flex items-center h-6">
+<input class="w-5 h-5 text-primary focus:ring-primary border-outline" name="payment" type="radio"/>
+</div>
+<div class="flex-grow flex justify-between items-center">
+<span class="text-label-md font-label-md text-on-surface">Chuyển khoản ngân hàng</span>
+<span class="material-symbols-outlined text-on-surface-variant">account_balance</span>
+</div>
+</label>
+</div>
+</section>
+<!-- Action Buttons Mobile (Hidden on Desktop) -->
+<div class="block lg:hidden mt-4">
+<button class="w-full h-14 bg-action-blue hover:bg-primary-fixed-variant text-on-primary text-label-md font-label-md rounded-xl transition-colors shadow-sm flex items-center justify-center gap-2">
+<span class="material-symbols-outlined">lock</span> Hoàn tất thanh toán
+                    </button>
+<p class="text-center text-body-sm font-body-sm text-on-surface-variant mt-4">Bằng việc hoàn tất thanh toán, bạn đồng ý với Điều khoản Dịch vụ.</p>
+</div>
+</div>
+<!-- Right Column: Summary Sticky (4 cols) -->
+<div class="lg:col-span-4 relative">
+<div class="sticky top-[88px] flex flex-col gap-6">
+<!-- Hotel Summary Card -->
+<div class="glass-card rounded-xl overflow-hidden shadow-[0_4px_12px_rgba(0,0,0,0.08)]">
+<!-- Image -->
+<div class="w-full h-40 bg-surface-variant relative">
+<img class="w-full h-full object-cover" data-alt="A luxurious hotel exterior viewed from a low angle at golden hour, featuring modern glass architecture, warm interior lighting, a grand entrance with a circular driveway, clear blue sky, high resolution, photorealistic corporate hospitality style." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBjHet94uEbg1iHl8qkScBol101jJmw3zwd47xmbLKny-dqiU0CSNdIZbwT3W1nd4teTmRHWXnV2OBdGN5ZgRaNs6FCfKw7QidrvwhytXELF3GVlnXXpuZJBlOeyRzs6qbXxf0GeG7XA5bZ8mTPccP9Z0OR6dFOzelXTX_VUhABSbB-mX_VOYAHYpo6ew4qSAUXAbMs6QfYUoeaqNirFgqJbkN2sltlg7Q9qG9ERrkv2ynOYrzqqhV9MRxXhU26syCoZp_5nIOvYNVu"/>
+<div class="absolute top-4 right-4 bg-surface-container-lowest/90 backdrop-blur rounded px-2 py-1 flex items-center gap-1">
+<span class="material-symbols-outlined text-highlight-gold text-[16px]" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="text-label-sm font-label-sm text-on-surface">4.8</span>
+</div>
+</div>
+<!-- Info -->
+<div class="p-6 flex flex-col gap-4">
+<div>
+<span class="text-label-sm font-label-sm text-on-surface-variant uppercase tracking-wider">Khách sạn &amp; Resort</span>
+<h3 class="text-headline-md font-headline-md text-on-surface mt-1">The Grand Azure Marina</h3>
+<p class="text-body-sm font-body-sm text-on-surface-variant mt-1 flex items-center gap-1">
+<span class="material-symbols-outlined text-[16px]">location_on</span> Vịnh Hạ Long, Việt Nam
+                                </p>
+</div>
+<hr class="border-outline-variant"/>
+<!-- Booking Details -->
+<div class="grid grid-cols-2 gap-4">
+<div>
+<span class="text-label-sm font-label-sm text-on-surface-variant block mb-1">Nhận phòng</span>
+<span class="text-label-md font-label-md text-on-surface block">15 Thg 11, 2024</span>
+<span class="text-body-sm font-body-sm text-on-surface-variant block">Từ 14:00</span>
+</div>
+<div>
+<span class="text-label-sm font-label-sm text-on-surface-variant block mb-1">Trả phòng</span>
+<span class="text-label-md font-label-md text-on-surface block">18 Thg 11, 2024</span>
+<span class="text-body-sm font-body-sm text-on-surface-variant block">Đến 12:00</span>
+</div>
+</div>
+<div class="bg-surface-container-low rounded-lg p-3 flex justify-between items-center mt-2">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-primary">bed</span>
+<span class="text-body-sm font-body-sm text-on-surface">1 x Deluxe Ocean View</span>
+</div>
+<span class="text-body-sm font-body-sm text-on-surface-variant">2 Người lớn</span>
+</div>
+</div>
+</div>
+<!-- Price Summary Card -->
+<div class="bg-surface-container-lowest border border-outline-variant rounded-xl p-6 shadow-sm">
+<h3 class="text-label-md font-label-md text-on-surface mb-4">Chi tiết giá</h3>
+<div class="flex flex-col gap-3 mb-4">
+<div class="flex justify-between">
+<span class="text-body-md font-body-md text-on-surface-variant">Giá phòng (3 đêm)</span>
+<span class="text-body-md font-body-md text-on-surface">8.500.000 ₫</span>
+</div>
+<div class="flex justify-between">
+<span class="text-body-md font-body-md text-on-surface-variant">Thuế &amp; Phí</span>
+<span class="text-body-md font-body-md text-on-surface">850.000 ₫</span>
+</div>
+<div class="flex justify-between text-success-green">
+<span class="text-body-md font-body-md flex items-center gap-1"><span class="material-symbols-outlined text-[16px]">local_offer</span> Khuyến mãi đặc biệt</span>
+<span class="text-body-md font-body-md">-500.000 ₫</span>
+</div>
+</div>
+<hr class="border-outline-variant border-dashed my-4"/>
+<div class="flex justify-between items-end mb-6">
+<div>
+<span class="text-headline-md font-headline-md text-on-surface block">Tổng cộng</span>
+<span class="text-label-sm font-label-sm text-on-surface-variant">Đã bao gồm thuế và phí</span>
+</div>
+<span class="text-headline-lg font-headline-lg text-primary">8.850.000 ₫</span>
+</div>
+<!-- Action Button Desktop -->
+<button class="w-full h-14 bg-action-blue hover:bg-primary-container text-on-primary text-label-md font-label-md rounded-xl transition-all shadow-[0_4px_12px_rgba(0,108,228,0.3)] hover:shadow-[0_6px_16px_rgba(0,108,228,0.4)] flex items-center justify-center gap-2 hidden lg:flex">
+<span class="material-symbols-outlined">lock</span> Hoàn tất thanh toán
+                        </button>
+<p class="text-center text-label-sm font-label-sm text-on-surface-variant mt-4 hidden lg:block">Bằng việc hoàn tất thanh toán, bạn đồng ý với Điều khoản Dịch vụ và Chính sách Bảo mật.</p>
+</div>
+</div>
+</div>
+</div>
+</main>
+<!-- Footer (Suppressed on transactional flow, kept minimal) -->
+<footer class="w-full border-t border-outline-variant bg-surface-container-highest mt-auto py-6 px-margin-desktop text-center">
+<p class="text-body-sm font-body-sm text-on-surface-variant">© 2024 GlobalStay Hospitality Group. Giao dịch được mã hóa và bảo mật 256-bit.</p>
+</footer>
+</body></html>

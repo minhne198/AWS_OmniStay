@@ -1,0 +1,263 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>OmniStay Frontend Prototype</title>
+    <style>
+      :root {
+        color-scheme: light;
+        --bg: #f4f7fb;
+        --card: #ffffff;
+        --line: #dbe3ef;
+        --text: #152033;
+        --muted: #617089;
+        --blue: #0054b5;
+        --blue-soft: #e8f1ff;
+        --gold: #ffb700;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        min-width: 320px;
+        background: var(--bg);
+        color: var(--text);
+        font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      }
+
+      header {
+        background: #003580;
+        color: white;
+        padding: 32px clamp(18px, 5vw, 64px);
+      }
+
+      header p,
+      header h1 {
+        margin: 0;
+      }
+
+      header p {
+        color: #cfe0ff;
+        font-size: 14px;
+        font-weight: 700;
+        letter-spacing: 0;
+        text-transform: uppercase;
+      }
+
+      header h1 {
+        margin-top: 8px;
+        font-size: clamp(30px, 5vw, 52px);
+        line-height: 1.02;
+      }
+
+      main {
+        width: min(1280px, calc(100% - 32px));
+        margin: 28px auto 48px;
+      }
+
+      .toolbar {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+        margin-bottom: 18px;
+      }
+
+      .toolbar a {
+        color: var(--blue);
+        font-weight: 800;
+        text-decoration: none;
+      }
+
+      .grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+        gap: 18px;
+      }
+
+      .card {
+        overflow: hidden;
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        background: var(--card);
+      }
+
+      .card img {
+        display: block;
+        width: 100%;
+        aspect-ratio: 16 / 10;
+        background: var(--blue-soft);
+        object-fit: cover;
+        object-position: top center;
+      }
+
+      .card-body {
+        display: grid;
+        gap: 10px;
+        padding: 16px;
+      }
+
+      .badge {
+        width: fit-content;
+        border-radius: 999px;
+        background: var(--gold);
+        color: #392500;
+        padding: 5px 9px;
+        font-size: 12px;
+        font-weight: 800;
+      }
+
+      .card h2 {
+        margin: 0;
+        font-size: 20px;
+        line-height: 1.2;
+      }
+
+      .card p {
+        margin: 0;
+        color: var(--muted);
+        line-height: 1.5;
+      }
+
+      .actions {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        margin-top: 2px;
+      }
+
+      .actions a {
+        min-height: 40px;
+        border-radius: 6px;
+        padding: 10px 12px;
+        color: white;
+        background: var(--blue);
+        font-weight: 800;
+        text-decoration: none;
+      }
+
+      .actions a.secondary {
+        border: 1px solid var(--line);
+        color: var(--text);
+        background: white;
+      }
+
+      @media (max-width: 680px) {
+        main {
+          width: min(100% - 24px, 1280px);
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <p>AWS OmniStay</p>
+      <h1>Frontend prototype pages</h1>
+    </header>
+
+    <main>
+      <div class="toolbar">
+        <p>Static preview pages copied from Stitch. These pages are for visual review first.</p>
+        <a href="../index.html">Open current API-connected app</a>
+      </div>
+
+      <section class="grid" aria-label="Prototype pages">
+        <article class="card">
+          <img src="./screens/home.png" alt="Home page preview" />
+          <div class="card-body">
+            <span class="badge">01</span>
+            <h2>Home</h2>
+            <p>Landing/search page with hero, destination, dates, guests, and featured hotel blocks.</p>
+            <div class="actions">
+              <a href="./home.html">Open page</a>
+              <a class="secondary" href="./screens/home.png">Screenshot</a>
+            </div>
+          </div>
+        </article>
+
+        <article class="card">
+          <img src="./screens/search.png" alt="Search results preview" />
+          <div class="card-body">
+            <span class="badge">02</span>
+            <h2>Search Results</h2>
+            <p>Hotel result list with filters, cards, price, score, and availability indicators.</p>
+            <div class="actions">
+              <a href="./search.html">Open page</a>
+              <a class="secondary" href="./screens/search.png">Screenshot</a>
+            </div>
+          </div>
+        </article>
+
+        <article class="card">
+          <img src="./screens/hotel-detail.png" alt="Hotel detail preview" />
+          <div class="card-body">
+            <span class="badge">03</span>
+            <h2>Hotel Detail</h2>
+            <p>Hotel gallery, description, amenities, room options, and booking call to action.</p>
+            <div class="actions">
+              <a href="./hotel-detail.html">Open page</a>
+              <a class="secondary" href="./screens/hotel-detail.png">Screenshot</a>
+            </div>
+          </div>
+        </article>
+
+        <article class="card">
+          <img src="./screens/booking.png" alt="Booking page preview" />
+          <div class="card-body">
+            <span class="badge">04</span>
+            <h2>Booking</h2>
+            <p>Guest information, payment-style layout, trip summary, and final confirmation action.</p>
+            <div class="actions">
+              <a href="./booking.html">Open page</a>
+              <a class="secondary" href="./screens/booking.png">Screenshot</a>
+            </div>
+          </div>
+        </article>
+
+        <article class="card">
+          <img src="./screens/booking-confirmation.png" alt="Booking confirmation preview" />
+          <div class="card-body">
+            <span class="badge">05</span>
+            <h2>Booking Confirmation</h2>
+            <p>Success page with booking code, reservation summary, and next-step actions.</p>
+            <div class="actions">
+              <a href="./booking-confirmation.html">Open page</a>
+              <a class="secondary" href="./screens/booking-confirmation.png">Screenshot</a>
+            </div>
+          </div>
+        </article>
+
+        <article class="card">
+          <img src="./screens/booking-lookup.png" alt="Booking lookup preview" />
+          <div class="card-body">
+            <span class="badge">06</span>
+            <h2>Booking Lookup</h2>
+            <p>Lookup/history page for entering a booking code and reviewing reservation details.</p>
+            <div class="actions">
+              <a href="./booking-lookup.html">Open page</a>
+              <a class="secondary" href="./screens/booking-lookup.png">Screenshot</a>
+            </div>
+          </div>
+        </article>
+
+        <article class="card">
+          <img src="./screens/system-status.png" alt="System status preview" />
+          <div class="card-body">
+            <span class="badge">07</span>
+            <h2>AWS Demo Status</h2>
+            <p>AWS proof page for API, region, database, Redis cache, CloudFront, and health checks.</p>
+            <div class="actions">
+              <a href="./system-status.html">Open page</a>
+              <a class="secondary" href="./screens/system-status.png">Screenshot</a>
+            </div>
+          </div>
+        </article>
+      </section>
+    </main>
+  </body>
+</html>
