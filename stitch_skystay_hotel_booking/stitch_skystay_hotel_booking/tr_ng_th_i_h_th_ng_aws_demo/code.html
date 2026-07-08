@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>GlobalStay - System Status</title>
+<link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;600;700&amp;family=Inter:wght@400;500;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "primary": "#0054b5",
+                        "surface-container-low": "#f3f3f3",
+                        "on-secondary-fixed-variant": "#5e4100",
+                        "error-container": "#ffdad6",
+                        "surface-container": "#eeeeee",
+                        "surface-dim": "#dadada",
+                        "text-main": "#2A2A2E",
+                        "primary-fixed-dim": "#adc6ff",
+                        "primary-fixed": "#d8e2ff",
+                        "inverse-primary": "#adc6ff",
+                        "highlight-gold": "#FFB700",
+                        "surface": "#f9f9f9",
+                        "on-error": "#ffffff",
+                        "secondary-fixed": "#ffdea9",
+                        "surface-variant": "#e2e2e2",
+                        "on-background": "#1a1c1c",
+                        "tertiary": "#3055a1",
+                        "surface-container-high": "#e8e8e8",
+                        "error": "#ba1a1a",
+                        "on-surface-variant": "#414754",
+                        "secondary": "#7d5800",
+                        "on-tertiary-container": "#f4f5ff",
+                        "surface-tint": "#005ac1",
+                        "success-green": "#008009",
+                        "surface-bright": "#f9f9f9",
+                        "inverse-surface": "#2f3131",
+                        "on-surface": "#1a1c1c",
+                        "tertiary-fixed-dim": "#b0c6ff",
+                        "tertiary-fixed": "#d9e2ff",
+                        "primary-container": "#006ce4",
+                        "outline-variant": "#c1c6d6",
+                        "on-secondary-container": "#6b4b00",
+                        "on-error-container": "#93000a",
+                        "surface-container-lowest": "#ffffff",
+                        "on-primary": "#ffffff",
+                        "inverse-on-surface": "#f1f1f1",
+                        "on-tertiary-fixed": "#001945",
+                        "on-secondary": "#ffffff",
+                        "on-primary-fixed-variant": "#004494",
+                        "tertiary-container": "#4b6ebb",
+                        "secondary-container": "#ffb700",
+                        "outline": "#727785",
+                        "secondary-fixed-dim": "#ffba26",
+                        "on-tertiary": "#ffffff",
+                        "on-primary-container": "#f4f5ff",
+                        "on-tertiary-fixed-variant": "#1a438e",
+                        "background": "#f9f9f9",
+                        "booking-blue": "#003580",
+                        "on-secondary-fixed": "#271900",
+                        "on-primary-fixed": "#001a41",
+                        "surface-container-highest": "#e2e2e2",
+                        "action-blue": "#006CE4"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.125rem",
+                        "lg": "0.25rem",
+                        "xl": "0.5rem",
+                        "full": "0.75rem"
+                    },
+                    "spacing": {
+                        "unit": "4px",
+                        "gutter": "24px",
+                        "max-width": "1280px",
+                        "margin-mobile": "16px",
+                        "margin-desktop": "64px"
+                    },
+                    "fontFamily": {
+                        "body-md": ["Inter"],
+                        "body-sm": ["Inter"],
+                        "headline-lg-mobile": ["Hanken Grotesk"],
+                        "headline-lg": ["Hanken Grotesk"],
+                        "body-lg": ["Inter"],
+                        "display-lg": ["Hanken Grotesk"],
+                        "label-sm": ["Inter"],
+                        "label-md": ["Inter"],
+                        "headline-md": ["Hanken Grotesk"]
+                    },
+                    "fontSize": {
+                        "body-md": ["16px", { "lineHeight": "24px", "fontWeight": "400" }],
+                        "body-sm": ["14px", { "lineHeight": "20px", "fontWeight": "400" }],
+                        "headline-lg-mobile": ["24px", { "lineHeight": "32px", "fontWeight": "700" }],
+                        "headline-lg": ["32px", { "lineHeight": "40px", "fontWeight": "700" }],
+                        "body-lg": ["18px", { "lineHeight": "28px", "fontWeight": "400" }],
+                        "display-lg": ["48px", { "lineHeight": "56px", "letterSpacing": "-0.02em", "fontWeight": "700" }],
+                        "label-sm": ["12px", { "lineHeight": "16px", "fontWeight": "500" }],
+                        "label-md": ["14px", { "lineHeight": "16px", "letterSpacing": "0.01em", "fontWeight": "600" }],
+                        "headline-md": ["24px", { "lineHeight": "32px", "fontWeight": "600" }]
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+        body {
+            background-color: #f5f5f5; /* Level 0 Background as per Style Guidance */
+            color: #1a1c1c;
+        }
+        .chart-grid {
+            background-size: 40px 40px;
+            background-image:
+                linear-gradient(to right, #e2e2e2 1px, transparent 1px),
+                linear-gradient(to bottom, #e2e2e2 1px, transparent 1px);
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col font-body-md text-body-md">
+<!-- TopNavBar -->
+<header class="bg-booking-blue dark:bg-inverse-surface border-b border-outline-variant shadow-sm w-full px-margin-desktop h-16 sticky top-0 z-50 flex justify-between items-center transition-colors">
+<div class="flex items-center gap-8">
+<div class="text-headline-md font-headline-md font-bold text-on-primary">
+                GlobalStay
+            </div>
+<nav class="hidden md:flex gap-6">
+<a class="text-on-primary hover:text-highlight-gold transition-colors text-label-md font-label-md" href="#">Destinations</a>
+<a class="text-on-primary hover:text-highlight-gold transition-colors text-label-md font-label-md" href="#">Deals</a>
+<a class="text-on-primary hover:text-highlight-gold transition-colors text-label-md font-label-md" href="#">My Bookings</a>
+<a class="text-highlight-gold font-bold border-b-2 border-highlight-gold pb-1 text-label-md font-label-md opacity-80 scale-95 transition-transform" href="#">Cloud Status</a>
+</nav>
+</div>
+<div class="flex items-center gap-4">
+<button class="text-on-primary hover:bg-primary-container dark:hover:bg-primary-fixed-dim transition-all p-2 rounded-full">
+<span class="material-symbols-outlined" data-icon="language">language</span>
+</button>
+<button class="text-on-primary hover:bg-primary-container dark:hover:bg-primary-fixed-dim transition-all p-2 rounded-full">
+<span class="material-symbols-outlined" data-icon="person">person</span>
+</button>
+<button class="hidden md:block bg-action-blue hover:bg-primary text-white text-label-md font-label-md py-2 px-4 rounded transition-colors">
+                Sign In
+            </button>
+<button class="hidden md:block border border-outline-variant text-on-primary hover:bg-primary-container text-label-md font-label-md py-2 px-4 rounded transition-colors">
+                Support
+            </button>
+</div>
+</header>
+<!-- Main Content -->
+<main class="flex-grow w-full max-w-[1280px] mx-auto px-margin-mobile md:px-margin-desktop py-8 md:py-12 flex flex-col gap-8">
+<!-- Status Header -->
+<section class="bg-surface-container-lowest border border-outline-variant rounded-xl p-6 md:p-8 flex flex-col md:flex-row justify-between items-center gap-6">
+<div>
+<h1 class="text-headline-lg-mobile md:text-headline-lg font-headline-lg-mobile md:font-headline-lg text-primary mb-2">System Status</h1>
+<p class="text-on-surface-variant text-body-md font-body-md">Real-time overview of GlobalStay AWS Infrastructure</p>
+</div>
+<div class="bg-surface-container border border-outline-variant rounded-lg p-4 flex items-center gap-4 w-full md:w-auto shadow-sm">
+<div class="w-12 h-12 rounded-full bg-success-green/10 flex items-center justify-center">
+<span class="material-symbols-outlined text-success-green text-3xl" data-icon="check_circle" data-weight="fill" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+</div>
+<div>
+<div class="text-headline-md font-headline-md text-success-green">All Systems Operational</div>
+<div class="text-label-sm font-label-sm text-on-surface-variant">Last updated: Just now</div>
+</div>
+</div>
+</section>
+<!-- Main Dashboard Grid -->
+<div class="grid grid-cols-1 md:grid-cols-12 gap-8">
+<!-- Services Status (Left Column) -->
+<section class="md:col-span-4 flex flex-col gap-6">
+<div class="bg-surface-container-lowest border border-outline-variant rounded-xl p-6 h-full shadow-sm hover:shadow-md transition-shadow">
+<h2 class="text-body-lg font-body-lg font-semibold mb-6 flex items-center gap-2 border-b border-outline-variant pb-2">
+<span class="material-symbols-outlined text-primary" data-icon="dns">dns</span>
+                        Core Services
+                    </h2>
+<div class="flex flex-col gap-4">
+<!-- EC2 -->
+<div class="flex justify-between items-center p-3 rounded-lg hover:bg-surface-container-low transition-colors">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-on-surface-variant" data-icon="storage">storage</span>
+<div>
+<div class="text-label-md font-label-md text-text-main">Compute (EC2)</div>
+<div class="text-label-sm font-label-sm text-on-surface-variant">us-east-1</div>
+</div>
+</div>
+<div class="flex items-center gap-2">
+<div class="w-2.5 h-2.5 rounded-full bg-success-green animate-pulse"></div>
+<span class="text-success-green text-label-sm font-label-sm">Operational</span>
+</div>
+</div>
+<!-- RDS -->
+<div class="flex justify-between items-center p-3 rounded-lg hover:bg-surface-container-low transition-colors">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-on-surface-variant" data-icon="database">database</span>
+<div>
+<div class="text-label-md font-label-md text-text-main">Database (RDS)</div>
+<div class="text-label-sm font-label-sm text-on-surface-variant">us-east-1</div>
+</div>
+</div>
+<div class="flex items-center gap-2">
+<div class="w-2.5 h-2.5 rounded-full bg-success-green animate-pulse"></div>
+<span class="text-success-green text-label-sm font-label-sm">Operational</span>
+</div>
+</div>
+<!-- S3 -->
+<div class="flex justify-between items-center p-3 rounded-lg hover:bg-surface-container-low transition-colors">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-on-surface-variant" data-icon="cloud">cloud</span>
+<div>
+<div class="text-label-md font-label-md text-text-main">Storage (S3)</div>
+<div class="text-label-sm font-label-sm text-on-surface-variant">Global</div>
+</div>
+</div>
+<div class="flex items-center gap-2">
+<div class="w-2.5 h-2.5 rounded-full bg-success-green animate-pulse"></div>
+<span class="text-success-green text-label-sm font-label-sm">Operational</span>
+</div>
+</div>
+<!-- Route 53 -->
+<div class="flex justify-between items-center p-3 rounded-lg hover:bg-surface-container-low transition-colors">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-on-surface-variant" data-icon="router">router</span>
+<div>
+<div class="text-label-md font-label-md text-text-main">DNS (Route 53)</div>
+<div class="text-label-sm font-label-sm text-on-surface-variant">Global</div>
+</div>
+</div>
+<div class="flex items-center gap-2">
+<div class="w-2.5 h-2.5 rounded-full bg-success-green animate-pulse"></div>
+<span class="text-success-green text-label-sm font-label-sm">Operational</span>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Metrics (Right Column) -->
+<section class="md:col-span-8 flex flex-col gap-6">
+<!-- Latency Chart Card -->
+<div class="bg-surface-container-lowest border border-outline-variant rounded-xl p-6 shadow-sm hover:shadow-md transition-shadow">
+<div class="flex justify-between items-center mb-6">
+<h2 class="text-body-lg font-body-lg font-semibold flex items-center gap-2">
+<span class="material-symbols-outlined text-primary" data-icon="show_chart">show_chart</span>
+                            API Response Time
+                        </h2>
+<div class="text-label-sm font-label-sm text-on-surface-variant bg-surface-container-low px-3 py-1 rounded">Past 24 Hours</div>
+</div>
+<!-- Decorative Chart Area -->
+<div class="relative w-full h-64 border-l border-b border-outline-variant chart-grid mt-4">
+<!-- Y-axis labels -->
+<div class="absolute -left-8 top-0 text-label-sm font-label-sm text-on-surface-variant">200ms</div>
+<div class="absolute -left-8 top-1/2 -translate-y-1/2 text-label-sm font-label-sm text-on-surface-variant">100ms</div>
+<div class="absolute -left-6 bottom-0 text-label-sm font-label-sm text-on-surface-variant">0ms</div>
+<!-- SVG Line Chart (Decorative) -->
+<svg class="absolute inset-0 w-full h-full" preserveaspectratio="none" viewbox="0 0 100 100">
+<!-- Gradient fill below line -->
+<defs>
+<lineargradient id="chartGradient" x1="0" x2="0" y1="0" y2="1">
+<stop offset="0%" stop-color="#006ce4" stop-opacity="0.2"></stop>
+<stop offset="100%" stop-color="#006ce4" stop-opacity="0"></stop>
+</lineargradient>
+</defs>
+<path d="M0,80 Q10,75 20,85 T40,60 T60,70 T80,50 T100,65 L100,100 L0,100 Z" fill="url(#chartGradient)"></path>
+<!-- The line -->
+<path class="drop-shadow-sm" d="M0,80 Q10,75 20,85 T40,60 T60,70 T80,50 T100,65" fill="none" stroke="#006ce4" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+</svg>
+<!-- X-axis labels -->
+<div class="absolute bottom-[-24px] left-0 text-label-sm font-label-sm text-on-surface-variant">24h ago</div>
+<div class="absolute bottom-[-24px] left-1/2 -translate-x-1/2 text-label-sm font-label-sm text-on-surface-variant">12h ago</div>
+<div class="absolute bottom-[-24px] right-0 text-label-sm font-label-sm text-on-surface-variant">Now</div>
+</div>
+</div>
+<!-- Secondary Metrics Bento -->
+<div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+<div class="bg-surface-container-lowest border border-outline-variant rounded-xl p-6 shadow-sm flex items-center justify-between">
+<div>
+<div class="text-label-md font-label-md text-on-surface-variant mb-1">Uptime (30 Days)</div>
+<div class="text-headline-lg-mobile md:text-headline-lg font-headline-lg-mobile md:font-headline-lg text-primary">99.99%</div>
+</div>
+<div class="w-12 h-12 rounded-full bg-primary-container/10 flex items-center justify-center">
+<span class="material-symbols-outlined text-primary" data-icon="verified">verified</span>
+</div>
+</div>
+<div class="bg-surface-container-lowest border border-outline-variant rounded-xl p-6 shadow-sm flex items-center justify-between">
+<div>
+<div class="text-label-md font-label-md text-on-surface-variant mb-1">Active Incidents</div>
+<div class="text-headline-lg-mobile md:text-headline-lg font-headline-lg-mobile md:font-headline-lg text-text-main">0</div>
+</div>
+<div class="w-12 h-12 rounded-full bg-surface-container-low flex items-center justify-center">
+<span class="material-symbols-outlined text-on-surface-variant" data-icon="notifications_off">notifications_off</span>
+</div>
+</div>
+</div>
+</section>
+</div>
+</main>
+<!-- Footer -->
+<footer class="bg-surface-container-highest dark:bg-inverse-surface border-t border-outline-variant w-full py-8 px-margin-desktop mt-auto flex flex-col md:flex-row justify-between items-center gap-4">
+<div class="text-body-lg font-headline-md text-primary font-bold">
+            GlobalStay
+        </div>
+<div class="flex flex-wrap justify-center gap-6">
+<a class="text-on-surface-variant hover:text-primary hover:underline decoration-primary transition-colors duration-200 text-label-sm font-label-sm" href="#">About Us</a>
+<a class="text-on-surface-variant hover:text-primary hover:underline decoration-primary transition-colors duration-200 text-label-sm font-label-sm" href="#">Privacy Policy</a>
+<a class="text-on-surface-variant hover:text-primary hover:underline decoration-primary transition-colors duration-200 text-label-sm font-label-sm" href="#">Terms of Service</a>
+<a class="text-on-surface-variant hover:text-primary hover:underline decoration-primary transition-colors duration-200 text-label-sm font-label-sm" href="#">Partner With Us</a>
+<a class="text-on-surface-variant hover:text-primary hover:underline decoration-primary transition-colors duration-200 text-label-sm font-label-sm" href="#">Help Center</a>
+<a class="text-primary font-semibold hover:underline decoration-primary transition-colors duration-200 text-label-sm font-label-sm" href="#">AWS Status</a>
+</div>
+<div class="text-body-sm font-body-sm text-on-surface dark:text-inverse-on-surface">
+            © 2024 GlobalStay Hospitality Group. All rights reserved.
+        </div>
+</footer>
+</body></html>

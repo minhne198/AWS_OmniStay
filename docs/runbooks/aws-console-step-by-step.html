@@ -1,0 +1,933 @@
+<!doctype html>
+<html lang="vi">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>AWS OmniStay - Huong dan tao AWS services</title>
+    <style>
+      :root {
+        color-scheme: light;
+        --bg: #f5f7fb;
+        --paper: #ffffff;
+        --ink: #182230;
+        --muted: #667085;
+        --line: #d6deea;
+        --navy: #003580;
+        --blue: #006ce4;
+        --blue-soft: #e8f1ff;
+        --gold: #ffb700;
+        --gold-soft: #fff5d6;
+        --green: #008009;
+        --green-soft: #e9f8ec;
+        --red: #b42318;
+        --red-soft: #fee4e2;
+        --shadow: 0 20px 55px rgba(16, 24, 40, 0.08);
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      html {
+        scroll-behavior: smooth;
+      }
+
+      body {
+        margin: 0;
+        min-width: 320px;
+        background: var(--bg);
+        color: var(--ink);
+        font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+        line-height: 1.55;
+      }
+
+      a {
+        color: var(--blue);
+        font-weight: 700;
+        text-decoration: none;
+      }
+
+      a:hover {
+        text-decoration: underline;
+      }
+
+      code {
+        border: 1px solid #d0d7e2;
+        border-radius: 6px;
+        background: #f1f5f9;
+        color: #24364f;
+        padding: 2px 6px;
+        font-family: "Cascadia Code", Consolas, "Liberation Mono", monospace;
+        font-size: 0.92em;
+      }
+
+      .hero {
+        background:
+          linear-gradient(135deg, rgba(0, 53, 128, 0.96), rgba(0, 108, 228, 0.86)),
+          radial-gradient(circle at top right, rgba(255, 183, 0, 0.32), transparent 32%);
+        color: white;
+        padding: 42px clamp(20px, 5vw, 72px) 32px;
+      }
+
+      .hero-inner {
+        width: min(1180px, 100%);
+        margin: 0 auto;
+      }
+
+      .eyebrow {
+        margin: 0 0 10px;
+        color: #d8e7ff;
+        font-size: 13px;
+        font-weight: 800;
+        letter-spacing: 0;
+        text-transform: uppercase;
+      }
+
+      h1,
+      h2,
+      h3 {
+        margin: 0;
+        line-height: 1.15;
+      }
+
+      h1 {
+        max-width: 900px;
+        font-size: clamp(32px, 5vw, 58px);
+      }
+
+      .hero-copy {
+        max-width: 860px;
+        margin: 16px 0 0;
+        color: #e8f1ff;
+        font-size: 18px;
+      }
+
+      .hero-grid {
+        display: grid;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: 12px;
+        margin-top: 26px;
+      }
+
+      .hero-stat {
+        border: 1px solid rgba(255, 255, 255, 0.24);
+        border-radius: 8px;
+        background: rgba(255, 255, 255, 0.1);
+        padding: 14px;
+      }
+
+      .hero-stat strong {
+        display: block;
+        font-size: 22px;
+      }
+
+      .hero-stat span {
+        color: #d8e7ff;
+        font-size: 13px;
+      }
+
+      .layout {
+        display: grid;
+        grid-template-columns: 292px minmax(0, 1fr);
+        gap: 24px;
+        width: min(1180px, calc(100% - 32px));
+        margin: 24px auto 56px;
+      }
+
+      .toc {
+        align-self: start;
+        position: sticky;
+        top: 16px;
+        max-height: calc(100vh - 32px);
+        overflow: auto;
+        border: 1px solid var(--line);
+        border-radius: 10px;
+        background: var(--paper);
+        box-shadow: var(--shadow);
+      }
+
+      .toc-header {
+        border-bottom: 1px solid var(--line);
+        padding: 16px;
+      }
+
+      .toc-header strong {
+        display: block;
+        font-size: 17px;
+      }
+
+      .toc-header span {
+        color: var(--muted);
+        font-size: 13px;
+      }
+
+      .toc nav {
+        display: grid;
+        gap: 2px;
+        padding: 10px;
+      }
+
+      .toc a {
+        border-radius: 7px;
+        color: #344054;
+        padding: 8px 10px;
+        font-size: 14px;
+        font-weight: 700;
+      }
+
+      .toc a:hover {
+        background: var(--blue-soft);
+        color: var(--blue);
+        text-decoration: none;
+      }
+
+      .content {
+        display: grid;
+        gap: 18px;
+        min-width: 0;
+      }
+
+      .card {
+        border: 1px solid var(--line);
+        border-radius: 12px;
+        background: var(--paper);
+        box-shadow: var(--shadow);
+        overflow: hidden;
+      }
+
+      .card-head {
+        display: flex;
+        align-items: flex-start;
+        gap: 14px;
+        border-bottom: 1px solid var(--line);
+        padding: 18px 20px;
+      }
+
+      .badge {
+        display: inline-grid;
+        flex: 0 0 auto;
+        place-items: center;
+        width: 42px;
+        height: 42px;
+        border-radius: 10px;
+        background: var(--navy);
+        color: white;
+        font-weight: 900;
+      }
+
+      .card-head h2 {
+        font-size: clamp(22px, 3vw, 30px);
+      }
+
+      .card-head p {
+        margin: 5px 0 0;
+        color: var(--muted);
+      }
+
+      .card-body {
+        display: grid;
+        gap: 16px;
+        padding: 20px;
+      }
+
+      .callout {
+        border: 1px solid var(--line);
+        border-left: 5px solid var(--blue);
+        border-radius: 8px;
+        background: #f8fbff;
+        padding: 14px 16px;
+      }
+
+      .callout.warning {
+        border-left-color: var(--gold);
+        background: var(--gold-soft);
+      }
+
+      .callout.danger {
+        border-left-color: var(--red);
+        background: var(--red-soft);
+      }
+
+      .callout.success {
+        border-left-color: var(--green);
+        background: var(--green-soft);
+      }
+
+      .callout strong {
+        display: block;
+        margin-bottom: 3px;
+      }
+
+      .grid-two {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 14px;
+      }
+
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        overflow: hidden;
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        background: white;
+        font-size: 14px;
+      }
+
+      th,
+      td {
+        border-bottom: 1px solid var(--line);
+        padding: 10px 12px;
+        text-align: left;
+        vertical-align: top;
+      }
+
+      th {
+        background: #f1f5fb;
+        color: #344054;
+        font-size: 12px;
+        font-weight: 900;
+        text-transform: uppercase;
+      }
+
+      tr:last-child td {
+        border-bottom: 0;
+      }
+
+      ul,
+      ol {
+        margin: 0;
+        padding-left: 22px;
+      }
+
+      li + li {
+        margin-top: 5px;
+      }
+
+      .chips {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+      }
+
+      .chip {
+        border-radius: 999px;
+        background: var(--blue-soft);
+        color: #004494;
+        padding: 6px 10px;
+        font-size: 13px;
+        font-weight: 800;
+      }
+
+      .shot-list {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+        gap: 8px;
+        list-style: none;
+        padding: 0;
+      }
+
+      .shot-list li {
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        background: #fbfdff;
+        padding: 9px 10px;
+      }
+
+      .shot-list li::before {
+        color: var(--green);
+        content: "□ ";
+        font-weight: 900;
+      }
+
+      .footer {
+        width: min(1180px, calc(100% - 32px));
+        margin: 0 auto 36px;
+        color: var(--muted);
+        font-size: 13px;
+        text-align: center;
+      }
+
+      @media (max-width: 980px) {
+        .hero-grid,
+        .layout,
+        .grid-two {
+          grid-template-columns: 1fr;
+        }
+
+        .toc {
+          position: static;
+          max-height: none;
+        }
+      }
+
+      @media print {
+        body {
+          background: white;
+        }
+
+        .hero {
+          background: white;
+          color: black;
+          padding: 0 0 18px;
+        }
+
+        .hero-copy,
+        .eyebrow,
+        .toc,
+        .footer {
+          display: none;
+        }
+
+        .layout {
+          display: block;
+          width: 100%;
+          margin: 0;
+        }
+
+        .content {
+          gap: 12px;
+        }
+
+        .card {
+          break-inside: avoid;
+          border-color: #c8ced8;
+          box-shadow: none;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <header class="hero">
+      <div class="hero-inner">
+        <p class="eyebrow">AWS OmniStay Runbook</p>
+        <h1>Huong dan tao AWS services tung buoc de chup anh Console</h1>
+        <p class="hero-copy">
+          Ban HTML nay dung de gui ban be/nhom do an, mo truc tiep bang trinh duyet hoac in PDF. Noi dung tap trung vao viec tao resource thanh cong va chup anh bang chung, chua bat buoc deploy app chay end-to-end.
+        </p>
+        <div class="hero-grid" aria-label="Thong tin nhanh">
+          <div class="hero-stat"><strong>ap-southeast-1</strong><span>Region mac dinh</span></div>
+          <div class="hero-stat"><strong>22 buoc</strong><span>Tu Budget den CloudWatch</span></div>
+          <div class="hero-stat"><strong>4 SG</strong><span>ALB, EC2, RDS, Redis</span></div>
+          <div class="hero-stat"><strong>0 secrets</strong><span>Khong ghi gia tri nhay cam</span></div>
+        </div>
+      </div>
+    </header>
+
+    <main class="layout">
+      <aside class="toc" aria-label="Muc luc">
+        <div class="toc-header">
+          <strong>Muc luc</strong>
+          <span>Click de nhay nhanh den tung phan</span>
+        </div>
+        <nav>
+          <a href="#overview">0. Chuan bi chung</a>
+          <a href="#budget">1. AWS Budget</a>
+          <a href="#vpc">2. VPC</a>
+          <a href="#subnets">3. Subnets</a>
+          <a href="#igw">4. Internet Gateway</a>
+          <a href="#public-route">5. Public route table</a>
+          <a href="#nat">6. NAT Gateways</a>
+          <a href="#private-routes">7. Private route tables</a>
+          <a href="#security-groups">8. Security Groups</a>
+          <a href="#rds">9. RDS MySQL</a>
+          <a href="#elasticache">10. ElastiCache</a>
+          <a href="#iam">11. IAM Role</a>
+          <a href="#secrets">12. Secrets/Parameters</a>
+          <a href="#s3">13. S3 Buckets</a>
+          <a href="#target-group">14. Target Group</a>
+          <a href="#alb">15. ALB</a>
+          <a href="#launch-template">16. Launch Template</a>
+          <a href="#asg">17. Auto Scaling Group</a>
+          <a href="#cloudfront">18. CloudFront OAC</a>
+          <a href="#waf">19. AWS WAF</a>
+          <a href="#sns">20. SNS</a>
+          <a href="#cloudwatch">21. CloudWatch</a>
+          <a href="#cleanup">Cleanup</a>
+        </nav>
+      </aside>
+
+      <section class="content">
+        <article class="card" id="overview">
+          <div class="card-head">
+            <span class="badge">0</span>
+            <div>
+              <h2>Chuan bi chung</h2>
+              <p>Quy uoc region, tags, chup anh va bao mat truoc khi tao dich vu.</p>
+            </div>
+          </div>
+          <div class="card-body">
+            <div class="callout warning">
+              <strong>Luu y chi phi</strong>
+              NAT Gateway, ALB, RDS, ElastiCache va public IPv4 co the tinh phi theo gio. Sau khi chup anh xong, lam phan cleanup.
+            </div>
+            <div class="grid-two">
+              <table>
+                <thead><tr><th>Hang muc</th><th>Gia tri</th></tr></thead>
+                <tbody>
+                  <tr><td>Region</td><td><code>Asia Pacific (Singapore) ap-southeast-1</code></td></tr>
+                  <tr><td>VPC CIDR</td><td><code>10.0.0.0/16</code></td></tr>
+                  <tr><td>Project</td><td><code>AWS_OmniStay</code></td></tr>
+                  <tr><td>Environment</td><td><code>demo</code></td></tr>
+                </tbody>
+              </table>
+              <table>
+                <thead><tr><th>Tag key</th><th>Tag value</th></tr></thead>
+                <tbody>
+                  <tr><td><code>Project</code></td><td><code>AWS_OmniStay</code></td></tr>
+                  <tr><td><code>Environment</code></td><td><code>demo</code></td></tr>
+                  <tr><td><code>Owner</code></td><td><code>minhne198</code></td></tr>
+                </tbody>
+              </table>
+            </div>
+            <div class="chips">
+              <span class="chip">Khong chup password</span>
+              <span class="chip">Khong chup secret value</span>
+              <span class="chip">Chup summary/details</span>
+              <span class="chip">Ghi lai endpoint</span>
+            </div>
+          </div>
+        </article>
+
+        <article class="card" id="budget">
+          <div class="card-head"><span class="badge">1</span><div><h2>Tao AWS Budget</h2><p>Canh bao chi phi truoc khi tao cac resource tinh phi.</p></div></div>
+          <div class="card-body">
+            <table>
+              <thead><tr><th>Truong</th><th>Gia tri</th></tr></thead>
+              <tbody>
+                <tr><td>Duong dan</td><td>Billing and Cost Management -> Budgets -> Create budget</td></tr>
+                <tr><td>Budget type</td><td>Monthly cost budget</td></tr>
+                <tr><td>Budget name</td><td><code>omnistay-monthly-budget</code></td></tr>
+                <tr><td>Amount</td><td><code>10 USD</code></td></tr>
+                <tr><td>Alerts</td><td>50%, 80%, 100%</td></tr>
+              </tbody>
+            </table>
+            <ul class="shot-list"><li>Budget summary</li><li>Alert thresholds</li><li>Email recipient</li></ul>
+          </div>
+        </article>
+
+        <article class="card" id="vpc">
+          <div class="card-head"><span class="badge">2</span><div><h2>Tao VPC</h2><p>Network chinh cho toan bo he thong OmniStay.</p></div></div>
+          <div class="card-body">
+            <table>
+              <thead><tr><th>Truong</th><th>Gia tri</th></tr></thead>
+              <tbody>
+                <tr><td>Duong dan</td><td>VPC -> Your VPCs -> Create VPC</td></tr>
+                <tr><td>Resource to create</td><td>VPC only</td></tr>
+                <tr><td>Name tag</td><td><code>omnistay-vpc</code></td></tr>
+                <tr><td>IPv4 CIDR</td><td><code>10.0.0.0/16</code></td></tr>
+                <tr><td>VPC encryption control</td><td>None</td></tr>
+              </tbody>
+            </table>
+            <ul class="shot-list"><li>VPC details</li><li>CIDR 10.0.0.0/16</li><li>VPC ID</li></ul>
+          </div>
+        </article>
+
+        <article class="card" id="subnets">
+          <div class="card-head"><span class="badge">3</span><div><h2>Tao 6 Subnets</h2><p>2 public, 2 private app, 2 private data tren 2 Availability Zones.</p></div></div>
+          <div class="card-body">
+            <table>
+              <thead><tr><th>Subnet</th><th>AZ</th><th>CIDR</th><th>Vai tro</th></tr></thead>
+              <tbody>
+                <tr><td><code>omnistay-public-a</code></td><td><code>ap-southeast-1a</code></td><td><code>10.0.1.0/24</code></td><td>ALB/NAT</td></tr>
+                <tr><td><code>omnistay-public-b</code></td><td><code>ap-southeast-1b</code></td><td><code>10.0.2.0/24</code></td><td>ALB/NAT</td></tr>
+                <tr><td><code>omnistay-app-a</code></td><td><code>ap-southeast-1a</code></td><td><code>10.0.10.0/24</code></td><td>EC2 app</td></tr>
+                <tr><td><code>omnistay-app-b</code></td><td><code>ap-southeast-1b</code></td><td><code>10.0.11.0/24</code></td><td>EC2 app</td></tr>
+                <tr><td><code>omnistay-data-a</code></td><td><code>ap-southeast-1a</code></td><td><code>10.0.20.0/24</code></td><td>RDS/Redis</td></tr>
+                <tr><td><code>omnistay-data-b</code></td><td><code>ap-southeast-1b</code></td><td><code>10.0.21.0/24</code></td><td>RDS/Redis</td></tr>
+              </tbody>
+            </table>
+            <div class="callout">Bat <strong>Auto-assign public IPv4 address</strong> cho <code>omnistay-public-a</code> va <code>omnistay-public-b</code>.</div>
+            <ul class="shot-list"><li>Danh sach 6 subnets</li><li>AZ va CIDR</li><li>Public subnet settings</li></ul>
+          </div>
+        </article>
+
+        <article class="card" id="igw">
+          <div class="card-head"><span class="badge">4</span><div><h2>Tao Internet Gateway</h2><p>Cho public subnet co duong ra Internet.</p></div></div>
+          <div class="card-body">
+            <table>
+              <thead><tr><th>Truong</th><th>Gia tri</th></tr></thead>
+              <tbody>
+                <tr><td>Name</td><td><code>omnistay-igw</code></td></tr>
+                <tr><td>Attach to VPC</td><td><code>omnistay-vpc</code></td></tr>
+              </tbody>
+            </table>
+            <ol><li>Create internet gateway.</li><li>Actions -> Attach to VPC.</li><li>Chon <code>omnistay-vpc</code>.</li></ol>
+            <ul class="shot-list"><li>IGW state attached</li><li>VPC attachment</li></ul>
+          </div>
+        </article>
+
+        <article class="card" id="public-route">
+          <div class="card-head"><span class="badge">5</span><div><h2>Tao Public Route Table</h2><p>Route public subnets ra Internet Gateway.</p></div></div>
+          <div class="card-body">
+            <table>
+              <thead><tr><th>Hang muc</th><th>Gia tri</th></tr></thead>
+              <tbody>
+                <tr><td>Name</td><td><code>omnistay-public-rt</code></td></tr>
+                <tr><td>VPC</td><td><code>omnistay-vpc</code></td></tr>
+                <tr><td>Route</td><td><code>0.0.0.0/0 -> omnistay-igw</code></td></tr>
+                <tr><td>Subnet associations</td><td><code>omnistay-public-a</code>, <code>omnistay-public-b</code></td></tr>
+              </tbody>
+            </table>
+            <ul class="shot-list"><li>Route 0.0.0.0/0 -> igw</li><li>Associated public subnets</li></ul>
+          </div>
+        </article>
+
+        <article class="card" id="nat">
+          <div class="card-head"><span class="badge">6</span><div><h2>Tao NAT Gateways</h2><p>Cho private app subnet outbound Internet qua public subnet cung AZ.</p></div></div>
+          <div class="card-body">
+            <div class="callout warning">
+              <strong>NAT Gateway tinh phi theo gio.</strong>
+              Sau khi chup anh hoac neu chua deploy app, nen delete NAT va release Elastic IP.
+            </div>
+            <table>
+              <thead><tr><th>Name</th><th>Mode</th><th>Subnet</th><th>Connectivity</th><th>EIP</th></tr></thead>
+              <tbody>
+                <tr><td><code>omnistay-nat-a</code></td><td>Zonal</td><td><code>omnistay-public-a</code></td><td>Public</td><td>Automatic</td></tr>
+                <tr><td><code>omnistay-nat-b</code></td><td>Zonal</td><td><code>omnistay-public-b</code></td><td>Public</td><td>Automatic</td></tr>
+              </tbody>
+            </table>
+            <div class="callout">Neu Console khong hien cho chon subnet, doi <strong>Availability mode</strong> tu Regional sang <strong>Zonal</strong>.</div>
+            <ul class="shot-list"><li>NAT Gateway list</li><li>Status Available</li><li>Subnet va Elastic IP</li></ul>
+          </div>
+        </article>
+
+        <article class="card" id="private-routes">
+          <div class="card-head"><span class="badge">7</span><div><h2>Tao Private App Route Tables</h2><p>Moi AZ route ra NAT Gateway cung AZ.</p></div></div>
+          <div class="card-body">
+            <table>
+              <thead><tr><th>Route table</th><th>Route</th><th>Subnet association</th></tr></thead>
+              <tbody>
+                <tr><td><code>omnistay-app-a-rt</code></td><td><code>0.0.0.0/0 -> omnistay-nat-a</code></td><td><code>omnistay-app-a</code></td></tr>
+                <tr><td><code>omnistay-app-b-rt</code></td><td><code>0.0.0.0/0 -> omnistay-nat-b</code></td><td><code>omnistay-app-b</code></td></tr>
+              </tbody>
+            </table>
+            <ul class="shot-list"><li>Route table AZ-a</li><li>Route table AZ-b</li><li>Subnet associations</li></ul>
+          </div>
+        </article>
+
+        <article class="card" id="security-groups">
+          <div class="card-head"><span class="badge">8</span><div><h2>Tao Security Groups</h2><p>Firewall theo tung layer: ALB -> EC2 -> RDS/Redis.</p></div></div>
+          <div class="card-body">
+            <table>
+              <thead><tr><th>Security group</th><th>Description</th><th>Inbound rule</th></tr></thead>
+              <tbody>
+                <tr><td><code>SG-ALB</code></td><td>Allow public HTTP to ALB</td><td>HTTP 80 from <code>0.0.0.0/0</code></td></tr>
+                <tr><td><code>SG-EC2</code></td><td>Allow ALB to API instances</td><td>Custom TCP 8080 from <code>SG-ALB</code></td></tr>
+                <tr><td><code>SG-RDS</code></td><td>Allow EC2 to MySQL</td><td>MySQL/Aurora 3306 from <code>SG-EC2</code></td></tr>
+                <tr><td><code>SG-Redis</code></td><td>Allow EC2 to Redis</td><td>Custom TCP 6379 from <code>SG-EC2</code></td></tr>
+              </tbody>
+            </table>
+            <div class="callout danger">
+              <strong>Khong mo RDS/Redis public.</strong>
+              Hai security group <code>SG-RDS</code> va <code>SG-Redis</code> chi nhan source <code>SG-EC2</code>, khong dung Anywhere.
+            </div>
+            <ul class="shot-list"><li>Inbound SG-ALB</li><li>Inbound SG-EC2</li><li>Inbound SG-RDS</li><li>Inbound SG-Redis</li></ul>
+          </div>
+        </article>
+
+        <article class="card" id="rds">
+          <div class="card-head"><span class="badge">9</span><div><h2>Tao RDS MySQL</h2><p>Database persistence cho booking va seed data.</p></div></div>
+          <div class="card-body">
+            <h3>DB Subnet Group</h3>
+            <table>
+              <thead><tr><th>Truong</th><th>Gia tri</th></tr></thead>
+              <tbody>
+                <tr><td>Name</td><td><code>omnistay-db-subnet-group</code></td></tr>
+                <tr><td>VPC</td><td><code>omnistay-vpc</code></td></tr>
+                <tr><td>Subnets</td><td><code>omnistay-data-a</code>, <code>omnistay-data-b</code></td></tr>
+              </tbody>
+            </table>
+            <h3>Database</h3>
+            <table>
+              <thead><tr><th>Truong</th><th>Gia tri</th></tr></thead>
+              <tbody>
+                <tr><td>Engine</td><td>MySQL</td></tr>
+                <tr><td>DB identifier</td><td><code>omnistay-mysql</code></td></tr>
+                <tr><td>Master username</td><td><code>admin</code></td></tr>
+                <tr><td>Initial database</td><td><code>hotel_booking</code></td></tr>
+                <tr><td>Public access</td><td>No</td></tr>
+                <tr><td>Security group</td><td><code>SG-RDS</code></td></tr>
+              </tbody>
+            </table>
+            <ul class="shot-list"><li>Status Available</li><li>Endpoint va port</li><li>VPC/subnet group/SG</li><li>Engine va storage</li></ul>
+          </div>
+        </article>
+
+        <article class="card" id="elasticache">
+          <div class="card-head"><span class="badge">10</span><div><h2>Tao ElastiCache Valkey/Redis</h2><p>Cache ket qua search phong de demo cache HIT/MISS sau nay.</p></div></div>
+          <div class="card-body">
+            <table>
+              <thead><tr><th>Truong</th><th>Gia tri</th></tr></thead>
+              <tbody>
+                <tr><td>Subnet group</td><td><code>omnistay-cache-subnet-group</code> voi <code>omnistay-data-a/b</code></td></tr>
+                <tr><td>Engine</td><td>Valkey hoac Redis OSS</td></tr>
+                <tr><td>Cluster name</td><td><code>omnistay-cache</code></td></tr>
+                <tr><td>Cluster mode</td><td>Disabled</td></tr>
+                <tr><td>Replicas</td><td>0 cho demo tiet kiem</td></tr>
+                <tr><td>Port</td><td>6379</td></tr>
+                <tr><td>Security group</td><td><code>SG-Redis</code></td></tr>
+              </tbody>
+            </table>
+            <ul class="shot-list"><li>Cluster Available</li><li>Endpoint va port</li><li>Subnet group</li><li>Security group</li></ul>
+          </div>
+        </article>
+
+        <article class="card" id="iam">
+          <div class="card-head"><span class="badge">11</span><div><h2>Tao IAM Role Cho EC2</h2><p>Cho EC2 doc config, artifact va ghi log ma khong dung access key trong code.</p></div></div>
+          <div class="card-body">
+            <table>
+              <thead><tr><th>Truong</th><th>Gia tri</th></tr></thead>
+              <tbody>
+                <tr><td>Trusted entity</td><td>AWS service</td></tr>
+                <tr><td>Use case</td><td>EC2</td></tr>
+                <tr><td>Role name</td><td><code>EC2-HotelAPI-Role</code></td></tr>
+                <tr><td>Policies</td><td><code>AmazonSSMManagedInstanceCore</code>, <code>CloudWatchAgentServerPolicy</code>, <code>AmazonS3ReadOnlyAccess</code></td></tr>
+              </tbody>
+            </table>
+            <ul class="shot-list"><li>Role summary</li><li>Attached policies</li><li>Trust relationship EC2</li></ul>
+          </div>
+        </article>
+
+        <article class="card" id="secrets">
+          <div class="card-head"><span class="badge">12</span><div><h2>Tao Secrets Va Parameters</h2><p>Luu thong tin runtime khong hard-code vao code.</p></div></div>
+          <div class="card-body">
+            <h3>Secrets Manager</h3>
+            <table>
+              <thead><tr><th>Key</th><th>Value</th></tr></thead>
+              <tbody>
+                <tr><td>Secret name</td><td><code>omnistay/prod/hotelbookingdb</code></td></tr>
+                <tr><td><code>username</code></td><td><code>admin</code></td></tr>
+                <tr><td><code>password</code></td><td>RDS password, khong chup lo</td></tr>
+                <tr><td><code>host</code></td><td>RDS endpoint</td></tr>
+                <tr><td><code>database</code></td><td><code>hotel_booking</code></td></tr>
+              </tbody>
+            </table>
+            <h3>Parameter Store</h3>
+            <table>
+              <thead><tr><th>Name</th><th>Value</th></tr></thead>
+              <tbody>
+                <tr><td><code>/omnistay/prod/Database__Provider</code></td><td><code>MySql</code></td></tr>
+                <tr><td><code>/omnistay/prod/AWS__Region</code></td><td><code>ap-southeast-1</code></td></tr>
+                <tr><td><code>/omnistay/prod/Cache__SearchTtlSeconds</code></td><td><code>120</code></td></tr>
+                <tr><td><code>/omnistay/prod/AWS__S3FrontendBucket</code></td><td><code>&lt;bucket-name&gt;</code></td></tr>
+                <tr><td><code>/omnistay/prod/AWS__CloudFrontDomain</code></td><td><code>&lt;cloudfront-domain&gt;</code></td></tr>
+              </tbody>
+            </table>
+            <ul class="shot-list"><li>Secret metadata</li><li>Parameter list</li><li>Khong chup secret value</li></ul>
+          </div>
+        </article>
+
+        <article class="card" id="s3">
+          <div class="card-head"><span class="badge">13</span><div><h2>Tao S3 Buckets</h2><p>Bucket frontend va artifact, ca hai deu private.</p></div></div>
+          <div class="card-body">
+            <table>
+              <thead><tr><th>Bucket</th><th>Setting</th></tr></thead>
+              <tbody>
+                <tr><td><code>omnistay-frontend-&lt;account-id&gt;</code></td><td>Block Public Access ON, SSE-S3, Bucket owner enforced</td></tr>
+                <tr><td><code>omnistay-artifacts-&lt;account-id&gt;</code></td><td>Block Public Access ON, SSE-S3, Bucket owner enforced</td></tr>
+              </tbody>
+            </table>
+            <ul class="shot-list"><li>Bucket list</li><li>Properties</li><li>Permissions Block Public Access</li></ul>
+          </div>
+        </article>
+
+        <article class="card" id="target-group">
+          <div class="card-head"><span class="badge">14</span><div><h2>Tao Target Group</h2><p>Dich den cua ALB, health check vao backend API.</p></div></div>
+          <div class="card-body">
+            <table>
+              <thead><tr><th>Truong</th><th>Gia tri</th></tr></thead>
+              <tbody>
+                <tr><td>Target type</td><td>Instances</td></tr>
+                <tr><td>Name</td><td><code>omnistay-api-tg</code></td></tr>
+                <tr><td>Protocol/Port</td><td>HTTP / 8080</td></tr>
+                <tr><td>VPC</td><td><code>omnistay-vpc</code></td></tr>
+                <tr><td>Health check path</td><td><code>/health</code></td></tr>
+                <tr><td>Success code</td><td><code>200</code></td></tr>
+              </tbody>
+            </table>
+            <ul class="shot-list"><li>Target group details</li><li>Health check /health</li></ul>
+          </div>
+        </article>
+
+        <article class="card" id="alb">
+          <div class="card-head"><span class="badge">15</span><div><h2>Tao Application Load Balancer</h2><p>Internet-facing ALB phan tai request vao EC2 API.</p></div></div>
+          <div class="card-body">
+            <table>
+              <thead><tr><th>Truong</th><th>Gia tri</th></tr></thead>
+              <tbody>
+                <tr><td>Name</td><td><code>omnistay-alb</code></td></tr>
+                <tr><td>Scheme</td><td>Internet-facing</td></tr>
+                <tr><td>VPC/subnets</td><td><code>omnistay-vpc</code>, <code>omnistay-public-a/b</code></td></tr>
+                <tr><td>Security group</td><td><code>SG-ALB</code></td></tr>
+                <tr><td>Listener</td><td>HTTP 80 -> <code>omnistay-api-tg</code></td></tr>
+              </tbody>
+            </table>
+            <ul class="shot-list"><li>ALB Active</li><li>DNS name</li><li>Listener HTTP 80</li><li>Security group</li></ul>
+          </div>
+        </article>
+
+        <article class="card" id="launch-template">
+          <div class="card-head"><span class="badge">16</span><div><h2>Tao Launch Template</h2><p>Mau tao EC2 instance cho Auto Scaling Group.</p></div></div>
+          <div class="card-body">
+            <table>
+              <thead><tr><th>Truong</th><th>Gia tri</th></tr></thead>
+              <tbody>
+                <tr><td>Name</td><td><code>omnistay-api-template</code></td></tr>
+                <tr><td>AMI</td><td>Amazon Linux 2023</td></tr>
+                <tr><td>Instance type</td><td><code>t3.micro</code> hoac loai nho nhat kha dung</td></tr>
+                <tr><td>Key pair</td><td>Co the bo qua neu chua can SSH</td></tr>
+                <tr><td>Security group</td><td><code>SG-EC2</code></td></tr>
+                <tr><td>IAM profile</td><td><code>EC2-HotelAPI-Role</code></td></tr>
+                <tr><td>User data</td><td>De trong trong giai doan chup service</td></tr>
+              </tbody>
+            </table>
+            <ul class="shot-list"><li>Launch template summary</li><li>AMI va instance type</li><li>IAM role va SG</li></ul>
+          </div>
+        </article>
+
+        <article class="card" id="asg">
+          <div class="card-head"><span class="badge">17</span><div><h2>Tao Auto Scaling Group</h2><p>Mo hinh HA/scale cho backend API.</p></div></div>
+          <div class="card-body">
+            <table>
+              <thead><tr><th>Truong</th><th>Gia tri</th></tr></thead>
+              <tbody>
+                <tr><td>Name</td><td><code>omnistay-api-asg</code></td></tr>
+                <tr><td>Launch template</td><td><code>omnistay-api-template</code></td></tr>
+                <tr><td>Subnets</td><td><code>omnistay-app-a</code>, <code>omnistay-app-b</code></td></tr>
+                <tr><td>Target group</td><td><code>omnistay-api-tg</code></td></tr>
+                <tr><td>Desired / Min / Max</td><td><code>0 / 0 / 4</code> luc chup service</td></tr>
+                <tr><td>Scaling policy</td><td>Target tracking, CPU 70%</td></tr>
+              </tbody>
+            </table>
+            <div class="callout success">Khi demo app that, doi Desired/Min tu <code>0</code> thanh <code>1</code>.</div>
+            <ul class="shot-list"><li>ASG details</li><li>Capacity</li><li>Attached target group</li><li>Scaling policy</li></ul>
+          </div>
+        </article>
+
+        <article class="card" id="cloudfront">
+          <div class="card-head"><span class="badge">18</span><div><h2>Tao CloudFront OAC Va Distribution</h2><p>CDN cho frontend private S3 va behavior API ve ALB.</p></div></div>
+          <div class="card-body">
+            <table>
+              <thead><tr><th>Muc</th><th>Gia tri</th></tr></thead>
+              <tbody>
+                <tr><td>S3 origin</td><td>Frontend bucket, Origin Access Control settings</td></tr>
+                <tr><td>OAC name</td><td><code>omnistay-frontend-oac</code></td></tr>
+                <tr><td>Signing behavior</td><td>Sign requests</td></tr>
+                <tr><td>Viewer protocol</td><td>Redirect HTTP to HTTPS</td></tr>
+                <tr><td>Default root object</td><td><code>public/index.html</code></td></tr>
+                <tr><td>ALB origin</td><td>ALB DNS, HTTP only</td></tr>
+                <tr><td>API behavior</td><td><code>/api/*</code> -> ALB origin, cache disabled</td></tr>
+              </tbody>
+            </table>
+            <ul class="shot-list"><li>Distribution domain</li><li>S3 + ALB origins</li><li>Behaviors</li><li>OAC</li><li>S3 bucket policy</li></ul>
+          </div>
+        </article>
+
+        <article class="card" id="waf">
+          <div class="card-head"><span class="badge">19</span><div><h2>Tao AWS WAF Cho CloudFront</h2><p>Managed rules de minh hoa bao ve ung dung web.</p></div></div>
+          <div class="card-body">
+            <table>
+              <thead><tr><th>Truong</th><th>Gia tri</th></tr></thead>
+              <tbody>
+                <tr><td>Resource type</td><td>CloudFront distributions</td></tr>
+                <tr><td>Scope</td><td>Global</td></tr>
+                <tr><td>Name</td><td><code>omnistay-cloudfront-waf</code></td></tr>
+                <tr><td>Associated resource</td><td>CloudFront distribution</td></tr>
+                <tr><td>Default action</td><td>Allow</td></tr>
+              </tbody>
+            </table>
+            <div class="chips">
+              <span class="chip">CommonRuleSet</span>
+              <span class="chip">KnownBadInputs</span>
+              <span class="chip">SQLiRuleSet</span>
+              <span class="chip">IPReputationList</span>
+            </div>
+            <ul class="shot-list"><li>Web ACL overview</li><li>Associated distribution</li><li>Rule list</li></ul>
+          </div>
+        </article>
+
+        <article class="card" id="sns">
+          <div class="card-head"><span class="badge">20</span><div><h2>Tao SNS Topic</h2><p>Kenh gui alert tu CloudWatch ve email.</p></div></div>
+          <div class="card-body">
+            <table>
+              <thead><tr><th>Truong</th><th>Gia tri</th></tr></thead>
+              <tbody>
+                <tr><td>Topic type</td><td>Standard</td></tr>
+                <tr><td>Name</td><td><code>omnistay-alerts</code></td></tr>
+                <tr><td>Subscription protocol</td><td>Email</td></tr>
+                <tr><td>Endpoint</td><td>Email cua anh</td></tr>
+              </tbody>
+            </table>
+            <ul class="shot-list"><li>Topic summary</li><li>Subscription confirmed</li></ul>
+          </div>
+        </article>
+
+        <article class="card" id="cloudwatch">
+          <div class="card-head"><span class="badge">21</span><div><h2>Tao CloudWatch Dashboard Va Alarms</h2><p>Bang chung monitoring cho ALB, ASG, RDS va cache.</p></div></div>
+          <div class="card-body">
+            <h3>Dashboard</h3>
+            <table>
+              <thead><tr><th>Name</th><th>Widgets</th></tr></thead>
+              <tbody>
+                <tr><td><code>OmniStay-Demo</code></td><td>ALB RequestCount/5XX, ASG capacity, EC2 CPU, RDS CPU/connections, ElastiCache CPU/connections</td></tr>
+              </tbody>
+            </table>
+            <h3>Alarms</h3>
+            <table>
+              <thead><tr><th>Alarm</th><th>Metric</th><th>Condition</th></tr></thead>
+              <tbody>
+                <tr><td><code>omnistay-asg-cpu-high</code></td><td>ASG CPUUtilization</td><td>&gt; 70</td></tr>
+                <tr><td><code>omnistay-alb-5xx-high</code></td><td>HTTPCode_Target_5XX_Count</td><td>&gt; 10</td></tr>
+                <tr><td><code>omnistay-rds-cpu-high</code></td><td>RDS CPUUtilization</td><td>&gt; 80</td></tr>
+              </tbody>
+            </table>
+            <ul class="shot-list"><li>Dashboard overview</li><li>Widget list</li><li>Alarm list</li></ul>
+          </div>
+        </article>
+
+        <article class="card" id="cleanup">
+          <div class="card-head"><span class="badge">✓</span><div><h2>Cleanup Cuoi Buoi</h2><p>Giam chi phi sau khi da chup anh.</p></div></div>
+          <div class="card-body">
+            <div class="callout danger">
+              <strong>Lam phan nay neu chua deploy tiep.</strong>
+              Day la buoc giup tranh phat sinh chi phi ngoai y muon.
+            </div>
+            <table>
+              <thead><tr><th>Resource</th><th>Hanh dong</th></tr></thead>
+              <tbody>
+                <tr><td>Auto Scaling Group</td><td>Set Desired = 0, Min = 0</td></tr>
+                <tr><td>NAT Gateway</td><td>Delete neu chua can, sau do release Elastic IP</td></tr>
+                <tr><td>ElastiCache</td><td>Delete neu chua dung tiep</td></tr>
+                <tr><td>RDS</td><td>Stop neu chua deploy backend</td></tr>
+                <tr><td>ALB</td><td>Delete neu chua can test backend</td></tr>
+                <tr><td>Billing</td><td>Kiem tra Billing dashboard sau buoi lab</td></tr>
+              </tbody>
+            </table>
+            <div class="callout">VPC, subnets, route tables, security groups, IAM, S3 co the giu lai de lam tiep.</div>
+          </div>
+        </article>
+
+        <article class="card" id="links">
+          <div class="card-head"><span class="badge">i</span><div><h2>Link AWS Chinh Thuc</h2><p>Mo khi can doi chieu voi documentation.</p></div></div>
+          <div class="card-body">
+            <ul>
+              <li><a href="https://docs.aws.amazon.com/vpc/latest/userguide/create-vpc.html">Amazon VPC</a></li>
+              <li><a href="https://docs.aws.amazon.com/AmazonS3/latest/userguide/GetStartedWithS3.html">Amazon S3</a></li>
+              <li><a href="https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/private-content-restricting-access-to-s3.html">CloudFront Origin Access Control</a></li>
+              <li><a href="https://docs.aws.amazon.com/elasticloadbalancing/latest/application/create-application-load-balancer.html">Application Load Balancer</a></li>
+              <li><a href="https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/USER_CreateDBInstance.html">Amazon RDS</a></li>
+              <li><a href="https://docs.aws.amazon.com/AmazonElastiCache/latest/dg/Clusters.Create.html">Amazon ElastiCache</a></li>
+              <li><a href="https://docs.aws.amazon.com/autoscaling/ec2/userguide/create-asg-launch-template.html">EC2 Auto Scaling</a></li>
+              <li><a href="https://docs.aws.amazon.com/cost-management/latest/userguide/budgets-create.html">AWS Budgets</a></li>
+            </ul>
+          </div>
+        </article>
+      </section>
+    </main>
+
+    <footer class="footer">
+      AWS OmniStay runbook - ban HTML static, khong chua secret value. Mo file nay bang trinh duyet de xem dep hon hoac in PDF.
+    </footer>
+  </body>
+</html>

@@ -1,0 +1,400 @@
+<!DOCTYPE html>
+
+<html lang="vi"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>GlobalStay - My Bookings</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              "colors": {
+                      "primary": "#0054b5",
+                      "surface-container-low": "#f3f3f3",
+                      "on-secondary-fixed-variant": "#5e4100",
+                      "error-container": "#ffdad6",
+                      "surface-container": "#eeeeee",
+                      "surface-dim": "#dadada",
+                      "text-main": "#2A2A2E",
+                      "primary-fixed-dim": "#adc6ff",
+                      "primary-fixed": "#d8e2ff",
+                      "inverse-primary": "#adc6ff",
+                      "highlight-gold": "#FFB700",
+                      "surface": "#f9f9f9",
+                      "on-error": "#ffffff",
+                      "secondary-fixed": "#ffdea9",
+                      "surface-variant": "#e2e2e2",
+                      "on-background": "#1a1c1c",
+                      "tertiary": "#3055a1",
+                      "surface-container-high": "#e8e8e8",
+                      "error": "#ba1a1a",
+                      "on-surface-variant": "#414754",
+                      "secondary": "#7d5800",
+                      "on-tertiary-container": "#f4f5ff",
+                      "surface-tint": "#005ac1",
+                      "success-green": "#008009",
+                      "surface-bright": "#f9f9f9",
+                      "inverse-surface": "#2f3131",
+                      "on-surface": "#1a1c1c",
+                      "tertiary-fixed-dim": "#b0c6ff",
+                      "tertiary-fixed": "#d9e2ff",
+                      "primary-container": "#006ce4",
+                      "outline-variant": "#c1c6d6",
+                      "on-secondary-container": "#6b4b00",
+                      "on-error-container": "#93000a",
+                      "surface-container-lowest": "#ffffff",
+                      "on-primary": "#ffffff",
+                      "inverse-on-surface": "#f1f1f1",
+                      "on-tertiary-fixed": "#001945",
+                      "on-secondary": "#ffffff",
+                      "on-primary-fixed-variant": "#004494",
+                      "tertiary-container": "#4b6ebb",
+                      "secondary-container": "#ffb700",
+                      "outline": "#727785",
+                      "secondary-fixed-dim": "#ffba26",
+                      "on-tertiary": "#ffffff",
+                      "on-primary-container": "#f4f5ff",
+                      "on-tertiary-fixed-variant": "#1a438e",
+                      "background": "#f9f9f9",
+                      "booking-blue": "#003580",
+                      "on-secondary-fixed": "#271900",
+                      "on-primary-fixed": "#001a41",
+                      "surface-container-highest": "#e2e2e2",
+                      "action-blue": "#006CE4"
+              },
+              "borderRadius": {
+                      "DEFAULT": "0.125rem",
+                      "lg": "0.25rem",
+                      "xl": "0.5rem",
+                      "full": "0.75rem"
+              },
+              "spacing": {
+                      "unit": "4px",
+                      "gutter": "24px",
+                      "max-width": "1280px",
+                      "margin-mobile": "16px",
+                      "margin-desktop": "64px"
+              },
+              "fontFamily": {
+                      "body-md": [
+                              "Inter"
+                      ],
+                      "body-sm": [
+                              "Inter"
+                      ],
+                      "headline-lg-mobile": [
+                              "Hanken Grotesk"
+                      ],
+                      "headline-lg": [
+                              "Hanken Grotesk"
+                      ],
+                      "body-lg": [
+                              "Inter"
+                      ],
+                      "display-lg": [
+                              "Hanken Grotesk"
+                      ],
+                      "label-sm": [
+                              "Inter"
+                      ],
+                      "label-md": [
+                              "Inter"
+                      ],
+                      "headline-md": [
+                              "Hanken Grotesk"
+                      ]
+              },
+              "fontSize": {
+                      "body-md": [
+                              "16px",
+                              {
+                                      "lineHeight": "24px",
+                                      "fontWeight": "400"
+                              }
+                      ],
+                      "body-sm": [
+                              "14px",
+                              {
+                                      "lineHeight": "20px",
+                                      "fontWeight": "400"
+                              }
+                      ],
+                      "headline-lg-mobile": [
+                              "24px",
+                              {
+                                      "lineHeight": "32px",
+                                      "fontWeight": "700"
+                              }
+                      ],
+                      "headline-lg": [
+                              "32px",
+                              {
+                                      "lineHeight": "40px",
+                                      "fontWeight": "700"
+                              }
+                      ],
+                      "body-lg": [
+                              "18px",
+                              {
+                                      "lineHeight": "28px",
+                                      "fontWeight": "400"
+                              }
+                      ],
+                      "display-lg": [
+                              "48px",
+                              {
+                                      "lineHeight": "56px",
+                                      "letterSpacing": "-0.02em",
+                                      "fontWeight": "700"
+                              }
+                      ],
+                      "label-sm": [
+                              "12px",
+                              {
+                                      "lineHeight": "16px",
+                                      "fontWeight": "500"
+                              }
+                      ],
+                      "label-md": [
+                              "14px",
+                              {
+                                      "lineHeight": "16px",
+                                      "letterSpacing": "0.01em",
+                                      "fontWeight": "600"
+                              }
+                      ],
+                      "headline-md": [
+                              "24px",
+                              {
+                                      "lineHeight": "32px",
+                                      "fontWeight": "600"
+                              }
+                      ]
+              }
+      },
+          },
+        }
+    </script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&amp;family=Hanken+Grotesk:wght@600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+    </style>
+</head>
+<body class="bg-background text-on-background font-body-md min-h-screen flex flex-col">
+<!-- TopNavBar -->
+<nav class="bg-booking-blue dark:bg-inverse-surface border-b border-outline-variant shadow-sm flex justify-between items-center w-full px-margin-mobile md:px-margin-desktop h-16 sticky top-0 z-50">
+<div class="flex items-center gap-8">
+<span class="text-headline-md font-headline-md font-bold text-on-primary">GlobalStay</span>
+<div class="hidden md:flex gap-6">
+<a class="text-on-primary hover:text-highlight-gold transition-colors text-label-md font-label-md" href="#">Destinations</a>
+<a class="text-on-primary hover:text-highlight-gold transition-colors text-label-md font-label-md" href="#">Deals</a>
+<a class="text-highlight-gold font-bold border-b-2 border-highlight-gold pb-1 text-label-md font-label-md" href="#">My Bookings</a>
+<a class="text-on-primary hover:text-highlight-gold transition-colors text-label-md font-label-md" href="#">Cloud Status</a>
+</div>
+</div>
+<div class="flex items-center gap-4">
+<button class="hidden md:flex items-center gap-2 text-on-primary text-label-md font-label-md hover:bg-primary-container dark:hover:bg-primary-fixed-dim transition-all p-2 rounded">
+<span class="material-symbols-outlined" data-icon="language">language</span>
+</button>
+<button class="hidden md:block text-on-primary text-label-md font-label-md hover:bg-primary-container transition-all px-4 py-2 rounded border border-on-primary">Sign In</button>
+<button class="text-on-primary hover:bg-primary-container transition-all p-2 rounded">
+<span class="material-symbols-outlined" data-icon="person">person</span>
+</button>
+</div>
+</nav>
+<!-- Main Content Canvas -->
+<main class="flex-grow w-full max-w-[1280px] mx-auto px-margin-mobile md:px-margin-desktop py-8 md:py-12 flex flex-col gap-8">
+<!-- Header & Search -->
+<div class="flex flex-col gap-6">
+<h1 class="text-headline-lg-mobile md:text-headline-lg font-headline-lg-mobile md:font-headline-lg text-text-main">Lịch sử đặt phòng</h1>
+<div class="bg-surface-container-lowest border border-outline-variant rounded-xl p-6 shadow-sm flex flex-col md:flex-row gap-4 items-end">
+<div class="flex-grow w-full">
+<label class="block text-label-md font-label-md text-on-surface-variant mb-2" for="search-booking">Mã Booking hoặc Email</label>
+<div class="relative">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-outline" data-icon="search">search</span>
+<input class="w-full pl-10 pr-4 py-3 border border-outline-variant rounded-lg focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary text-body-md font-body-md bg-surface-bright" id="search-booking" placeholder="Nhập mã hoặc email..." type="text"/>
+</div>
+</div>
+<button class="w-full md:w-auto bg-primary text-on-primary px-8 py-3 rounded-lg text-label-md font-label-md hover:bg-tertiary transition-colors shadow-sm">
+                    Tìm kiếm
+                </button>
+</div>
+</div>
+<!-- Bookings Layout -->
+<div class="grid grid-cols-1 md:grid-cols-12 gap-8">
+<!-- Filters Sidebar -->
+<aside class="md:col-span-3 flex flex-col gap-6">
+<div class="bg-surface-container-lowest border border-outline-variant rounded-xl p-5">
+<h2 class="text-body-lg font-body-lg font-semibold text-text-main mb-4">Trạng thái</h2>
+<div class="flex flex-col gap-3">
+<label class="flex items-center gap-3 cursor-pointer">
+<input checked="" class="w-5 h-5 rounded border-outline-variant text-primary focus:ring-primary" type="checkbox"/>
+<span class="text-body-md font-body-md text-on-surface">Tất cả</span>
+</label>
+<label class="flex items-center gap-3 cursor-pointer">
+<input class="w-5 h-5 rounded border-outline-variant text-primary focus:ring-primary" type="checkbox"/>
+<span class="text-body-md font-body-md text-on-surface">Sắp tới</span>
+</label>
+<label class="flex items-center gap-3 cursor-pointer">
+<input class="w-5 h-5 rounded border-outline-variant text-primary focus:ring-primary" type="checkbox"/>
+<span class="text-body-md font-body-md text-on-surface">Đã hoàn thành</span>
+</label>
+<label class="flex items-center gap-3 cursor-pointer">
+<input class="w-5 h-5 rounded border-outline-variant text-primary focus:ring-primary" type="checkbox"/>
+<span class="text-body-md font-body-md text-on-surface">Đã hủy</span>
+</label>
+</div>
+</div>
+</aside>
+<!-- Bookings Feed -->
+<div class="md:col-span-9 flex flex-col gap-6">
+<!-- Upcoming Booking Card -->
+<article class="bg-surface-container-lowest border border-outline-variant rounded-xl overflow-hidden hover:shadow-[0_4px_12px_rgba(0,0,0,0.08)] transition-shadow duration-300 flex flex-col md:flex-row relative group">
+<div class="absolute top-4 left-4 z-10">
+<span class="bg-success-green text-on-primary px-3 py-1 rounded-full text-label-sm font-label-sm shadow-sm">Sắp tới</span>
+</div>
+<div class="w-full md:w-1/3 h-48 md:h-auto relative">
+<img class="w-full h-full object-cover" data-alt="A luxurious hotel exterior viewed at dusk with warm glowing lights from windows against a deep blue sky. A modern infinity pool reflects the building. High-end architectural photography style, clear, inviting, and premium hospitality aesthetic." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCHKo7XIIUiT_xaZE96x5jjcAafk87qG24z2OcPXzQ17_gzKqadLNrYRiqltm1m2t2P7PAXDL3bQLAwdkFYLsRYTwc_CjtNDNpdyhoYHib77WRe_If5djnp-Rk8HDPVFHWlFrr0-K6XGgp6EurjzlYpyiHJ-1_l9J1yt4vprlgRpWDdxIfb-hWhjxDR5zjZ1Ur-ZV1gmJ-J0Ok2Aryqr4RfRgPMaK5UJHDrhOx_Qgca4nKcKmOAiem6tQ4aZJY-FDi6q_lQmjOviWN_"/>
+</div>
+<div class="p-6 flex flex-col justify-between flex-grow">
+<div>
+<div class="flex justify-between items-start mb-2">
+<h3 class="text-headline-md font-headline-md text-text-main">Grand Plaza Resort &amp; Spa</h3>
+<span class="text-label-sm font-label-sm text-outline">Mã: #GS-99238</span>
+</div>
+<p class="text-body-sm font-body-sm text-on-surface-variant flex items-center gap-1 mb-4">
+<span class="material-symbols-outlined text-[16px]" data-icon="location_on">location_on</span>
+                                Da Nang, Vietnam
+                            </p>
+<div class="grid grid-cols-2 gap-4 mb-4">
+<div>
+<span class="block text-label-sm font-label-sm text-outline">Nhận phòng</span>
+<span class="text-body-md font-body-md font-medium text-text-main">15 Thg 10, 2024</span>
+</div>
+<div>
+<span class="block text-label-sm font-label-sm text-outline">Trả phòng</span>
+<span class="text-body-md font-body-md font-medium text-text-main">18 Thg 10, 2024</span>
+</div>
+</div>
+</div>
+<div class="flex justify-between items-end border-t border-surface-container pt-4">
+<div>
+<span class="block text-label-sm font-label-sm text-outline">Tổng cộng</span>
+<span class="text-headline-md font-headline-md font-bold text-text-main">4.500.000 ₫</span>
+</div>
+<div class="flex gap-3">
+<button class="px-4 py-2 text-primary text-label-md font-label-md border border-primary rounded hover:bg-primary-fixed-dim transition-colors">Chi tiết</button>
+</div>
+</div>
+</div>
+</article>
+<!-- Completed Booking Card -->
+<article class="bg-surface-container-lowest border border-outline-variant rounded-xl overflow-hidden hover:shadow-[0_4px_12px_rgba(0,0,0,0.08)] transition-shadow duration-300 flex flex-col md:flex-row opacity-80">
+<div class="absolute top-4 left-4 z-10 md:static md:hidden"></div>
+<div class="w-full md:w-1/3 h-48 md:h-auto relative">
+<div class="absolute inset-0 bg-black bg-opacity-20 z-10 flex items-center justify-center md:hidden">
+<span class="bg-surface-dim text-on-surface-variant px-3 py-1 rounded-full text-label-sm font-label-sm shadow-sm backdrop-blur-sm">Đã hoàn thành</span>
+</div>
+<img class="w-full h-full object-cover" data-alt="A cozy boutique hotel room interior featuring a large bed with crisp white linens, wooden minimalist furniture, and a large window showing a bustling city street. Warm natural morning sunlight filling the room. Clean, welcoming, and relaxed travel aesthetic." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBCBinzcjy0aA2HqOpXCKP9Tv0KA8Clrt-kBB8ZrrGAuUVvaUxeCj_qCnPaueVipU7Ei0-mpciiMEWZC1u8qXTJ8twFO2vd3V6JaQBEII6zma5tCHCk9rruIO1N5cK2EAu-5htuh45xWVuCkbeUlrwO9dzWsXhNmeWyvE9wPS2O_vY5qeZZI5ebJHOZmOS8IT32PIK5DnE4O0pz727oa7J0HMbt9syDIuKqOGf4lUTN0c_XBtKHfdQn-BKH-7chJYwXlllgPfpF_gbI"/>
+<div class="absolute top-4 left-4 z-10 hidden md:block">
+<span class="bg-surface-dim text-on-surface-variant px-3 py-1 rounded-full text-label-sm font-label-sm shadow-sm backdrop-blur-sm">Đã hoàn thành</span>
+</div>
+</div>
+<div class="p-6 flex flex-col justify-between flex-grow">
+<div>
+<div class="flex justify-between items-start mb-2">
+<h3 class="text-headline-md font-headline-md text-text-main">Boutique City Central</h3>
+<span class="text-label-sm font-label-sm text-outline">Mã: #GS-88124</span>
+</div>
+<p class="text-body-sm font-body-sm text-on-surface-variant flex items-center gap-1 mb-4">
+<span class="material-symbols-outlined text-[16px]" data-icon="location_on">location_on</span>
+                                Ho Chi Minh City, Vietnam
+                            </p>
+<div class="grid grid-cols-2 gap-4 mb-4">
+<div>
+<span class="block text-label-sm font-label-sm text-outline">Nhận phòng</span>
+<span class="text-body-md font-body-md font-medium text-text-main">02 Thg 9, 2024</span>
+</div>
+<div>
+<span class="block text-label-sm font-label-sm text-outline">Trả phòng</span>
+<span class="text-body-md font-body-md font-medium text-text-main">05 Thg 9, 2024</span>
+</div>
+</div>
+</div>
+<div class="flex justify-between items-end border-t border-surface-container pt-4">
+<div>
+<span class="block text-label-sm font-label-sm text-outline">Tổng cộng</span>
+<span class="text-headline-md font-headline-md font-bold text-text-main">2.100.000 ₫</span>
+</div>
+<div class="flex gap-3">
+<button class="px-4 py-2 text-primary text-label-md font-label-md border border-primary rounded hover:bg-primary-fixed-dim transition-colors">Đánh giá</button>
+<button class="px-4 py-2 bg-surface-container text-on-surface-variant text-label-md font-label-md rounded hover:bg-surface-dim transition-colors">Chi tiết</button>
+</div>
+</div>
+</div>
+</article>
+<!-- Cancelled Booking Card -->
+<article class="bg-surface-container-lowest border border-outline-variant rounded-xl overflow-hidden hover:shadow-[0_4px_12px_rgba(0,0,0,0.08)] transition-shadow duration-300 flex flex-col md:flex-row opacity-75 grayscale-[0.3]">
+<div class="w-full md:w-1/3 h-48 md:h-auto relative">
+<img class="w-full h-full object-cover" data-alt="A serene landscape view of a mountain resort cabin hidden among pine trees with morning mist. The image has a slightly muted, desaturated color palette to indicate a past or unavailable state, yet maintains a high-quality travel aesthetic." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBKJk3vkCZ3ABVtr0GdyEkTG-STWqvsYvOVD0sI_tDfd8ZDLvYcGaaBldQ4uBkYP3nl2aT0KSQbNYnDujsz40cr1UxlJw7A3LDnNbDHU02vKjqnrmjD-Ided6ICx52jmZSq-Lc6I_wUkGzgLJTphyc-i5JVi8er8sWUnd1ZVMo_pyOZYnWYmmwD-b-TJo4VZ6iQ-72gia7tJ_0vcmqofXTDzaoFYa9TfORRIQtik-pfc3oDoeIQyi2pqAn5Agqr3cReN_nnI_zESq4u"/>
+<div class="absolute top-4 left-4 z-10">
+<span class="bg-error-container text-on-error-container px-3 py-1 rounded-full text-label-sm font-label-sm shadow-sm">Đã hủy</span>
+</div>
+</div>
+<div class="p-6 flex flex-col justify-between flex-grow">
+<div>
+<div class="flex justify-between items-start mb-2">
+<h3 class="text-headline-md font-headline-md text-text-main line-through decoration-outline">Mountain Retreat Pine</h3>
+<span class="text-label-sm font-label-sm text-outline">Mã: #GS-77401</span>
+</div>
+<p class="text-body-sm font-body-sm text-on-surface-variant flex items-center gap-1 mb-4">
+<span class="material-symbols-outlined text-[16px]" data-icon="location_on">location_on</span>
+                                Da Lat, Vietnam
+                            </p>
+<div class="grid grid-cols-2 gap-4 mb-4">
+<div>
+<span class="block text-label-sm font-label-sm text-outline">Nhận phòng</span>
+<span class="text-body-md font-body-md font-medium text-text-main">20 Thg 8, 2024</span>
+</div>
+<div>
+<span class="block text-label-sm font-label-sm text-outline">Trả phòng</span>
+<span class="text-body-md font-body-md font-medium text-text-main">22 Thg 8, 2024</span>
+</div>
+</div>
+</div>
+<div class="flex justify-between items-end border-t border-surface-container pt-4">
+<div>
+<span class="block text-label-sm font-label-sm text-outline">Đã hoàn tiền</span>
+<span class="text-headline-md font-headline-md font-bold text-text-main">1.800.000 ₫</span>
+</div>
+<div class="flex gap-3">
+<button class="px-4 py-2 text-on-surface-variant text-label-md font-label-md hover:underline transition-all">Xem chi tiết hủy</button>
+</div>
+</div>
+</div>
+</article>
+</div>
+</div>
+</main>
+<!-- Footer -->
+<footer class="w-full py-8 px-margin-mobile md:px-margin-desktop mt-auto flex flex-col md:flex-row justify-between items-center gap-4 border-t border-outline-variant bg-surface-container-highest dark:bg-inverse-surface">
+<div class="text-body-lg font-headline-md text-primary font-bold">GlobalStay</div>
+<div class="flex flex-wrap justify-center gap-6">
+<a class="text-on-surface-variant hover:text-primary hover:underline decoration-primary transition-colors duration-200 text-label-sm font-label-sm" href="#">About Us</a>
+<a class="text-on-surface-variant hover:text-primary hover:underline decoration-primary transition-colors duration-200 text-label-sm font-label-sm" href="#">Privacy Policy</a>
+<a class="text-on-surface-variant hover:text-primary hover:underline decoration-primary transition-colors duration-200 text-label-sm font-label-sm" href="#">Terms of Service</a>
+<a class="text-on-surface-variant hover:text-primary hover:underline decoration-primary transition-colors duration-200 text-label-sm font-label-sm" href="#">Partner With Us</a>
+<a class="text-on-surface-variant hover:text-primary hover:underline decoration-primary transition-colors duration-200 text-label-sm font-label-sm" href="#">Help Center</a>
+<a class="text-on-surface-variant hover:text-primary hover:underline decoration-primary transition-colors duration-200 text-label-sm font-label-sm" href="#">AWS Status</a>
+</div>
+<div class="text-body-sm font-body-sm text-on-surface dark:text-inverse-on-surface">
+            © 2024 GlobalStay Hospitality Group. All rights reserved.
+        </div>
+</footer>
+</body></html>

@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+
+<html lang="vi"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Xác Nhận Đặt Phòng - GlobalStay</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@600;700&amp;family=Inter:wght@400;500;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#0054b5",
+                        "surface-container-low": "#f3f3f3",
+                        "on-secondary-fixed-variant": "#5e4100",
+                        "error-container": "#ffdad6",
+                        "surface-container": "#eeeeee",
+                        "surface-dim": "#dadada",
+                        "text-main": "#2A2A2E",
+                        "primary-fixed-dim": "#adc6ff",
+                        "primary-fixed": "#d8e2ff",
+                        "inverse-primary": "#adc6ff",
+                        "highlight-gold": "#FFB700",
+                        "surface": "#f9f9f9",
+                        "on-error": "#ffffff",
+                        "secondary-fixed": "#ffdea9",
+                        "surface-variant": "#e2e2e2",
+                        "on-background": "#1a1c1c",
+                        "tertiary": "#3055a1",
+                        "surface-container-high": "#e8e8e8",
+                        "error": "#ba1a1a",
+                        "on-surface-variant": "#414754",
+                        "secondary": "#7d5800",
+                        "on-tertiary-container": "#f4f5ff",
+                        "surface-tint": "#005ac1",
+                        "success-green": "#008009",
+                        "surface-bright": "#f9f9f9",
+                        "inverse-surface": "#2f3131",
+                        "on-surface": "#1a1c1c",
+                        "tertiary-fixed-dim": "#b0c6ff",
+                        "tertiary-fixed": "#d9e2ff",
+                        "primary-container": "#006ce4",
+                        "outline-variant": "#c1c6d6",
+                        "on-secondary-container": "#6b4b00",
+                        "on-error-container": "#93000a",
+                        "surface-container-lowest": "#ffffff",
+                        "on-primary": "#ffffff",
+                        "inverse-on-surface": "#f1f1f1",
+                        "on-tertiary-fixed": "#001945",
+                        "on-secondary": "#ffffff",
+                        "on-primary-fixed-variant": "#004494",
+                        "tertiary-container": "#4b6ebb",
+                        "secondary-container": "#ffb700",
+                        "outline": "#727785",
+                        "secondary-fixed-dim": "#ffba26",
+                        "on-tertiary": "#ffffff",
+                        "on-primary-container": "#f4f5ff",
+                        "on-tertiary-fixed-variant": "#1a438e",
+                        "background": "#f9f9f9",
+                        "booking-blue": "#003580",
+                        "on-secondary-fixed": "#271900",
+                        "on-primary-fixed": "#001a41",
+                        "surface-container-highest": "#e2e2e2",
+                        "action-blue": "#006CE4"
+                    },
+                    borderRadius: {
+                        "DEFAULT": "0.125rem",
+                        "lg": "0.25rem",
+                        "xl": "0.5rem",
+                        "full": "0.75rem"
+                    },
+                    spacing: {
+                        "unit": "4px",
+                        "gutter": "24px",
+                        "max-width": "1280px",
+                        "margin-mobile": "16px",
+                        "margin-desktop": "64px"
+                    },
+                    fontFamily: {
+                        "body-md": ["Inter"],
+                        "body-sm": ["Inter"],
+                        "headline-lg-mobile": ["Hanken Grotesk"],
+                        "headline-lg": ["Hanken Grotesk"],
+                        "body-lg": ["Inter"],
+                        "display-lg": ["Hanken Grotesk"],
+                        "label-sm": ["Inter"],
+                        "label-md": ["Inter"],
+                        "headline-md": ["Hanken Grotesk"]
+                    },
+                    fontSize: {
+                        "body-md": ["16px", { "lineHeight": "24px", "fontWeight": "400" }],
+                        "body-sm": ["14px", { "lineHeight": "20px", "fontWeight": "400" }],
+                        "headline-lg-mobile": ["24px", { "lineHeight": "32px", "fontWeight": "700" }],
+                        "headline-lg": ["32px", { "lineHeight": "40px", "fontWeight": "700" }],
+                        "body-lg": ["18px", { "lineHeight": "28px", "fontWeight": "400" }],
+                        "display-lg": ["48px", { "lineHeight": "56px", "letterSpacing": "-0.02em", "fontWeight": "700" }],
+                        "label-sm": ["12px", { "lineHeight": "16px", "fontWeight": "500" }],
+                        "label-md": ["14px", { "lineHeight": "16px", "letterSpacing": "0.01em", "fontWeight": "600" }],
+                        "headline-md": ["24px", { "lineHeight": "32px", "fontWeight": "600" }]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        .print-btn { transition: all 0.2s ease; }
+        .print-btn:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(0,0,0,0.08); }
+    </style>
+</head>
+<body class="bg-background text-on-background font-body-md min-h-screen flex flex-col">
+<!-- TopNavBar (Suppressed due to Transactional Success Page Intent) -->
+<!-- Main Content -->
+<main class="flex-grow flex items-center justify-center p-margin-mobile md:p-margin-desktop">
+<div class="max-w-3xl w-full bg-surface-container-lowest rounded-xl shadow-sm border border-surface-variant overflow-hidden">
+<!-- Success Header -->
+<div class="bg-surface-tint text-on-primary p-8 text-center relative overflow-hidden">
+<div class="absolute inset-0 bg-booking-blue opacity-20"></div>
+<div class="relative z-10 flex flex-col items-center">
+<div class="w-16 h-16 bg-success-green rounded-full flex items-center justify-center mb-4 border-4 border-on-primary shadow-sm">
+<span class="material-symbols-outlined text-4xl text-on-primary" style="font-variation-settings: 'FILL' 1;">check</span>
+</div>
+<h1 class="text-headline-lg-mobile md:text-headline-lg font-headline-lg-mobile md:font-headline-lg text-on-primary mb-2">Đặt Phòng Thành Công!</h1>
+<p class="text-body-lg font-body-lg text-on-primary opacity-90">Cảm ơn bạn đã lựa chọn GlobalStay. Trải nghiệm tuyệt vời đang chờ đón bạn.</p>
+</div>
+</div>
+<!-- Booking ID -->
+<div class="px-8 py-6 border-b border-surface-variant flex flex-col sm:flex-row justify-between items-center bg-surface-container-low">
+<div>
+<span class="text-label-md font-label-md text-on-surface-variant uppercase tracking-wider block mb-1">Mã Đặt Phòng (Booking ID)</span>
+<span class="text-headline-md font-headline-md text-primary tracking-tight">GLB-8924-XYZ</span>
+</div>
+<div class="mt-4 sm:mt-0 flex gap-4">
+<button class="print-btn flex items-center gap-2 px-4 py-2 bg-surface-container-lowest text-primary border border-primary rounded-lg text-label-md font-label-md hover:bg-surface-container-low transition-colors">
+<span class="material-symbols-outlined">print</span> In Xác Nhận
+                    </button>
+</div>
+</div>
+<!-- Booking Summary -->
+<div class="p-8">
+<h2 class="text-headline-md font-headline-md text-on-surface mb-6 border-l-4 border-highlight-gold pl-3">Tóm Tắt Đặt Phòng</h2>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+<!-- Hotel Details -->
+<div class="flex flex-col gap-4">
+<div class="flex items-start gap-4">
+<div class="w-24 h-24 rounded-lg overflow-hidden shrink-0">
+<img class="w-full h-full object-cover" data-alt="A modern, luxurious hotel exterior at twilight, featuring expansive glass windows glowing with warm interior light. The architecture is sleek and corporate, situated in a bustling metropolitan area. The sky is a deep, clear indigo, providing high contrast. The image exudes premium quality, professionalism, and a high-end travel aesthetic, perfect for a modern booking platform." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCgLwcQxqCDJdrwJVemGnb8JaupTJJHwN3QNSz0AS6DWnsk5pfBGssvZsk-vCVCRo8zxXc02l3NnSNXGcoGK-nMDttX8HifvKBawmrHLISuQ2_HtCmLCsCH_KUbiKk1et1niuON-rV-epZv7PI8kh9eewInbJKPv9qsUXvDnNYUPqcumqN8wQ7A7jd5BbEsenEqLoF_SUWd70S0I8ksBg3uML7QeNM0n9FyY7LdjgucSKdtG2mewm8OzVHpKUe6ZHKGwZ4fmANvd8Pz"/>
+</div>
+<div>
+<h3 class="text-body-lg font-body-lg font-semibold text-on-surface mb-1">Grand Horizon Resort &amp; Spa</h3>
+<p class="text-body-sm font-body-sm text-on-surface-variant flex items-center gap-1 mb-2">
+<span class="material-symbols-outlined text-sm">location_on</span> 123 Ocean Drive, Da Nang, Vietnam
+                                </p>
+<span class="inline-flex items-center gap-1 px-2 py-1 bg-tertiary text-on-tertiary rounded text-label-sm font-label-sm">
+<span class="material-symbols-outlined text-xs" style="font-variation-settings: 'FILL' 1;">star</span> 4.8 Tuyệt vời
+                                </span>
+</div>
+</div>
+<!-- Stay Details -->
+<div class="grid grid-cols-2 gap-4 mt-2">
+<div class="bg-surface-container-low p-3 rounded-lg border border-surface-variant">
+<span class="text-label-sm font-label-sm text-on-surface-variant block mb-1">Nhận Phòng</span>
+<span class="text-body-md font-body-md font-semibold text-on-surface">15 Tháng 10, 2024</span>
+<span class="text-body-sm font-body-sm text-on-surface-variant block">Từ 14:00</span>
+</div>
+<div class="bg-surface-container-low p-3 rounded-lg border border-surface-variant">
+<span class="text-label-sm font-label-sm text-on-surface-variant block mb-1">Trả Phòng</span>
+<span class="text-body-md font-body-md font-semibold text-on-surface">18 Tháng 10, 2024</span>
+<span class="text-body-sm font-body-sm text-on-surface-variant block">Trước 12:00</span>
+</div>
+</div>
+</div>
+<!-- Guest & Payment Details -->
+<div class="flex flex-col justify-between">
+<div>
+<div class="flex items-center gap-3 mb-4">
+<span class="material-symbols-outlined text-primary bg-primary-fixed p-2 rounded-full">group</span>
+<div>
+<span class="text-label-md font-label-md text-on-surface-variant block">Khách</span>
+<span class="text-body-md font-body-md text-on-surface font-semibold">2 Người lớn, 1 Phòng Deluxe Hướng Biển</span>
+</div>
+</div>
+<div class="flex items-center gap-3 mb-6">
+<span class="material-symbols-outlined text-primary bg-primary-fixed p-2 rounded-full">person</span>
+<div>
+<span class="text-label-md font-label-md text-on-surface-variant block">Người Đặt</span>
+<span class="text-body-md font-body-md text-on-surface font-semibold">Nguyễn Văn A</span>
+<span class="text-body-sm font-body-sm text-on-surface-variant block">nguyenvana@email.com • +84 901 234 567</span>
+</div>
+</div>
+</div>
+<div class="bg-surface p-4 rounded-lg border border-surface-variant">
+<div class="flex justify-between items-center mb-2">
+<span class="text-body-md font-body-md text-on-surface">Tổng thanh toán</span>
+<span class="text-headline-md font-headline-md font-bold text-primary">8,500,000 VND</span>
+</div>
+<div class="flex items-center gap-2 text-success-green">
+<span class="material-symbols-outlined text-sm" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+<span class="text-label-sm font-label-sm">Đã thanh toán qua Thẻ Tín Dụng (**** 1234)</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Support & Actions -->
+<div class="bg-surface-container-high px-8 py-6 flex flex-col md:flex-row justify-between items-center gap-6 border-t border-surface-variant">
+<div class="flex items-center gap-4">
+<div class="bg-surface-container-lowest p-3 rounded-full border border-surface-variant text-primary">
+<span class="material-symbols-outlined">support_agent</span>
+</div>
+<div>
+<span class="text-body-md font-body-md font-semibold text-on-surface block">Cần hỗ trợ?</span>
+<span class="text-body-sm font-body-sm text-on-surface-variant">Liên hệ <a class="text-primary hover:underline font-medium" href="#">Trung tâm trợ giúp</a> hoặc gọi 1800-1234</span>
+</div>
+</div>
+<div class="w-full md:w-auto">
+<a class="inline-block w-full md:w-auto text-center px-6 py-3 bg-action-blue text-on-primary rounded-lg text-label-md font-label-md font-semibold hover:bg-primary-container transition-colors shadow-sm" href="#">
+                        Về Trang Chủ
+                    </a>
+</div>
+</div>
+</div>
+</main>
+<!-- Footer (Suppressed due to Transactional Success Page Intent, keeping focus on the confirmation) -->
+</body></html>
