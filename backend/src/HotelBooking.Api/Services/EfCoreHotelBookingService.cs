@@ -8,8 +8,6 @@ namespace HotelBooking.Api.Services;
 
 public sealed class EfCoreHotelBookingService(HotelBookingDbContext dbContext) : IHotelBookingService
 {
-    private const string ConfirmedStatus = "Confirmed";
-
     public HotelDetails? GetHotelById(int hotelId)
     {
         return dbContext.Hotels
@@ -68,7 +66,8 @@ public sealed class EfCoreHotelBookingService(HotelBookingDbContext dbContext) :
                 Hotel = roomType.Hotel!,
                 BookedRooms = dbContext.Bookings.Count(booking =>
                     booking.RoomTypeId == roomType.Id
-                    && booking.Status == ConfirmedStatus
+                    && (booking.Status == BookingStatuses.PendingPayment
+                        || booking.Status == BookingStatuses.Confirmed)
                     && booking.CheckIn < checkOut
                     && booking.CheckOut > checkIn)
             })
@@ -95,7 +94,7 @@ public sealed class EfCoreHotelBookingService(HotelBookingDbContext dbContext) :
             .ToArray();
     }
 
-    public CreateBookingResult CreateBooking(CreateBookingRequest request)
+    public CreateBookingResult CreateBooking(CreateBookingRequest request, int? userId = null)
     {
         if (request.CheckOut <= request.CheckIn)
         {
@@ -124,7 +123,8 @@ public sealed class EfCoreHotelBookingService(HotelBookingDbContext dbContext) :
 
         var bookedRooms = dbContext.Bookings.Count(booking =>
             booking.RoomTypeId == roomType.Id
-            && booking.Status == ConfirmedStatus
+            && (booking.Status == BookingStatuses.PendingPayment
+                || booking.Status == BookingStatuses.Confirmed)
             && booking.CheckIn < request.CheckOut
             && booking.CheckOut > request.CheckIn);
 
@@ -140,13 +140,15 @@ public sealed class EfCoreHotelBookingService(HotelBookingDbContext dbContext) :
         {
             BookingCode = CreateBookingCode(request.CheckIn),
             RoomTypeId = roomType.Id,
+            UserId = userId,
             GuestName = request.GuestName.Trim(),
             GuestEmail = request.GuestEmail.Trim(),
             CheckIn = request.CheckIn,
             CheckOut = request.CheckOut,
             Guests = request.Guests,
             TotalPrice = nights * roomType.PricePerNight,
-            Status = ConfirmedStatus,
+            Status = BookingStatuses.PendingPayment,
+            PaymentStatus = PaymentStatuses.Pending,
             CreatedAt = DateTimeOffset.UtcNow
         };
 
@@ -172,6 +174,56 @@ public sealed class EfCoreHotelBookingService(HotelBookingDbContext dbContext) :
         return booking?.RoomType is null ? null : ToConfirmation(booking, booking.RoomType);
     }
 
+    public IReadOnlyList<BookingConfirmation> GetBookingsForUser(int userId)
+    {
+        return dbContext.Bookings
+            .AsNoTracking()
+            .Include(item => item.RoomType)
+            .ThenInclude(roomType => roomType!.Hotel)
+            .Where(item => item.UserId == userId)
+            .OrderByDescending(item => item.CreatedAt)
+            .ToArray()
+            .Where(item => item.RoomType is not null)
+            .Select(item => ToConfirmation(item, item.RoomType!))
+            .ToArray();
+    }
+
+    public BookingConfirmation? ConfirmMockPayment(string bookingCode, int userId, bool isAdmin = false)
+    {
+        var booking = FindMutableBooking(bookingCode);
+        if (booking?.RoomType is null || (!isAdmin && booking.UserId != userId))
+        {
+            return null;
+        }
+
+        if (booking.Status == BookingStatuses.Cancelled)
+        {
+            return null;
+        }
+
+        booking.Status = BookingStatuses.Confirmed;
+        booking.PaymentStatus = PaymentStatuses.Paid;
+        booking.PaidAt = DateTimeOffset.UtcNow;
+        dbContext.SaveChanges();
+
+        return ToConfirmation(booking, booking.RoomType);
+    }
+
+    public BookingConfirmation? CancelBooking(string bookingCode, int userId, bool isAdmin = false)
+    {
+        var booking = FindMutableBooking(bookingCode);
+        if (booking?.RoomType is null || (!isAdmin && booking.UserId != userId))
+        {
+            return null;
+        }
+
+        booking.Status = BookingStatuses.Cancelled;
+        booking.PaymentStatus = PaymentStatuses.Cancelled;
+        dbContext.SaveChanges();
+
+        return ToConfirmation(booking, booking.RoomType);
+    }
+
     private string CreateBookingCode(DateOnly checkIn)
     {
         var datePart = checkIn.ToString("yyyyMMdd", CultureInfo.InvariantCulture);
@@ -194,11 +246,25 @@ public sealed class EfCoreHotelBookingService(HotelBookingDbContext dbContext) :
             Nights: CalculateNights(booking.CheckIn, booking.CheckOut),
             Guests: booking.Guests,
             TotalPrice: booking.TotalPrice,
-            Status: booking.Status);
+            Status: booking.Status,
+            PaymentStatus: booking.PaymentStatus);
     }
 
     private static int CalculateNights(DateOnly checkIn, DateOnly checkOut)
     {
         return checkOut.DayNumber - checkIn.DayNumber;
+    }
+
+    private Booking? FindMutableBooking(string bookingCode)
+    {
+        if (string.IsNullOrWhiteSpace(bookingCode))
+        {
+            return null;
+        }
+
+        return dbContext.Bookings
+            .Include(item => item.RoomType)
+            .ThenInclude(roomType => roomType!.Hotel)
+            .SingleOrDefault(item => item.BookingCode == bookingCode.Trim());
     }
 }

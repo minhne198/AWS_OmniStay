@@ -10,6 +10,10 @@ public sealed class Booking
 
     public RoomType? RoomType { get; set; }
 
+    public int? UserId { get; set; }
+
+    public User? User { get; set; }
+
     public string GuestName { get; set; } = string.Empty;
 
     public string GuestEmail { get; set; } = string.Empty;
@@ -23,6 +27,10 @@ public sealed class Booking
     public decimal TotalPrice { get; set; }
 
     public string Status { get; set; } = string.Empty;
+
+    public string PaymentStatus { get; set; } = string.Empty;
+
+    public DateTimeOffset? PaidAt { get; set; }
 
     public DateTimeOffset CreatedAt { get; set; }
 }

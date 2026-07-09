@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="vi">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>OmniStay - Booking của tôi</title>
+    <link rel="stylesheet" href="../src/styles.css?v=20260708-multipage" />
+  </head>
+  <body>
+    <header class="site-header">
+      <a class="brand" href="home.html">OmniStay</a>
+      <nav class="site-nav" aria-label="Điều hướng chính">
+        <a data-nav="home" href="home.html">Trang chủ</a>
+        <a data-nav="search" href="search.html">Tìm phòng</a>
+        <a data-nav="bookings" href="booking-lookup.html">Booking của tôi</a>
+        <a data-nav="status" href="system-status.html">System status</a>
+        <a data-nav="admin" data-nav-admin href="admin.html" hidden>Admin</a>
+      </nav>
+      <div class="header-actions">
+        <span class="session-pill" data-session-name>...</span>
+        <button class="ghost-button on-dark small" type="button" data-logout>Đăng xuất</button>
+      </div>
+    </header>
+
+    <main class="page-shell">
+      <div class="page-title">
+        <div>
+          <p class="eyebrow">Tài khoản</p>
+          <h1>Booking của tôi</h1>
+          <p>Xem lại booking đã tạo, thanh toán giả lập hoặc hủy booking.</p>
+        </div>
+      </div>
+
+      <div class="split-layout">
+        <aside class="panel sticky-panel">
+          <form id="lookupForm" class="form-panel">
+            <div>
+              <p class="eyebrow">Tra cứu nhanh</p>
+              <h2>Nhập mã booking</h2>
+            </div>
+            <label class="field">
+              Mã booking
+              <input id="bookingCode" placeholder="VD: OMNI-..." />
+            </label>
+            <button class="primary-button" type="submit">Tra cứu</button>
+          </form>
+        </aside>
+
+        <section class="panel">
+          <div class="section-head">
+            <div>
+              <p class="eyebrow">Danh sách</p>
+              <h2>Các booking đã tạo</h2>
+            </div>
+          </div>
+          <div id="myBookingsList" class="message muted">Đang tải booking...</div>
+        </section>
+      </div>
+    </main>
+
+    <script src="./config.js?v=20260708-multipage"></script>
+    <script src="../src/api.js?v=20260708-multipage"></script>
+    <script src="../src/session.js?v=20260708-multipage"></script>
+    <script src="../src/booking-lookup.js?v=20260708-multipage"></script>
+  </body>
+</html>

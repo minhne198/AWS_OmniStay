@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="vi">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>OmniStay - Xác nhận booking</title>
+    <link rel="stylesheet" href="../src/styles.css?v=20260708-multipage" />
+  </head>
+  <body>
+    <header class="site-header">
+      <a class="brand" href="home.html">OmniStay</a>
+      <nav class="site-nav" aria-label="Điều hướng chính">
+        <a data-nav="home" href="home.html">Trang chủ</a>
+        <a data-nav="search" href="search.html">Tìm phòng</a>
+        <a data-nav="bookings" href="booking-lookup.html">Booking của tôi</a>
+        <a data-nav="status" href="system-status.html">System status</a>
+        <a data-nav="admin" data-nav-admin href="admin.html" hidden>Admin</a>
+      </nav>
+      <div class="header-actions">
+        <span class="session-pill" data-session-name>...</span>
+        <button class="ghost-button on-dark small" type="button" data-logout>Đăng xuất</button>
+      </div>
+    </header>
+
+    <main class="page-shell">
+      <div class="page-title">
+        <div>
+          <p class="eyebrow">Booking</p>
+          <h1>Xác nhận đặt phòng</h1>
+          <p>Booking mới sẽ ở trạng thái chờ thanh toán cho đến khi bạn bấm thanh toán giả lập.</p>
+        </div>
+      </div>
+
+      <section id="confirmationPanel" class="message muted">Đang tải booking...</section>
+    </main>
+
+    <script src="./config.js?v=20260708-multipage"></script>
+    <script src="../src/api.js?v=20260708-multipage"></script>
+    <script src="../src/session.js?v=20260708-multipage"></script>
+    <script src="../src/booking-confirmation.js?v=20260708-multipage"></script>
+  </body>
+</html>

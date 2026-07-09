@@ -73,5 +73,6 @@ public class BookingPersistenceTests
         int Nights,
         int Guests,
         decimal TotalPrice,
-        string Status);
+        string Status,
+        string PaymentStatus);
 }

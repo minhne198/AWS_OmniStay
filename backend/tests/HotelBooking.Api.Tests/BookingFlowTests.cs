@@ -51,7 +51,8 @@ public class BookingFlowTests
         var created = await createResponse.Content.ReadFromJsonAsync<BookingConfirmation>();
         Assert.NotNull(created);
         Assert.StartsWith("BK", created.BookingCode);
-        Assert.Equal("Confirmed", created.Status);
+        Assert.Equal("PendingPayment", created.Status);
+        Assert.Equal("Pending", created.PaymentStatus);
         Assert.Equal(3_600_000m, created.TotalPrice);
 
         using var getResponse = await client.GetAsync(createResponse.Headers.Location);
@@ -113,5 +114,6 @@ public class BookingFlowTests
         int Nights,
         int Guests,
         decimal TotalPrice,
-        string Status);
+        string Status,
+        string PaymentStatus);
 }

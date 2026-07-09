@@ -10,4 +10,5 @@ public sealed record BookingConfirmation(
     int Nights,
     int Guests,
     decimal TotalPrice,
-    string Status);
+    string Status,
+    string PaymentStatus);

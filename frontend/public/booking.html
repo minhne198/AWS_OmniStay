@@ -1,0 +1,69 @@
+<!doctype html>
+<html lang="vi">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>OmniStay - Đặt phòng</title>
+    <link rel="stylesheet" href="../src/styles.css?v=20260708-multipage" />
+  </head>
+  <body>
+    <header class="site-header">
+      <a class="brand" href="home.html">OmniStay</a>
+      <nav class="site-nav" aria-label="Điều hướng chính">
+        <a data-nav="home" href="home.html">Trang chủ</a>
+        <a data-nav="search" href="search.html">Tìm phòng</a>
+        <a data-nav="bookings" href="booking-lookup.html">Booking của tôi</a>
+        <a data-nav="status" href="system-status.html">System status</a>
+        <a data-nav="admin" data-nav-admin href="admin.html" hidden>Admin</a>
+      </nav>
+      <div class="header-actions">
+        <span class="session-pill" data-session-name>...</span>
+        <button class="ghost-button on-dark small" type="button" data-logout>Đăng xuất</button>
+      </div>
+    </header>
+
+    <main class="page-shell">
+      <div class="page-title">
+        <div>
+          <p class="eyebrow">Checkout</p>
+          <h1>Hoàn tất đặt phòng</h1>
+          <p>Kiểm tra thông tin khách và giữ phòng. Thanh toán giả lập nằm ở bước tiếp theo.</p>
+        </div>
+      </div>
+
+      <div class="checkout-grid">
+        <section>
+          <div id="bookingSummary" class="message muted">Đang tải thông tin phòng...</div>
+        </section>
+
+        <aside class="panel sticky-panel">
+          <form id="bookingForm" class="form-panel" hidden>
+            <div>
+              <p class="eyebrow">Thông tin khách</p>
+              <h2>Người đặt phòng</h2>
+            </div>
+            <label class="field">
+              Họ tên
+              <input id="guestName" autocomplete="name" required />
+            </label>
+            <label class="field">
+              Email
+              <input id="guestEmail" type="email" autocomplete="email" required />
+            </label>
+            <label class="field">
+              Số điện thoại
+              <input id="guestPhone" type="tel" placeholder="0912 345 678" />
+            </label>
+            <button class="primary-button" type="submit">Giữ phòng</button>
+          </form>
+          <div id="bookingMessage" class="message muted" hidden></div>
+        </aside>
+      </div>
+    </main>
+
+    <script src="./config.js?v=20260708-multipage"></script>
+    <script src="../src/api.js?v=20260708-multipage"></script>
+    <script src="../src/session.js?v=20260708-multipage"></script>
+    <script src="../src/booking.js?v=20260708-multipage"></script>
+  </body>
+</html>

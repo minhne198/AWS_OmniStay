@@ -46,9 +46,9 @@ public sealed class CachedHotelBookingService(
         return results;
     }
 
-    public CreateBookingResult CreateBooking(CreateBookingRequest request)
+    public CreateBookingResult CreateBooking(CreateBookingRequest request, int? userId = null)
     {
-        var result = inner.CreateBooking(request);
+        var result = inner.CreateBooking(request, userId);
         if (result.Confirmation is not null)
         {
             hotelSearchCache.ClearSearchResults();
@@ -60,5 +60,32 @@ public sealed class CachedHotelBookingService(
     public BookingConfirmation? GetBookingByCode(string bookingCode)
     {
         return inner.GetBookingByCode(bookingCode);
+    }
+
+    public IReadOnlyList<BookingConfirmation> GetBookingsForUser(int userId)
+    {
+        return inner.GetBookingsForUser(userId);
+    }
+
+    public BookingConfirmation? ConfirmMockPayment(string bookingCode, int userId, bool isAdmin = false)
+    {
+        var result = inner.ConfirmMockPayment(bookingCode, userId, isAdmin);
+        if (result is not null)
+        {
+            hotelSearchCache.ClearSearchResults();
+        }
+
+        return result;
+    }
+
+    public BookingConfirmation? CancelBooking(string bookingCode, int userId, bool isAdmin = false)
+    {
+        var result = inner.CancelBooking(bookingCode, userId, isAdmin);
+        if (result is not null)
+        {
+            hotelSearchCache.ClearSearchResults();
+        }
+
+        return result;
     }
 }

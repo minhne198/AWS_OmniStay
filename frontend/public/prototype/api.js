@@ -122,26 +122,6 @@
     getAdminBookings() {
       return request('/admin/bookings');
     },
-    getAdminUsers() {
-      return request('/admin/users');
-    },
-    createAdminUser(payload) {
-      return request('/admin/users', {
-        method: 'POST',
-        body: JSON.stringify(payload)
-      });
-    },
-    updateAdminUser(userId, payload) {
-      return request(`/admin/users/${encodeURIComponent(userId)}`, {
-        method: 'PUT',
-        body: JSON.stringify(payload)
-      });
-    },
-    deleteAdminUser(userId) {
-      return request(`/admin/users/${encodeURIComponent(userId)}`, {
-        method: 'DELETE'
-      });
-    },
     getAdminHotels() {
       return request('/admin/hotels');
     },

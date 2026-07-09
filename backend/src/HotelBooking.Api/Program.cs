@@ -1,7 +1,9 @@
 using HotelBooking.Api.Data;
 using HotelBooking.Api.Infrastructure;
 using HotelBooking.Api.Services;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 
 const string LocalFrontendCorsPolicy = "LocalFrontend";
 const string InMemoryDatabaseProvider = "InMemory";
@@ -13,6 +15,21 @@ var builder = WebApplication.CreateBuilder(args);
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddOpenApi();
 builder.Services.AddControllers();
+builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+    .AddJwtBearer(options =>
+    {
+        options.TokenValidationParameters = new TokenValidationParameters
+        {
+            ValidateIssuer = true,
+            ValidateAudience = true,
+            ValidateLifetime = true,
+            ValidateIssuerSigningKey = true,
+            ValidIssuer = builder.Configuration["Jwt:Issuer"] ?? "AWSOmniStay",
+            ValidAudience = builder.Configuration["Jwt:Audience"] ?? "AWSOmniStay.Web",
+            IssuerSigningKey = JwtTokenService.CreateSecurityKey(builder.Configuration)
+        };
+    });
+builder.Services.AddAuthorization();
 builder.Services.AddCors(options =>
 {
     var allowedOrigins = builder.Configuration.GetSection("Cors:AllowedOrigins").Get<string[]>()
@@ -54,6 +71,8 @@ builder.Services.AddDbContext<HotelBookingDbContext>(options =>
 });
 builder.Services.AddSingleton<RedisConnectionFactory>();
 builder.Services.AddSingleton<IHotelSearchCache, RedisHotelSearchCache>();
+builder.Services.AddSingleton<PasswordService>();
+builder.Services.AddSingleton<JwtTokenService>();
 builder.Services.AddScoped<EfCoreHotelBookingService>();
 builder.Services.AddScoped<IHotelBookingService, CachedHotelBookingService>();
 
@@ -64,6 +83,8 @@ using (var scope = app.Services.CreateScope())
     var dbContext = scope.ServiceProvider.GetRequiredService<HotelBookingDbContext>();
     dbContext.Database.EnsureCreated();
 }
+
+AdminUserSeeder.EnsureSeeded(app.Services, app.Configuration);
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
@@ -95,6 +116,8 @@ app.MapGet("/health/aws", (
     .WithName("AwsRuntimeStatus");
 
 app.UseCors(LocalFrontendCorsPolicy);
+app.UseAuthentication();
+app.UseAuthorization();
 app.MapControllers();
 
 app.Run();

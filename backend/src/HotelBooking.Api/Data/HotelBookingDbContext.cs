@@ -11,8 +11,20 @@ public sealed class HotelBookingDbContext(DbContextOptions<HotelBookingDbContext
 
     public DbSet<Booking> Bookings => Set<Booking>();
 
+    public DbSet<User> Users => Set<User>();
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
+        modelBuilder.Entity<User>(entity =>
+        {
+            entity.HasKey(user => user.Id);
+            entity.Property(user => user.FullName).HasMaxLength(200).IsRequired();
+            entity.Property(user => user.Email).HasMaxLength(200).IsRequired();
+            entity.Property(user => user.PasswordHash).HasMaxLength(500).IsRequired();
+            entity.Property(user => user.Role).HasMaxLength(30).IsRequired();
+            entity.HasIndex(user => user.Email).IsUnique();
+        });
+
         modelBuilder.Entity<Hotel>(entity =>
         {
             entity.HasKey(hotel => hotel.Id);
@@ -44,6 +56,7 @@ public sealed class HotelBookingDbContext(DbContextOptions<HotelBookingDbContext
             entity.Property(booking => booking.GuestName).HasMaxLength(200).IsRequired();
             entity.Property(booking => booking.GuestEmail).HasMaxLength(200).IsRequired();
             entity.Property(booking => booking.Status).HasMaxLength(30).IsRequired();
+            entity.Property(booking => booking.PaymentStatus).HasMaxLength(30).IsRequired();
             entity.Property(booking => booking.TotalPrice).HasPrecision(18, 2);
             entity.HasIndex(booking => booking.BookingCode).IsUnique();
             entity.HasIndex(booking => new { booking.RoomTypeId, booking.CheckIn, booking.CheckOut });
@@ -51,6 +64,10 @@ public sealed class HotelBookingDbContext(DbContextOptions<HotelBookingDbContext
                 .WithMany(roomType => roomType.Bookings)
                 .HasForeignKey(booking => booking.RoomTypeId)
                 .OnDelete(DeleteBehavior.Restrict);
+            entity.HasOne(booking => booking.User)
+                .WithMany(user => user.Bookings)
+                .HasForeignKey(booking => booking.UserId)
+                .OnDelete(DeleteBehavior.SetNull);
         });
 
         modelBuilder.Entity<Hotel>().HasData(HotelBookingSeedData.Hotels);

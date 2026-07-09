@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="vi">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>OmniStay - System status</title>
+    <link rel="stylesheet" href="../src/styles.css?v=20260708-multipage" />
+  </head>
+  <body>
+    <header class="site-header">
+      <a class="brand" href="home.html">OmniStay</a>
+      <nav class="site-nav" aria-label="Điều hướng chính">
+        <a data-nav="home" href="home.html">Trang chủ</a>
+        <a data-nav="search" href="search.html">Tìm phòng</a>
+        <a data-nav="bookings" href="booking-lookup.html">Booking của tôi</a>
+        <a data-nav="status" href="system-status.html">System status</a>
+        <a data-nav="admin" data-nav-admin href="admin.html" hidden>Admin</a>
+      </nav>
+      <div class="header-actions">
+        <span class="session-pill" data-session-name>...</span>
+        <button class="ghost-button on-dark small" type="button" data-logout>Đăng xuất</button>
+      </div>
+    </header>
+
+    <main class="page-shell">
+      <div class="page-title">
+        <div>
+          <p class="eyebrow">AWS runtime</p>
+          <h1>System status</h1>
+          <p>Thông tin runtime được đọc trực tiếp từ backend health endpoint.</p>
+        </div>
+        <button id="refreshStatus" class="primary-button" type="button">Kiểm tra lại</button>
+      </div>
+
+      <section id="statusPanel" class="message muted">Đang kiểm tra runtime...</section>
+    </main>
+
+    <script src="./config.js?v=20260708-multipage"></script>
+    <script src="../src/api.js?v=20260708-multipage"></script>
+    <script src="../src/session.js?v=20260708-multipage"></script>
+    <script src="../src/system-status.js?v=20260708-multipage"></script>
+  </body>
+</html>

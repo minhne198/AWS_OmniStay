@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="vi">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>OmniStay - Chi tiết khách sạn</title>
+    <link rel="stylesheet" href="../src/styles.css?v=20260708-multipage" />
+  </head>
+  <body>
+    <header class="site-header">
+      <a class="brand" href="home.html">OmniStay</a>
+      <nav class="site-nav" aria-label="Điều hướng chính">
+        <a data-nav="home" href="home.html">Trang chủ</a>
+        <a data-nav="search" href="search.html">Tìm phòng</a>
+        <a data-nav="bookings" href="booking-lookup.html">Booking của tôi</a>
+        <a data-nav="status" href="system-status.html">System status</a>
+        <a data-nav="admin" data-nav-admin href="admin.html" hidden>Admin</a>
+      </nav>
+      <div class="header-actions">
+        <span class="session-pill" data-session-name>...</span>
+        <button class="ghost-button on-dark small" type="button" data-logout>Đăng xuất</button>
+      </div>
+    </header>
+
+    <main class="page-shell">
+      <div id="hotelHero" class="message muted">Đang tải khách sạn...</div>
+
+      <div class="detail-layout">
+        <section class="panel" aria-label="Danh sách phòng">
+          <div class="section-head">
+            <div>
+              <p class="eyebrow">Loại phòng</p>
+              <h2>Chọn phòng</h2>
+            </div>
+            <a class="ghost-button as-link" href="search.html">Quay lại tìm kiếm</a>
+          </div>
+          <div id="roomsList" class="message muted">Đang tải phòng...</div>
+        </section>
+
+        <aside id="bookingCta" class="booking-callout sticky-panel">
+          <p class="eyebrow">Đặt phòng</p>
+          <h2>Chọn một loại phòng</h2>
+          <p>Thông tin đặt phòng sẽ hiện ở đây.</p>
+        </aside>
+      </div>
+    </main>
+
+    <script src="./config.js?v=20260708-multipage"></script>
+    <script src="../src/api.js?v=20260708-multipage"></script>
+    <script src="../src/session.js?v=20260708-multipage"></script>
+    <script src="../src/hotel-detail.js?v=20260708-multipage"></script>
+  </body>
+</html>

@@ -5,6 +5,8 @@ Thumbs.db
 .vscode/
 *.swp
 *.swo
+.codex-*.log
+.omc/
 
 # Local environment and secrets
 .env
@@ -20,6 +22,7 @@ secrets.json
 # .NET
 bin/
 obj/
+NuGet/
 TestResults/
 *.user
 *.suo

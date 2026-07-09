@@ -1,6 +1,9 @@
 using HotelBooking.Api.Contracts;
+using HotelBooking.Api.Models;
 using HotelBooking.Api.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 
 namespace HotelBooking.Api.Controllers;
 
@@ -15,7 +18,7 @@ public sealed class BookingsController(IHotelBookingService hotelBookingService)
     [ProducesResponseType(StatusCodes.Status409Conflict)]
     public ActionResult<BookingConfirmation> Create(CreateBookingRequest request)
     {
-        var result = hotelBookingService.CreateBooking(request);
+        var result = hotelBookingService.CreateBooking(request, OptionalUserId());
         if (result.Confirmation is not null)
         {
             return CreatedAtAction(
@@ -44,5 +47,64 @@ public sealed class BookingsController(IHotelBookingService hotelBookingService)
         }
 
         return Ok(booking);
+    }
+
+    [Authorize]
+    [HttpGet("my")]
+    [ProducesResponseType<IReadOnlyList<BookingConfirmation>>(StatusCodes.Status200OK)]
+    public ActionResult<IReadOnlyList<BookingConfirmation>> GetMyBookings()
+    {
+        return Ok(hotelBookingService.GetBookingsForUser(CurrentUserId()));
+    }
+
+    [Authorize]
+    [HttpPost("{code}/pay")]
+    [ProducesResponseType<BookingConfirmation>(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public ActionResult<BookingConfirmation> Pay(string code, MockPaymentRequest request)
+    {
+        _ = request.PaymentMethod;
+
+        var booking = hotelBookingService.ConfirmMockPayment(
+            code,
+            CurrentUserId(),
+            User.IsInRole(UserRoles.Admin));
+
+        if (booking is null)
+        {
+            return NotFound(new { error = "Booking was not found." });
+        }
+
+        return Ok(booking);
+    }
+
+    [Authorize]
+    [HttpDelete("{code}")]
+    [ProducesResponseType<BookingConfirmation>(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public ActionResult<BookingConfirmation> Cancel(string code)
+    {
+        var booking = hotelBookingService.CancelBooking(
+            code,
+            CurrentUserId(),
+            User.IsInRole(UserRoles.Admin));
+
+        if (booking is null)
+        {
+            return NotFound(new { error = "Booking was not found." });
+        }
+
+        return Ok(booking);
+    }
+
+    private int? OptionalUserId()
+    {
+        var value = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        return int.TryParse(value, out var userId) ? userId : null;
+    }
+
+    private int CurrentUserId()
+    {
+        return int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier) ?? "0");
     }
 }

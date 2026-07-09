@@ -14,7 +14,13 @@ public interface IHotelBookingService
         DateOnly checkOut,
         int guests);
 
-    CreateBookingResult CreateBooking(CreateBookingRequest request);
+    CreateBookingResult CreateBooking(CreateBookingRequest request, int? userId = null);
 
     BookingConfirmation? GetBookingByCode(string bookingCode);
+
+    IReadOnlyList<BookingConfirmation> GetBookingsForUser(int userId);
+
+    BookingConfirmation? ConfirmMockPayment(string bookingCode, int userId, bool isAdmin = false);
+
+    BookingConfirmation? CancelBooking(string bookingCode, int userId, bool isAdmin = false);
 }
