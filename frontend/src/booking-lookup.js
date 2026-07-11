@@ -21,7 +21,7 @@
   });
 
   async function loadMyBookings() {
-    ui.renderMessage(list, 'Dang tai booking cua ban...', 'muted');
+    ui.renderMessage(list, 'Đang tải booking của bạn...', 'muted');
 
     try {
       const bookings = await api.getMyBookings();
@@ -33,24 +33,24 @@
 
   function renderBookings(bookings) {
     if (!bookings.length) {
-      ui.renderMessage(list, 'Tai khoan nay chua co booking.', 'muted');
+      ui.renderMessage(list, 'Tài khoản này chưa có booking.', 'muted');
       return;
     }
 
-    list.className = 'booking-list';
+    list.className = 'space-y-4';
     list.hidden = false;
     list.innerHTML = bookings.map((booking) => `
-      <article class="booking-row">
-        <div>
-          <p class="eyebrow">${ui.escapeHtml(booking.bookingCode)}</p>
-          <h3>${ui.escapeHtml(booking.hotelName)}</h3>
-          <p>${ui.escapeHtml(booking.roomTypeName)} · ${ui.formatDate(booking.checkIn)} - ${ui.formatDate(booking.checkOut)}</p>
-          <p>${ui.formatCurrency(booking.totalPrice)} · <span class="pill ${ui.statusClass(booking.paymentStatus)}">${ui.statusLabel(booking.paymentStatus)}</span></p>
+      <article class="bg-surface-container-low border border-outline-variant rounded-xl p-5 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+        <div class="min-w-0">
+          <p class="text-label-sm font-label-sm text-outline uppercase tracking-wider mb-1">${ui.escapeHtml(booking.bookingCode)}</p>
+          <h3 class="text-headline-md font-headline-md text-on-surface">${ui.escapeHtml(booking.hotelName)}</h3>
+          <p class="text-body-md text-on-surface-variant mt-1">${ui.escapeHtml(booking.roomTypeName)} · ${ui.formatDate(booking.checkIn)} - ${ui.formatDate(booking.checkOut)}</p>
+          <p class="text-body-md text-on-surface-variant mt-2">${ui.formatCurrency(booking.totalPrice)} · <span class="px-2 py-1 rounded-full text-label-sm font-label-sm ${statusToneClass(booking.paymentStatus)}">${ui.statusLabel(booking.paymentStatus)}</span></p>
         </div>
-        <div class="row-actions">
-          <a class="ghost-button as-link" href="booking-confirmation.html?code=${encodeURIComponent(booking.bookingCode)}">Chi tiet</a>
-          ${booking.paymentStatus === 'Pending' ? `<button class="primary-button small" type="button" data-pay="${ui.escapeHtml(booking.bookingCode)}">Thanh toan</button>` : ''}
-          ${booking.status !== 'Cancelled' ? `<button class="secondary-button small" type="button" data-cancel="${ui.escapeHtml(booking.bookingCode)}">Huy</button>` : ''}
+        <div class="flex flex-wrap gap-2 md:justify-end">
+          <a class="bg-surface-container-high hover:bg-surface-container-highest text-on-surface font-label-md text-label-md px-4 py-2 rounded-lg transition-colors" href="booking-confirmation.html?code=${encodeURIComponent(booking.bookingCode)}">Chi tiết</a>
+          ${booking.paymentStatus === 'Pending' ? `<button class="bg-action-blue hover:bg-primary-container text-white font-label-md text-label-md px-4 py-2 rounded-lg transition-colors" type="button" data-pay="${ui.escapeHtml(booking.bookingCode)}">Thanh toán</button>` : ''}
+          ${booking.status !== 'Cancelled' && booking.canCancel !== false ? `<button class="bg-error-container hover:bg-error text-error hover:text-white font-label-md text-label-md px-4 py-2 rounded-lg transition-colors" type="button" data-cancel="${ui.escapeHtml(booking.bookingCode)}">Hủy</button>` : ''}
         </div>
       </article>
     `).join('');
@@ -60,17 +60,36 @@
     });
 
     list.querySelectorAll('[data-cancel]').forEach((button) => {
-      button.addEventListener('click', () => updateBooking(() => api.cancelBooking(button.dataset.cancel)));
+      button.addEventListener('click', () => {
+        const bookingCode = button.dataset.cancel;
+        const confirmed = window.confirm(`Bạn có chắc muốn hủy booking ${bookingCode}? Nếu booking đã thanh toán, hệ thống sẽ hoàn tiền theo quy định.`);
+        if (!confirmed) {
+          return;
+        }
+
+        updateBooking(() => api.cancelBooking(bookingCode));
+      });
     });
   }
 
   async function updateBooking(action) {
     try {
       await action();
+      api.setUser(await api.me());
       await loadMyBookings();
     } catch (error) {
       ui.renderMessage(list, error.message, 'error');
     }
+  }
+
+  function statusToneClass(value) {
+    return {
+      PendingPayment: 'bg-highlight-gold/20 text-on-surface',
+      Pending: 'bg-highlight-gold/20 text-on-surface',
+      Confirmed: 'bg-success-green/10 text-success-green',
+      Paid: 'bg-success-green/10 text-success-green',
+      Cancelled: 'bg-error-container text-error'
+    }[value] || 'bg-surface-container-high text-on-surface-variant';
   }
 
   loadMyBookings();

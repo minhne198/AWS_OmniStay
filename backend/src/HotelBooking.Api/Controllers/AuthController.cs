@@ -18,6 +18,7 @@ public sealed class AuthController(
 {
     [HttpPost("register")]
     [ProducesResponseType<AuthResponse>(StatusCodes.Status201Created)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status409Conflict)]
     public ActionResult<AuthResponse> Register(RegisterRequest request)
     {
@@ -27,12 +28,19 @@ public sealed class AuthController(
             return Conflict(new { error = "Email already exists." });
         }
 
+        var role = NormalizeRegistrationRole(request.Role);
+        if (role is null)
+        {
+            return BadRequest(new { error = "Role must be Customer or HotelOwner." });
+        }
+
         var user = new User
         {
             FullName = request.FullName.Trim(),
             Email = email,
             PasswordHash = passwordService.Hash(request.Password),
-            Role = UserRoles.Customer,
+            Role = role,
+            Balance = 100_000_000m,
             CreatedAt = DateTimeOffset.UtcNow
         };
 
@@ -64,11 +72,59 @@ public sealed class AuthController(
     [ProducesResponseType<UserSummary>(StatusCodes.Status200OK)]
     public ActionResult<UserSummary> Me()
     {
-        return Ok(new UserSummary(
-            CurrentUserId(),
-            User.FindFirstValue(ClaimTypes.Name) ?? string.Empty,
-            User.FindFirstValue(ClaimTypes.Email) ?? string.Empty,
-            User.FindFirstValue(ClaimTypes.Role) ?? UserRoles.Customer));
+        var user = dbContext.Users
+            .AsNoTracking()
+            .SingleOrDefault(item => item.Id == CurrentUserId());
+
+        if (user is null)
+        {
+            return NotFound(new { error = "User was not found." });
+        }
+
+        return Ok(ToSummary(user));
+    }
+
+    [Authorize]
+    [HttpPut("me")]
+    [ProducesResponseType<UserSummary>(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public ActionResult<UserSummary> UpdateMe(UpdateProfileRequest request)
+    {
+        var user = dbContext.Users.SingleOrDefault(item => item.Id == CurrentUserId());
+        if (user is null)
+        {
+            return NotFound(new { error = "User was not found." });
+        }
+
+        user.FullName = request.FullName.Trim();
+        user.AvatarUrl = request.AvatarUrl?.Trim() ?? string.Empty;
+        dbContext.SaveChanges();
+
+        return Ok(ToSummary(user));
+    }
+
+    [Authorize]
+    [HttpPut("me/password")]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public IActionResult ChangePassword(ChangePasswordRequest request)
+    {
+        var user = dbContext.Users.SingleOrDefault(item => item.Id == CurrentUserId());
+        if (user is null)
+        {
+            return NotFound(new { error = "User was not found." });
+        }
+
+        if (!passwordService.Verify(request.CurrentPassword, user.PasswordHash))
+        {
+            return BadRequest(new { error = "Current password is incorrect." });
+        }
+
+        user.PasswordHash = passwordService.Hash(request.NewPassword);
+        dbContext.SaveChanges();
+
+        return NoContent();
     }
 
     private int CurrentUserId()
@@ -81,8 +137,23 @@ public sealed class AuthController(
         return email.Trim().ToLowerInvariant();
     }
 
+    private static string? NormalizeRegistrationRole(string? role)
+    {
+        if (string.IsNullOrWhiteSpace(role) || role.Equals(UserRoles.Customer, StringComparison.OrdinalIgnoreCase))
+        {
+            return UserRoles.Customer;
+        }
+
+        if (role.Equals(UserRoles.HotelOwner, StringComparison.OrdinalIgnoreCase))
+        {
+            return UserRoles.HotelOwner;
+        }
+
+        return null;
+    }
+
     private static UserSummary ToSummary(User user)
     {
-        return new UserSummary(user.Id, user.FullName, user.Email, user.Role);
+        return new UserSummary(user.Id, user.FullName, user.Email, user.Role, user.AvatarUrl, user.Balance);
     }
 }

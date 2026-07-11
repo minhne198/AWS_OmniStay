@@ -7,4 +7,6 @@ public sealed record HotelDetails(
     string Address,
     string Description,
     int StarRating,
-    string MainImageUrl);
+    string MainImageUrl,
+    double AverageRating,
+    int ReviewCount);

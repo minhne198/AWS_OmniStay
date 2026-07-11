@@ -21,28 +21,37 @@ public sealed class CachedHotelBookingService(
         string city,
         DateOnly checkIn,
         DateOnly checkOut,
-        int guests)
+        int guests,
+        string? keyword = null,
+        int? minRating = null,
+        string? sortBy = null)
     {
-        if (hotelSearchCache.TryGet(city, checkIn, checkOut, guests, out var cachedResults))
+        if (hotelSearchCache.TryGet(city, checkIn, checkOut, guests, keyword, minRating, sortBy, out var cachedResults))
         {
             logger.LogInformation(
-                "Hotel search cache HIT for {City} {CheckIn} {CheckOut} {Guests}",
+                "Hotel search cache HIT for {City} {CheckIn} {CheckOut} {Guests} {Keyword} {MinRating} {SortBy}",
                 city,
                 checkIn,
                 checkOut,
-                guests);
+                guests,
+                keyword,
+                minRating,
+                sortBy);
             return cachedResults;
         }
 
         logger.LogInformation(
-            "Hotel search cache MISS for {City} {CheckIn} {CheckOut} {Guests}",
+            "Hotel search cache MISS for {City} {CheckIn} {CheckOut} {Guests} {Keyword} {MinRating} {SortBy}",
             city,
             checkIn,
             checkOut,
-            guests);
+            guests,
+            keyword,
+            minRating,
+            sortBy);
 
-        var results = inner.SearchAvailableRooms(city, checkIn, checkOut, guests);
-        hotelSearchCache.Set(city, checkIn, checkOut, guests, results);
+        var results = inner.SearchAvailableRooms(city, checkIn, checkOut, guests, keyword, minRating, sortBy);
+        hotelSearchCache.Set(city, checkIn, checkOut, guests, keyword, minRating, sortBy, results);
         return results;
     }
 
@@ -86,6 +95,18 @@ public sealed class CachedHotelBookingService(
             hotelSearchCache.ClearSearchResults();
         }
 
+        return result;
+    }
+
+    public IReadOnlyList<HotelReviewSummary> GetHotelReviews(int hotelId)
+    {
+        return inner.GetHotelReviews(hotelId);
+    }
+
+    public HotelReviewSummary CreateReview(int hotelId, CreateHotelReviewRequest request, int userId)
+    {
+        var result = inner.CreateReview(hotelId, request, userId);
+        hotelSearchCache.ClearSearchResults();
         return result;
     }
 }

@@ -11,8 +11,8 @@ public sealed class RedisHotelSearchCache(
     IConfiguration configuration,
     ILogger<RedisHotelSearchCache> logger) : IHotelSearchCache
 {
-    private const string KeyPrefix = "omnistay:search:v1";
-    private const string KeyIndex = "omnistay:search:v1:keys";
+    private const string KeyPrefix = "omnistay:search:v3";
+    private const string KeyIndex = "omnistay:search:v3:keys";
 
     private static readonly JsonSerializerOptions JsonOptions = new(JsonSerializerDefaults.Web);
 
@@ -24,6 +24,9 @@ public sealed class RedisHotelSearchCache(
         DateOnly checkIn,
         DateOnly checkOut,
         int guests,
+        string? keyword,
+        int? minRating,
+        string? sortBy,
         out IReadOnlyList<HotelSearchResult> results)
     {
         results = [];
@@ -36,7 +39,7 @@ public sealed class RedisHotelSearchCache(
 
         try
         {
-            var cached = database.StringGet(CreateKey(city, checkIn, checkOut, guests));
+            var cached = database.StringGet(CreateKey(city, checkIn, checkOut, guests, keyword, minRating, sortBy));
             if (cached.IsNullOrEmpty)
             {
                 return false;
@@ -57,6 +60,9 @@ public sealed class RedisHotelSearchCache(
         DateOnly checkIn,
         DateOnly checkOut,
         int guests,
+        string? keyword,
+        int? minRating,
+        string? sortBy,
         IReadOnlyList<HotelSearchResult> results)
     {
         var database = TryGetDatabase();
@@ -67,7 +73,7 @@ public sealed class RedisHotelSearchCache(
 
         try
         {
-            var key = CreateKey(city, checkIn, checkOut, guests);
+            var key = CreateKey(city, checkIn, checkOut, guests, keyword, minRating, sortBy);
             var payload = JsonSerializer.Serialize(results, JsonOptions);
 
             database.StringSet(key, payload, cacheTtl);
@@ -114,7 +120,14 @@ public sealed class RedisHotelSearchCache(
         return connection?.IsConnected == true ? connection.GetDatabase() : null;
     }
 
-    private static string CreateKey(string city, DateOnly checkIn, DateOnly checkOut, int guests)
+    private static string CreateKey(
+        string city,
+        DateOnly checkIn,
+        DateOnly checkOut,
+        int guests,
+        string? keyword,
+        int? minRating,
+        string? sortBy)
     {
         return string.Join(
             ':',
@@ -122,7 +135,10 @@ public sealed class RedisHotelSearchCache(
             Normalize(city),
             checkIn.ToString("yyyyMMdd", CultureInfo.InvariantCulture),
             checkOut.ToString("yyyyMMdd", CultureInfo.InvariantCulture),
-            guests.ToString(CultureInfo.InvariantCulture));
+            guests.ToString(CultureInfo.InvariantCulture),
+            Normalize(keyword ?? string.Empty),
+            minRating?.ToString(CultureInfo.InvariantCulture) ?? "0",
+            Normalize(sortBy ?? string.Empty));
     }
 
     private static string Normalize(string value)

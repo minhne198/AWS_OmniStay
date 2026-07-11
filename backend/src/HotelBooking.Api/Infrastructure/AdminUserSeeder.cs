@@ -34,12 +34,19 @@ public static class AdminUserSeeder
                 Email = normalizedEmail,
                 PasswordHash = passwordService.Hash(password),
                 Role = UserRoles.Admin,
+                AvatarUrl = string.Empty,
+                Balance = 100_000_000m,
                 CreatedAt = DateTimeOffset.UtcNow
             });
         }
         else
         {
             user.Role = UserRoles.Admin;
+            user.AvatarUrl ??= string.Empty;
+            if (user.Balance <= 0)
+            {
+                user.Balance = 100_000_000m;
+            }
             dbContext.Entry(user).State = EntityState.Modified;
         }
 

@@ -9,6 +9,9 @@ public interface IHotelSearchCache
         DateOnly checkIn,
         DateOnly checkOut,
         int guests,
+        string? keyword,
+        int? minRating,
+        string? sortBy,
         out IReadOnlyList<HotelSearchResult> results);
 
     void Set(
@@ -16,6 +19,9 @@ public interface IHotelSearchCache
         DateOnly checkIn,
         DateOnly checkOut,
         int guests,
+        string? keyword,
+        int? minRating,
+        string? sortBy,
         IReadOnlyList<HotelSearchResult> results);
 
     void ClearSearchResults();

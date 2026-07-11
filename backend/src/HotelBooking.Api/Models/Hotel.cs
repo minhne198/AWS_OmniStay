@@ -16,5 +16,11 @@ public sealed class Hotel
 
     public string MainImageUrl { get; set; } = string.Empty;
 
+    public int? OwnerUserId { get; set; }
+
+    public User? Owner { get; set; }
+
     public List<RoomType> RoomTypes { get; set; } = [];
+
+    public List<HotelReview> Reviews { get; set; } = [];
 }

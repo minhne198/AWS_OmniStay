@@ -1,43 +1,101 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="vi">
-  <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
+<head>
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
     <title>OmniStay - System status</title>
-    <link rel="stylesheet" href="../src/styles.css?v=20260708-multipage" />
-  </head>
-  <body>
-    <header class="site-header">
-      <a class="brand" href="home.html">OmniStay</a>
-      <nav class="site-nav" aria-label="Điều hướng chính">
-        <a data-nav="home" href="home.html">Trang chủ</a>
-        <a data-nav="search" href="search.html">Tìm phòng</a>
-        <a data-nav="bookings" href="booking-lookup.html">Booking của tôi</a>
-        <a data-nav="status" href="system-status.html">System status</a>
-        <a data-nav="admin" data-nav-admin href="admin.html" hidden>Admin</a>
-      </nav>
-      <div class="header-actions">
-        <span class="session-pill" data-session-name>...</span>
-        <button class="ghost-button on-dark small" type="button" data-logout>Đăng xuất</button>
-      </div>
-    </header>
-
-    <main class="page-shell">
-      <div class="page-title">
-        <div>
-          <p class="eyebrow">AWS runtime</p>
-          <h1>System status</h1>
-          <p>Thông tin runtime được đọc trực tiếp từ backend health endpoint.</p>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet"/>
+    <script id="tailwind-config">
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: "#0054b5",
+                        "booking-blue": "#003580",
+                        "action-blue": "#006CE4",
+                        "highlight-gold": "#FFB700",
+                        background: "#f9f9f9",
+                        "surface-container-lowest": "#ffffff",
+                        "surface-container-low": "#f3f3f3",
+                        "surface-container-highest": "#e2e2e2",
+                        "on-surface": "#1a1c1c",
+                        "on-surface-variant": "#414754",
+                        "on-primary": "#ffffff",
+                        "outline": "#727785",
+                        "outline-variant": "#c1c6d6",
+                        "success-green": "#008009",
+                        "error": "#ba1a1a",
+                        "error-container": "#ffdad6",
+                        "primary-container": "#006ce4"
+                    },
+                    borderRadius: {
+                        lg: "0.25rem",
+                        xl: "0.5rem",
+                        full: "0.75rem"
+                    },
+                    spacing: {
+                        "margin-mobile": "16px",
+                        "margin-desktop": "64px"
+                    },
+                    fontFamily: {
+                        "body-md": ["Inter"],
+                        "headline-md": ["Hanken Grotesk"],
+                        "headline-lg": ["Hanken Grotesk"],
+                        "label-md": ["Inter"],
+                        "label-sm": ["Inter"]
+                    },
+                    fontSize: {
+                        "body-md": ["16px", { lineHeight: "24px", fontWeight: "400" }],
+                        "headline-md": ["24px", { lineHeight: "32px", fontWeight: "600" }],
+                        "headline-lg": ["32px", { lineHeight: "40px", fontWeight: "700" }],
+                        "label-md": ["14px", { lineHeight: "16px", fontWeight: "600" }],
+                        "label-sm": ["12px", { lineHeight: "16px", fontWeight: "500" }]
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-background text-on-surface font-body-md text-body-md antialiased flex flex-col min-h-screen">
+<header class="bg-booking-blue border-b border-outline-variant shadow-sm sticky top-0 z-50">
+    <div class="flex justify-between items-center w-full px-margin-mobile md:px-margin-desktop h-16 max-w-[1280px] mx-auto">
+        <div class="flex items-center gap-8">
+            <a class="text-headline-md font-headline-md font-bold text-on-primary hover:opacity-80 transition-opacity" href="home.html">OmniStay</a>
+            <nav class="hidden md:flex gap-6 items-center h-full">
+                <a class="text-on-primary hover:text-highlight-gold transition-colors hover:bg-primary-container px-3 py-2 rounded" href="home.html" data-nav="home">Trang chủ</a>
+                <a class="text-on-primary hover:text-highlight-gold transition-colors hover:bg-primary-container px-3 py-2 rounded" href="search.html" data-nav="search">Tìm phòng</a>
+                <a class="text-on-primary hover:text-highlight-gold transition-colors hover:bg-primary-container px-3 py-2 rounded" href="booking-lookup.html" data-nav="bookings">Booking của tôi</a>
+                <a class="text-on-primary hover:text-highlight-gold transition-colors hover:bg-primary-container px-3 py-2 rounded" href="system-status.html" data-nav="status">System status</a>
+                <a class="text-on-primary hover:text-highlight-gold transition-colors hover:bg-primary-container px-3 py-2 rounded" href="admin.html" data-nav="admin" data-nav-admin hidden>Admin</a>
+            </nav>
         </div>
-        <button id="refreshStatus" class="primary-button" type="button">Kiểm tra lại</button>
-      </div>
+        <div class="flex items-center gap-4">
+            <a class="px-3 py-2 bg-white/10 rounded-lg text-white text-sm font-semibold hover:bg-white/20 transition-colors" href="profile.html" data-profile-link>Trang cá nhân</a>
+            <span class="px-3 py-2 bg-white/10 rounded-lg text-white text-sm font-semibold max-w-[220px] truncate" data-session-name>...</span>
+            <button class="text-on-primary hover:bg-primary-container transition-all px-3 py-2 rounded-lg font-label-md text-label-md" type="button" data-logout>Đăng xuất</button>
+        </div>
+    </div>
+</header>
 
-      <section id="statusPanel" class="message muted">Đang kiểm tra runtime...</section>
-    </main>
+<main class="flex-grow py-8 px-margin-mobile md:px-margin-desktop">
+    <div class="max-w-[1280px] mx-auto space-y-8">
+        <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+            <div>
+                <p class="text-label-sm font-label-sm text-outline uppercase tracking-wider mb-2">AWS runtime</p>
+                <h1 class="text-headline-lg font-headline-lg text-on-surface">System status</h1>
+                <p class="text-body-md text-on-surface-variant mt-2">Trạng thái backend, database, Redis và cấu hình triển khai hiện tại.</p>
+            </div>
+            <button id="refreshStatus" class="bg-action-blue hover:bg-primary-container text-white font-label-md text-label-md px-6 py-3 rounded-lg transition-colors" type="button">Kiểm tra lại</button>
+        </div>
 
-    <script src="./config.js?v=20260708-multipage"></script>
-    <script src="../src/api.js?v=20260708-multipage"></script>
-    <script src="../src/session.js?v=20260708-multipage"></script>
-    <script src="../src/system-status.js?v=20260708-multipage"></script>
-  </body>
+        <section id="statusPanel" class="p-6 bg-surface-container-lowest text-on-surface-variant rounded-xl border border-outline-variant">Đang kiểm tra runtime...</section>
+    </div>
+</main>
+
+<script src="./config.js?v=20260711-encodingfix"></script>
+<script src="../src/api.js?v=20260711-encodingfix"></script>
+<script src="../src/session.js?v=20260711-encodingfix"></script>
+<script src="../src/system-status.js?v=20260711-encodingfix"></script>
+</body>
 </html>

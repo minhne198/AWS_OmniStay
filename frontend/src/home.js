@@ -14,6 +14,7 @@
   const checkOutInput = document.getElementById('checkOut');
   const guestsInput = document.getElementById('guests');
 
+  ui.populateCitySelect(cityInput, cityInput.value || 'Da Nang', { includeAll: false });
   checkInInput.value = dates.checkIn;
   checkOutInput.value = dates.checkOut;
 

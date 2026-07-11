@@ -8,4 +8,7 @@ public sealed record RoomTypeDetails(
     int MaxGuests,
     decimal PricePerNight,
     int TotalRooms,
-    string ImageUrl);
+    string ImageUrl,
+    bool IsHidden,
+    int BookedRooms,
+    int AvailableRooms);

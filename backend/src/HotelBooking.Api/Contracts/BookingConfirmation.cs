@@ -2,6 +2,7 @@ namespace HotelBooking.Api.Contracts;
 
 public sealed record BookingConfirmation(
     string BookingCode,
+    int HotelId,
     int RoomTypeId,
     string HotelName,
     string RoomTypeName,
@@ -11,4 +12,7 @@ public sealed record BookingConfirmation(
     int Guests,
     decimal TotalPrice,
     string Status,
-    string PaymentStatus);
+    string PaymentStatus,
+    bool CanCancel,
+    bool CanReview,
+    bool HasReview);

@@ -6,6 +6,10 @@ public sealed record HotelSearchResult(
     string HotelName,
     string City,
     string RoomTypeName,
+    string MainImageUrl,
+    string RoomImageUrl,
     int MaxGuests,
     decimal PricePerNight,
-    int AvailableRooms);
+    int AvailableRooms,
+    double AverageRating,
+    int ReviewCount);

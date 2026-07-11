@@ -20,12 +20,12 @@
 
   async function loadBookingContext() {
     if (!params.hotelId || !params.roomTypeId) {
-      ui.renderMessage(summary, 'Thieu thong tin phong. Vui long chon phong tu trang chi tiet khach san.', 'error');
+      ui.renderMessage(summary, 'Thiếu thông tin phòng. Vui lòng chọn phòng từ trang chi tiết khách sạn.', 'error');
       form.hidden = true;
       return;
     }
 
-    ui.renderMessage(summary, 'Dang tai thong tin phong...', 'muted');
+    ui.renderMessage(summary, 'Đang tải thông tin phòng...', 'muted');
 
     try {
       const [hotelData, rooms] = await Promise.all([
@@ -54,23 +54,46 @@
 
   function renderSummary() {
     const total = nights() * room.pricePerNight;
-    summary.className = 'summary-card';
+    summary.className = 'bg-surface-container-lowest border border-outline-variant rounded-xl overflow-hidden';
     summary.hidden = false;
     summary.innerHTML = `
-      <img src="${ui.roomImage(room, hotel.hotelId)}" alt="${ui.escapeHtml(room.name)}" loading="lazy">
-      <div>
-        <p class="eyebrow">${ui.escapeHtml(hotel.city)} · ${hotel.starRating} sao</p>
-        <h2>${ui.escapeHtml(hotel.name)}</h2>
-        <p>${ui.escapeHtml(room.name)} · ${params.guests} khach</p>
-        <p>${ui.formatDate(params.checkIn)} - ${ui.formatDate(params.checkOut)} · ${nights()} dem</p>
-        <strong>${ui.formatCurrency(total)}</strong>
+      <div class="grid grid-cols-1 md:grid-cols-3">
+        <img src="${ui.roomImage(room, hotel.hotelId)}" alt="${ui.escapeHtml(room.name)}" loading="lazy" class="w-full h-full min-h-[240px] object-cover">
+        <div class="md:col-span-2 p-6 space-y-5">
+          <div>
+            <p class="text-label-sm font-label-sm text-outline uppercase tracking-wider mb-2">${ui.escapeHtml(hotel.city)} · ${hotel.starRating} sao</p>
+            <h2 class="text-headline-lg font-headline-lg text-on-surface">${ui.escapeHtml(hotel.name)}</h2>
+            <p class="text-body-md text-on-surface-variant mt-2">${ui.escapeHtml(room.name)} · ${params.guests} khách</p>
+          </div>
+          <dl class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+            <div class="bg-surface-container-low border border-outline-variant rounded-lg p-4">
+              <dt class="text-label-sm font-label-sm text-outline uppercase tracking-wider">Nhận phòng</dt>
+              <dd class="mt-1 text-on-surface">${ui.formatDate(params.checkIn)}</dd>
+            </div>
+            <div class="bg-surface-container-low border border-outline-variant rounded-lg p-4">
+              <dt class="text-label-sm font-label-sm text-outline uppercase tracking-wider">Trả phòng</dt>
+              <dd class="mt-1 text-on-surface">${ui.formatDate(params.checkOut)}</dd>
+            </div>
+            <div class="bg-surface-container-low border border-outline-variant rounded-lg p-4">
+              <dt class="text-label-sm font-label-sm text-outline uppercase tracking-wider">Số đêm</dt>
+              <dd class="mt-1 text-on-surface">${nights()}</dd>
+            </div>
+          </dl>
+          <div class="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-3 border-t border-outline-variant pt-5">
+            <div>
+              <p class="text-label-sm font-label-sm text-on-surface-variant">Tạm tính</p>
+              <strong class="text-headline-md font-headline-md text-primary">${ui.formatCurrency(total)}</strong>
+            </div>
+            <p class="text-body-sm text-on-surface-variant">Còn ${room.availableRooms ?? room.totalRooms} phòng đang mở bán.</p>
+          </div>
+        </div>
       </div>
     `;
   }
 
   form.addEventListener('submit', async (event) => {
     event.preventDefault();
-    ui.renderMessage(message, 'Dang giu phong...', 'muted');
+    ui.renderMessage(message, 'Đang giữ phòng...', 'muted');
 
     try {
       const booking = await api.createBooking({

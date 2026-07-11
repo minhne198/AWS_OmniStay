@@ -1,6 +1,10 @@
 using System.Net;
 using System.Net.Http.Json;
+using HotelBooking.Api.Data;
+using HotelBooking.Api.Models;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace HotelBooking.Api.Tests;
 
@@ -26,6 +30,28 @@ public class BookingFlowTests
             Assert.True(result.AvailableRooms > 0);
             Assert.True(result.PricePerNight > 0);
             Assert.True(result.MaxGuests >= 2);
+        });
+    }
+
+    [Fact]
+    public async Task SearchHotels_CanFilterByHotelOrRoomName()
+    {
+        await using var application = new WebApplicationFactory<Program>();
+        using var client = application.CreateClient();
+
+        using var response = await client.GetAsync(
+            "/api/hotels/search?keyword=Family&checkIn=2026-08-15&checkOut=2026-08-18&guests=2");
+
+        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+
+        var results = await response.Content.ReadFromJsonAsync<List<HotelSearchResult>>();
+        Assert.NotNull(results);
+        Assert.NotEmpty(results);
+        Assert.All(results, result =>
+        {
+            Assert.True(
+                result.RoomTypeName.Contains("Family", StringComparison.OrdinalIgnoreCase)
+                || result.HotelName.Contains("Family", StringComparison.OrdinalIgnoreCase));
         });
     }
 
@@ -84,6 +110,62 @@ public class BookingFlowTests
 
         Assert.Equal(HttpStatusCode.Created, firstResponse.StatusCode);
         Assert.Equal(HttpStatusCode.Conflict, secondResponse.StatusCode);
+    }
+
+    [Fact]
+    public async Task GetBookingByCode_ReturnsLatestMatchWhenDuplicateCodesExist()
+    {
+        var databaseName = $"duplicate-code-{Guid.NewGuid():N}";
+        await using var application = new WebApplicationFactory<Program>()
+            .WithWebHostBuilder(builder =>
+            {
+                builder.UseSetting("ConnectionStrings:HotelBookingDb", databaseName);
+            });
+
+        using (var scope = application.Services.CreateScope())
+        {
+            var dbContext = scope.ServiceProvider.GetRequiredService<HotelBookingDbContext>();
+            dbContext.Bookings.AddRange(
+                new Booking
+                {
+                    BookingCode = "BK20260724-001",
+                    RoomTypeId = 101,
+                    GuestName = "Old duplicate",
+                    GuestEmail = "old@example.com",
+                    CheckIn = new DateOnly(2026, 7, 24),
+                    CheckOut = new DateOnly(2026, 7, 25),
+                    Guests = 1,
+                    TotalPrice = 1_200_000m,
+                    Status = "PendingPayment",
+                    PaymentStatus = "Pending",
+                    CreatedAt = DateTimeOffset.UtcNow.AddMinutes(-5)
+                },
+                new Booking
+                {
+                    BookingCode = "BK20260724-001",
+                    RoomTypeId = 101,
+                    GuestName = "Newest duplicate",
+                    GuestEmail = "newest@example.com",
+                    CheckIn = new DateOnly(2026, 7, 24),
+                    CheckOut = new DateOnly(2026, 7, 26),
+                    Guests = 2,
+                    TotalPrice = 2_400_000m,
+                    Status = "PendingPayment",
+                    PaymentStatus = "Pending",
+                    CreatedAt = DateTimeOffset.UtcNow
+                });
+            dbContext.SaveChanges();
+        }
+
+        using var client = application.CreateClient();
+        using var response = await client.GetAsync("/api/bookings/BK20260724-001");
+
+        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+
+        var booking = await response.Content.ReadFromJsonAsync<BookingConfirmation>();
+        Assert.NotNull(booking);
+        Assert.Equal(2, booking.Guests);
+        Assert.Equal(2_400_000m, booking.TotalPrice);
     }
 
     private sealed record HotelSearchResult(

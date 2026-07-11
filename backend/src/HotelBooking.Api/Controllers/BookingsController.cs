@@ -65,10 +65,18 @@ public sealed class BookingsController(IHotelBookingService hotelBookingService)
     {
         _ = request.PaymentMethod;
 
-        var booking = hotelBookingService.ConfirmMockPayment(
-            code,
-            CurrentUserId(),
-            User.IsInRole(UserRoles.Admin));
+        BookingConfirmation? booking;
+        try
+        {
+            booking = hotelBookingService.ConfirmMockPayment(
+                code,
+                CurrentUserId(),
+                User.IsInRole(UserRoles.Admin));
+        }
+        catch (InvalidOperationException ex)
+        {
+            return BadRequest(new { error = ex.Message });
+        }
 
         if (booking is null)
         {
@@ -84,10 +92,18 @@ public sealed class BookingsController(IHotelBookingService hotelBookingService)
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public ActionResult<BookingConfirmation> Cancel(string code)
     {
-        var booking = hotelBookingService.CancelBooking(
-            code,
-            CurrentUserId(),
-            User.IsInRole(UserRoles.Admin));
+        BookingConfirmation? booking;
+        try
+        {
+            booking = hotelBookingService.CancelBooking(
+                code,
+                CurrentUserId(),
+                User.IsInRole(UserRoles.Admin));
+        }
+        catch (InvalidOperationException ex)
+        {
+            return BadRequest(new { error = ex.Message });
+        }
 
         if (booking is null)
         {

@@ -1,7 +1,7 @@
 (function () {
   const api = window.OmniStayApi;
   const ui = window.OmniStaySession;
-  const session = ui.requireAuth();
+  const session = ui.requireAuth({ role: 'Admin' });
   if (!session) {
     return;
   }
@@ -14,11 +14,11 @@
   refreshButton.addEventListener('click', loadStatus);
 
   async function loadStatus() {
-    ui.renderMessage(target, 'Dang kiem tra runtime...', 'muted');
+    ui.renderMessage(target, 'Đang kiểm tra runtime...', 'muted');
 
     try {
       const status = await api.getAwsStatus();
-      target.className = 'status-grid';
+      target.className = 'grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4';
       target.hidden = false;
       target.innerHTML = [
         ['Environment', status.environment],
@@ -31,9 +31,9 @@
         ['CloudFront', status.cloudFrontDomain],
         ['API base path', status.apiBasePath]
       ].map(([label, value]) => `
-        <article class="status-item">
-          <span>${ui.escapeHtml(label)}</span>
-          <strong>${ui.escapeHtml(value)}</strong>
+        <article class="bg-surface-container-lowest border border-outline-variant rounded-xl p-5">
+          <span class="text-label-sm font-label-sm text-outline uppercase tracking-wider">${ui.escapeHtml(label)}</span>
+          <strong class="block mt-2 text-headline-md font-headline-md text-on-surface break-words">${ui.escapeHtml(value)}</strong>
         </article>
       `).join('');
     } catch (error) {

@@ -22,16 +22,21 @@ public sealed record AdminUserSummary(
     string FullName,
     string Email,
     string Role,
+    string AvatarUrl,
+    decimal Balance,
     DateTimeOffset CreatedAt);
 
 public sealed record UpsertUserRequest(
     [Required, MaxLength(200)] string FullName,
     [Required, MaxLength(200)] string Email,
-    [Required, MaxLength(200)] string? Password,
-    [Required] string Role);
+    [MaxLength(200)] string? Password,
+    [Required] string Role,
+    [Range(0, 1_000_000_000_000)] decimal? Balance = null,
+    [MaxLength(500)] string? AvatarUrl = null);
 
 public sealed record AdminHotelSummary(
     int HotelId,
+    int? OwnerUserId,
     string Name,
     string City,
     string Address,
@@ -55,4 +60,49 @@ public sealed record UpsertRoomTypeRequest(
     [Range(1, 20)] int MaxGuests,
     [Range(0, 1_000_000_000)] decimal PricePerNight,
     [Range(0, 10_000)] int TotalRooms,
-    [Required, MaxLength(500)] string ImageUrl);
+    [Required, MaxLength(500)] string ImageUrl,
+    bool IsHidden = false);
+
+public sealed record AdminImageUploadResult(string ImageUrl);
+
+public sealed record RevenuePoint(
+    string Label,
+    decimal Revenue,
+    int BookingCount);
+
+public sealed record DashboardSummary(
+    decimal TotalRevenue,
+    int BookingCount,
+    string MostBookedRoomName,
+    int MostBookedRoomBookings,
+    int TotalRooms,
+    int BookedRooms,
+    decimal OccupancyRate,
+    IReadOnlyList<RevenuePoint> RevenueByDay,
+    IReadOnlyList<RevenuePoint> RevenueByMonth);
+
+public sealed record BalanceTransactionSummary(
+    int TransactionId,
+    int UserId,
+    string UserEmail,
+    string UserFullName,
+    string? BookingCode,
+    decimal Amount,
+    decimal BalanceAfter,
+    string Type,
+    string Description,
+    DateTimeOffset CreatedAt);
+
+public sealed record BalanceTopUpRequest(
+    [Range(1, 1_000_000_000_000)] decimal Amount,
+    [MaxLength(500)] string? Description = null);
+
+public sealed record AdminActivitySummary(
+    int NotificationId,
+    int UserId,
+    string UserEmail,
+    string Type,
+    string Title,
+    string Message,
+    string LinkUrl,
+    DateTimeOffset CreatedAt);

@@ -3,10 +3,10 @@
 <head>
     <meta charset="utf-8"/>
     <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-    <title>OmniStay - Đặt phòng</title>
+    <title>OmniStay - Hồ sơ chủ khách sạn</title>
     <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
     <link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet"/>
-    <script id="tailwind-config">
+    <script>
         tailwind.config = {
             theme: {
                 extend: {
@@ -41,7 +41,6 @@
                     },
                     fontSize: {
                         "body-md": ["16px", { lineHeight: "24px", fontWeight: "400" }],
-                        "body-sm": ["14px", { lineHeight: "20px", fontWeight: "400" }],
                         "headline-md": ["24px", { lineHeight: "32px", fontWeight: "600" }],
                         "headline-lg": ["32px", { lineHeight: "40px", fontWeight: "700" }],
                         "label-md": ["14px", { lineHeight: "16px", fontWeight: "600" }],
@@ -61,8 +60,7 @@
                 <a class="text-on-primary hover:text-highlight-gold transition-colors hover:bg-primary-container px-3 py-2 rounded" href="home.html" data-nav="home">Trang chủ</a>
                 <a class="text-on-primary hover:text-highlight-gold transition-colors hover:bg-primary-container px-3 py-2 rounded" href="search.html" data-nav="search">Tìm phòng</a>
                 <a class="text-on-primary hover:text-highlight-gold transition-colors hover:bg-primary-container px-3 py-2 rounded" href="booking-lookup.html" data-nav="bookings">Booking của tôi</a>
-                <a class="text-on-primary hover:text-highlight-gold transition-colors hover:bg-primary-container px-3 py-2 rounded" href="system-status.html" data-nav="status">System status</a>
-                <a class="text-on-primary hover:text-highlight-gold transition-colors hover:bg-primary-container px-3 py-2 rounded" href="admin.html" data-nav="admin" data-nav-admin hidden>Admin</a>
+                <a class="text-on-primary hover:text-highlight-gold transition-colors hover:bg-primary-container px-3 py-2 rounded" href="admin.html" data-nav="admin" data-nav-admin hidden>Quản lý</a>
             </nav>
         </div>
         <div class="flex items-center gap-4">
@@ -74,47 +72,21 @@
 </header>
 
 <main class="flex-grow py-8 px-margin-mobile md:px-margin-desktop">
-    <div class="max-w-[1280px] mx-auto space-y-8">
-        <div>
-            <p class="text-label-sm font-label-sm text-outline uppercase tracking-wider mb-2">Checkout</p>
-            <h1 class="text-headline-lg font-headline-lg text-on-surface">Hoàn tất đặt phòng</h1>
-            <p class="text-body-md text-on-surface-variant mt-2">Kiểm tra thông tin khách và giữ phòng. Sau đó bạn có thể thanh toán ở trang xác nhận.</p>
-        </div>
-
-        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-            <section class="lg:col-span-2">
-                <div id="bookingSummary" class="p-6 bg-surface-container-lowest text-on-surface-variant rounded-xl border border-outline-variant">Đang tải thông tin phòng...</div>
-            </section>
-
-            <aside class="bg-surface-container-lowest border border-outline-variant rounded-xl p-6 h-fit lg:sticky lg:top-24">
-                <form id="bookingForm" class="space-y-4" hidden>
-                    <div>
-                        <p class="text-label-sm font-label-sm text-outline uppercase tracking-wider mb-1">Thông tin khách</p>
-                        <h2 class="text-headline-md font-headline-md text-on-surface">Người đặt phòng</h2>
-                    </div>
-                    <label class="block">
-                        <span class="text-label-md font-label-md text-on-surface-variant block mb-1">Họ tên</span>
-                        <input id="guestName" autocomplete="name" class="w-full px-4 py-3 border border-outline-variant rounded-lg bg-surface-container-lowest focus:ring-2 focus:ring-primary focus:border-primary outline-none transition-all" required />
-                    </label>
-                    <label class="block">
-                        <span class="text-label-md font-label-md text-on-surface-variant block mb-1">Email</span>
-                        <input id="guestEmail" type="email" autocomplete="email" class="w-full px-4 py-3 border border-outline-variant rounded-lg bg-surface-container-lowest focus:ring-2 focus:ring-primary focus:border-primary outline-none transition-all" required />
-                    </label>
-                    <label class="block">
-                        <span class="text-label-md font-label-md text-on-surface-variant block mb-1">Số điện thoại</span>
-                        <input id="guestPhone" type="tel" placeholder="0912 345 678" class="w-full px-4 py-3 border border-outline-variant rounded-lg bg-surface-container-lowest focus:ring-2 focus:ring-primary focus:border-primary outline-none transition-all" />
-                    </label>
-                    <button class="w-full bg-action-blue hover:bg-primary-container text-white font-label-md text-label-md px-6 py-3 rounded-lg transition-colors" type="submit">Giữ phòng</button>
-                </form>
-                <div id="bookingMessage" class="mt-4" hidden></div>
-            </aside>
-        </div>
+    <div class="max-w-[1280px] mx-auto space-y-6">
+        <section id="ownerSummary" class="bg-surface-container-lowest border border-outline-variant rounded-xl p-6"></section>
+        <section class="bg-surface-container-lowest border border-outline-variant rounded-xl p-6">
+            <div class="mb-5">
+                <p class="text-label-sm font-label-sm text-outline uppercase tracking-wider mb-1">Khách sạn sở hữu</p>
+                <h2 class="text-headline-md font-headline-md text-on-surface">Danh sách khách sạn</h2>
+            </div>
+            <div id="ownerHotelsList" class="space-y-4"></div>
+        </section>
     </div>
 </main>
 
 <script src="./config.js?v=20260711-encodingfix"></script>
 <script src="../src/api.js?v=20260711-encodingfix"></script>
 <script src="../src/session.js?v=20260711-encodingfix"></script>
-<script src="../src/booking.js?v=20260711-encodingfix"></script>
+<script src="../src/owner-profile.js?v=20260711-encodingfix"></script>
 </body>
 </html>

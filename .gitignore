@@ -57,4 +57,5 @@ venv/
 *.tfstate
 *.tfstate.*
 *.zip
-
+artifacts/
+backend/src/HotelBooking.Api/uploads/

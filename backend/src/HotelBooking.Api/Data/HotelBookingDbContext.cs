@@ -13,6 +13,12 @@ public sealed class HotelBookingDbContext(DbContextOptions<HotelBookingDbContext
 
     public DbSet<User> Users => Set<User>();
 
+    public DbSet<HotelReview> HotelReviews => Set<HotelReview>();
+
+    public DbSet<Notification> Notifications => Set<Notification>();
+
+    public DbSet<BalanceTransaction> BalanceTransactions => Set<BalanceTransaction>();
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.Entity<User>(entity =>
@@ -22,6 +28,8 @@ public sealed class HotelBookingDbContext(DbContextOptions<HotelBookingDbContext
             entity.Property(user => user.Email).HasMaxLength(200).IsRequired();
             entity.Property(user => user.PasswordHash).HasMaxLength(500).IsRequired();
             entity.Property(user => user.Role).HasMaxLength(30).IsRequired();
+            entity.Property(user => user.AvatarUrl).HasMaxLength(500).IsRequired();
+            entity.Property(user => user.Balance).HasPrecision(18, 2);
             entity.HasIndex(user => user.Email).IsUnique();
         });
 
@@ -34,6 +42,10 @@ public sealed class HotelBookingDbContext(DbContextOptions<HotelBookingDbContext
             entity.Property(hotel => hotel.Description).HasMaxLength(2_000).IsRequired();
             entity.Property(hotel => hotel.MainImageUrl).HasMaxLength(500).IsRequired();
             entity.HasIndex(hotel => hotel.City);
+            entity.HasOne(hotel => hotel.Owner)
+                .WithMany(user => user.OwnedHotels)
+                .HasForeignKey(hotel => hotel.OwnerUserId)
+                .OnDelete(DeleteBehavior.SetNull);
         });
 
         modelBuilder.Entity<RoomType>(entity =>
@@ -43,6 +55,7 @@ public sealed class HotelBookingDbContext(DbContextOptions<HotelBookingDbContext
             entity.Property(roomType => roomType.Description).HasMaxLength(2_000).IsRequired();
             entity.Property(roomType => roomType.PricePerNight).HasPrecision(18, 2);
             entity.Property(roomType => roomType.ImageUrl).HasMaxLength(500).IsRequired();
+            entity.Property(roomType => roomType.IsHidden).HasDefaultValue(false);
             entity.HasOne(roomType => roomType.Hotel)
                 .WithMany(hotel => hotel.RoomTypes)
                 .HasForeignKey(roomType => roomType.HotelId)
@@ -67,6 +80,60 @@ public sealed class HotelBookingDbContext(DbContextOptions<HotelBookingDbContext
             entity.HasOne(booking => booking.User)
                 .WithMany(user => user.Bookings)
                 .HasForeignKey(booking => booking.UserId)
+                .OnDelete(DeleteBehavior.SetNull);
+        });
+
+        modelBuilder.Entity<HotelReview>(entity =>
+        {
+            entity.HasKey(review => review.Id);
+            entity.Property(review => review.Comment).HasMaxLength(2_000).IsRequired();
+            entity.HasIndex(review => review.HotelId);
+            entity.HasIndex(review => review.UserId);
+            entity.HasIndex(review => review.BookingId).IsUnique();
+            entity.HasOne(review => review.Hotel)
+                .WithMany(hotel => hotel.Reviews)
+                .HasForeignKey(review => review.HotelId)
+                .OnDelete(DeleteBehavior.Cascade);
+            entity.HasOne(review => review.Booking)
+                .WithOne(booking => booking.Review)
+                .HasForeignKey<HotelReview>(review => review.BookingId)
+                .OnDelete(DeleteBehavior.Cascade);
+            entity.HasOne(review => review.User)
+                .WithMany(user => user.HotelReviews)
+                .HasForeignKey(review => review.UserId)
+                .OnDelete(DeleteBehavior.Cascade);
+        });
+
+        modelBuilder.Entity<Notification>(entity =>
+        {
+            entity.HasKey(notification => notification.Id);
+            entity.Property(notification => notification.Type).HasMaxLength(50).IsRequired();
+            entity.Property(notification => notification.Title).HasMaxLength(200).IsRequired();
+            entity.Property(notification => notification.Message).HasMaxLength(1_000).IsRequired();
+            entity.Property(notification => notification.LinkUrl).HasMaxLength(500).IsRequired();
+            entity.HasIndex(notification => new { notification.UserId, notification.IsRead, notification.CreatedAt });
+            entity.HasOne(notification => notification.User)
+                .WithMany(user => user.Notifications)
+                .HasForeignKey(notification => notification.UserId)
+                .OnDelete(DeleteBehavior.Cascade);
+        });
+
+        modelBuilder.Entity<BalanceTransaction>(entity =>
+        {
+            entity.HasKey(transaction => transaction.Id);
+            entity.Property(transaction => transaction.Amount).HasPrecision(18, 2);
+            entity.Property(transaction => transaction.BalanceAfter).HasPrecision(18, 2);
+            entity.Property(transaction => transaction.Type).HasMaxLength(50).IsRequired();
+            entity.Property(transaction => transaction.Description).HasMaxLength(1_000).IsRequired();
+            entity.HasIndex(transaction => new { transaction.UserId, transaction.CreatedAt });
+            entity.HasIndex(transaction => transaction.BookingId);
+            entity.HasOne(transaction => transaction.User)
+                .WithMany(user => user.BalanceTransactions)
+                .HasForeignKey(transaction => transaction.UserId)
+                .OnDelete(DeleteBehavior.Cascade);
+            entity.HasOne(transaction => transaction.Booking)
+                .WithMany(booking => booking.BalanceTransactions)
+                .HasForeignKey(transaction => transaction.BookingId)
                 .OnDelete(DeleteBehavior.SetNull);
         });
 

@@ -12,7 +12,10 @@ public interface IHotelBookingService
         string city,
         DateOnly checkIn,
         DateOnly checkOut,
-        int guests);
+        int guests,
+        string? keyword = null,
+        int? minRating = null,
+        string? sortBy = null);
 
     CreateBookingResult CreateBooking(CreateBookingRequest request, int? userId = null);
 
@@ -23,4 +26,8 @@ public interface IHotelBookingService
     BookingConfirmation? ConfirmMockPayment(string bookingCode, int userId, bool isAdmin = false);
 
     BookingConfirmation? CancelBooking(string bookingCode, int userId, bool isAdmin = false);
+
+    IReadOnlyList<HotelReviewSummary> GetHotelReviews(int hotelId);
+
+    HotelReviewSummary CreateReview(int hotelId, CreateHotelReviewRequest request, int userId);
 }

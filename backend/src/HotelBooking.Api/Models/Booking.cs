@@ -33,4 +33,8 @@ public sealed class Booking
     public DateTimeOffset? PaidAt { get; set; }
 
     public DateTimeOffset CreatedAt { get; set; }
+
+    public HotelReview? Review { get; set; }
+
+    public List<BalanceTransaction> BalanceTransactions { get; set; } = [];
 }

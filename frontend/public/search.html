@@ -121,6 +121,7 @@
             </nav>
         </div>
         <div class="flex items-center gap-4">
+            <a class="px-3 py-2 bg-white/10 rounded-lg text-white text-sm font-semibold hover:bg-white/20 transition-colors" href="profile.html" data-profile-link>Trang cá nhân</a>
             <span class="px-3 py-2 bg-white/10 rounded-lg text-white text-sm font-semibold max-w-[200px] truncate" data-session-name>...</span>
             <button class="text-on-primary hover:bg-primary-container transition-all p-2 rounded-full" type="button" data-logout>
                 <span class="material-symbols-outlined">logout</span>
@@ -136,10 +137,6 @@
                 <h1 class="text-headline-lg font-headline-lg text-on-surface">Phòng còn trống</h1>
                 <p id="searchSummary" class="text-body-md text-on-surface-variant mt-2">...</p>
             </div>
-            <div class="bg-surface-container-lowest border border-outline-variant rounded-lg px-4 py-2">
-                <span class="text-label-sm font-label-sm text-on-surface-variant">API: </span>
-                <span data-api-base class="text-body-md text-on-surface">...</span>
-            </div>
         </div>
 
         <div class="grid grid-cols-1 lg:grid-cols-4 gap-gutter">
@@ -150,7 +147,28 @@
                         <div class="space-y-4">
                             <label class="block">
                                 <span class="text-label-md font-label-md text-on-surface-variant block mb-1">Thành phố</span>
-                                <input id="city" class="w-full px-4 py-3 border border-outline-variant rounded-lg bg-surface-container-lowest focus:ring-2 focus:ring-primary focus:border-primary outline-none transition-all" required />
+                                <select id="city" class="w-full px-4 py-3 border border-outline-variant rounded-lg bg-surface-container-lowest focus:ring-2 focus:ring-primary focus:border-primary outline-none transition-all"></select>
+                            </label>
+                            <label class="block">
+                                <span class="text-label-md font-label-md text-on-surface-variant block mb-1">Tên khách sạn/phòng</span>
+                                <input id="keyword" class="w-full px-4 py-3 border border-outline-variant rounded-lg bg-surface-container-lowest focus:ring-2 focus:ring-primary focus:border-primary outline-none transition-all" placeholder="VD: Sunrise, Deluxe" />
+                            </label>
+                            <label class="block">
+                                <span class="text-label-md font-label-md text-on-surface-variant block mb-1">Điểm đánh giá tối thiểu</span>
+                                <select id="minRating" class="w-full px-4 py-3 border border-outline-variant rounded-lg bg-surface-container-lowest focus:ring-2 focus:ring-primary focus:border-primary outline-none transition-all">
+                                    <option value="">Tất cả điểm</option>
+                                    <option value="5">5 sao</option>
+                                    <option value="4">Từ 4 sao</option>
+                                    <option value="3">Từ 3 sao</option>
+                                </select>
+                            </label>
+                            <label class="block">
+                                <span class="text-label-md font-label-md text-on-surface-variant block mb-1">Sắp xếp</span>
+                                <select id="sortBy" class="w-full px-4 py-3 border border-outline-variant rounded-lg bg-surface-container-lowest focus:ring-2 focus:ring-primary focus:border-primary outline-none transition-all">
+                                    <option value="price">Giá thấp trước</option>
+                                    <option value="price_desc">Giá cao trước</option>
+                                    <option value="rating">Điểm cao trước</option>
+                                </select>
                             </label>
                             <label class="block">
                                 <span class="text-label-md font-label-md text-on-surface-variant block mb-1">Nhận phòng</span>
@@ -197,9 +215,9 @@
     </div>
 </footer>
 
-<script src="./config.js?v=20260708-multipage"></script>
-<script src="../src/api.js?v=20260708-multipage"></script>
-<script src="../src/session.js?v=20260708-multipage"></script>
-<script src="../src/search.js?v=20260708-multipage"></script>
+<script src="./config.js?v=20260711-encodingfix"></script>
+<script src="../src/api.js?v=20260711-encodingfix"></script>
+<script src="../src/session.js?v=20260711-encodingfix"></script>
+<script src="../src/search.js?v=20260711-encodingfix"></script>
 </body>
 </html>

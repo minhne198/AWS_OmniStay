@@ -20,5 +20,7 @@ public sealed class RoomType
 
     public string ImageUrl { get; set; } = string.Empty;
 
+    public bool IsHidden { get; set; }
+
     public List<Booking> Bookings { get; set; } = [];
 }
