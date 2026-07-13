@@ -131,6 +131,129 @@
     window.location.replace(safeReturnUrl(params.get('returnUrl')) || 'home.html');
   }
 
+  function visibleElement(element) {
+    return element && !element.hidden && element.getAttribute('hidden') === null;
+  }
+
+  function mobileNavLinkFrom(source, active) {
+    const link = document.createElement('a');
+    link.href = source.getAttribute('href') || '#';
+    link.textContent = source.textContent.trim();
+    link.className = 'omni-mobile-nav-item';
+    if (source.dataset.nav === active || source.classList.contains('active')) {
+      link.classList.add('active');
+      link.setAttribute('aria-current', 'page');
+    }
+    return link;
+  }
+
+  function enhanceMobileNav(active) {
+    const header = document.querySelector('header');
+    const desktopNav = header && header.querySelector('nav');
+    if (!header || !desktopNav) {
+      return;
+    }
+
+    const shell = header.firstElementChild;
+    const brandRow = desktopNav.parentElement;
+    if (!shell || !brandRow) {
+      return;
+    }
+
+    let toggle = header.querySelector('[data-mobile-nav-toggle]');
+    let panel = header.querySelector('[data-mobile-nav-panel]');
+
+    header.dataset.mobileNavReady = 'true';
+
+    if (!toggle) {
+      toggle = document.createElement('button');
+      toggle.type = 'button';
+      toggle.className = 'omni-mobile-toggle';
+      toggle.dataset.mobileNavToggle = 'true';
+      toggle.setAttribute('aria-expanded', 'false');
+      toggle.setAttribute('aria-label', 'Mở menu');
+      toggle.innerHTML = '<span></span><span></span><span></span>';
+      brandRow.appendChild(toggle);
+    }
+
+    if (!panel) {
+      panel = document.createElement('div');
+      panel.className = 'omni-mobile-panel';
+      panel.dataset.mobileNavPanel = 'true';
+      panel.hidden = true;
+      shell.appendChild(panel);
+    }
+
+    const setOpen = (open) => {
+      panel.hidden = !open;
+      toggle.setAttribute('aria-expanded', String(open));
+      header.classList.toggle('omni-mobile-open', open);
+    };
+
+    if (!toggle.dataset.mobileNavBound) {
+      toggle.dataset.mobileNavBound = 'true';
+      toggle.addEventListener('click', () => {
+        setOpen(panel.hidden);
+      });
+
+      document.addEventListener('keydown', (event) => {
+        if (event.key === 'Escape') {
+          setOpen(false);
+        }
+      });
+
+      document.addEventListener('click', (event) => {
+        if (!header.contains(event.target)) {
+          setOpen(false);
+        }
+      });
+    }
+
+    panel.innerHTML = '';
+
+    Array.from(desktopNav.querySelectorAll('a'))
+      .filter(visibleElement)
+      .forEach((source) => {
+        panel.appendChild(mobileNavLinkFrom(source, active));
+      });
+
+    const actionSource = Array.from(shell.children)
+      .find((child) => child !== brandRow && child !== panel);
+
+    if (actionSource) {
+      const actionLinks = Array.from(actionSource.querySelectorAll('a')).filter(visibleElement);
+      if (actionLinks.length > 0) {
+        const divider = document.createElement('div');
+        divider.className = 'omni-mobile-divider';
+        panel.appendChild(divider);
+      }
+
+      actionLinks.forEach((source) => {
+        panel.appendChild(mobileNavLinkFrom(source, active));
+      });
+
+      const sessionName = actionSource.querySelector('[data-session-name]');
+      if (visibleElement(sessionName)) {
+        const userBadge = document.createElement('div');
+        userBadge.className = 'omni-mobile-user';
+        userBadge.textContent = sessionName.textContent;
+        panel.appendChild(userBadge);
+      }
+
+      if (actionSource.querySelector('[data-logout]')) {
+        const logout = document.createElement('button');
+        logout.type = 'button';
+        logout.className = 'omni-mobile-nav-item omni-mobile-logout';
+        logout.textContent = 'Đăng xuất';
+        logout.addEventListener('click', () => {
+          api.clearSession();
+          window.location.replace('index.html');
+        });
+        panel.appendChild(logout);
+      }
+    }
+  }
+
   function hydrateNav(active) {
     const session = api.getSession();
     const user = session.user;
@@ -214,6 +337,8 @@
         window.location.replace('index.html');
       });
     });
+
+    enhanceMobileNav(active);
   }
 
   function defaultDates() {

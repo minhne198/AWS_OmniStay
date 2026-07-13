@@ -56,7 +56,14 @@
     `).join('');
 
     list.querySelectorAll('[data-pay]').forEach((button) => {
-      button.addEventListener('click', () => updateBooking(() => api.payBooking(button.dataset.pay)));
+      button.addEventListener('click', () => {
+        const booking = bookings.find((item) => item.bookingCode === button.dataset.pay);
+        if (!booking || !confirmPayment(booking)) {
+          return;
+        }
+
+        updateBooking(() => api.payBooking(button.dataset.pay));
+      });
     });
 
     list.querySelectorAll('[data-cancel]').forEach((button) => {
@@ -90,6 +97,10 @@
       Paid: 'bg-success-green/10 text-success-green',
       Cancelled: 'bg-error-container text-error'
     }[value] || 'bg-surface-container-high text-on-surface-variant';
+  }
+
+  function confirmPayment(booking) {
+    return window.confirm(`Xac nhan thanh toan booking ${booking.bookingCode} voi so tien ${ui.formatCurrency(booking.totalPrice)}? So du tai khoan se bi tru sau khi xac nhan.`);
   }
 
   loadMyBookings();

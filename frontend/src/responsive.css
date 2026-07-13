@@ -1,0 +1,376 @@
+html {
+  min-width: 320px;
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+}
+
+body {
+  overflow-x: hidden;
+}
+
+body,
+button,
+input,
+select,
+textarea {
+  letter-spacing: 0 !important;
+}
+
+img,
+svg,
+video,
+canvas {
+  max-width: 100%;
+}
+
+main,
+section,
+article,
+aside,
+form,
+div {
+  min-width: 0;
+}
+
+input,
+select,
+textarea {
+  font-size: 16px;
+}
+
+button,
+a,
+input,
+select,
+textarea {
+  -webkit-tap-highlight-color: transparent;
+}
+
+.omni-mobile-toggle,
+.omni-mobile-panel {
+  display: none;
+}
+
+.omni-mobile-toggle {
+  width: 44px;
+  height: 44px;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 auto;
+  flex-direction: column;
+  gap: 5px;
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.10);
+  color: #fff;
+}
+
+.omni-mobile-toggle span {
+  width: 20px;
+  height: 2px;
+  border-radius: 999px;
+  background: currentColor;
+}
+
+.omni-mobile-panel {
+  width: 100%;
+  flex: 0 0 100%;
+  gap: 8px;
+  padding: 12px 0 4px;
+  border-top: 1px solid rgba(255, 255, 255, 0.18);
+}
+
+.omni-mobile-panel[hidden] {
+  display: none !important;
+}
+
+.omni-mobile-nav-item,
+.omni-mobile-user {
+  width: 100%;
+  min-height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  border-radius: 8px;
+  padding: 11px 12px;
+  background: rgba(255, 255, 255, 0.10);
+  color: #fff;
+  font-size: 15px;
+  font-weight: 700;
+  line-height: 1.25;
+  text-align: left;
+}
+
+.omni-mobile-nav-item.active {
+  background: rgba(255, 183, 0, 0.20);
+  color: #ffdc76;
+}
+
+.omni-mobile-user {
+  justify-content: flex-start;
+  overflow: hidden;
+  color: rgba(255, 255, 255, 0.86);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.omni-mobile-logout {
+  border: 0;
+  cursor: pointer;
+}
+
+.omni-mobile-divider {
+  height: 1px;
+  margin: 4px 0;
+  background: rgba(255, 255, 255, 0.18);
+}
+
+@media (max-width: 767px) {
+  .px-margin-desktop {
+    padding-left: 16px !important;
+    padding-right: 16px !important;
+  }
+
+  .gap-gutter {
+    gap: 16px !important;
+  }
+
+  .text-display-lg {
+    font-size: 34px !important;
+    line-height: 40px !important;
+  }
+
+  .text-headline-lg {
+    font-size: 27px !important;
+    line-height: 34px !important;
+  }
+
+  .text-headline-md {
+    font-size: 22px !important;
+    line-height: 28px !important;
+  }
+
+  header[data-mobile-nav-ready] > div {
+    height: auto !important;
+    min-height: 64px;
+    flex-wrap: wrap;
+    gap: 10px;
+    padding: 10px 16px !important;
+  }
+
+  header[data-mobile-nav-ready] > div > div:first-child {
+    width: 100%;
+    justify-content: space-between;
+    gap: 12px;
+  }
+
+  header[data-mobile-nav-ready] nav {
+    display: none !important;
+  }
+
+  header[data-mobile-nav-ready] > div > div:not(:first-child):not(.omni-mobile-panel) {
+    display: none !important;
+  }
+
+  header[data-mobile-nav-ready] .omni-mobile-toggle {
+    display: inline-flex !important;
+  }
+
+  header[data-mobile-nav-ready] .omni-mobile-panel:not([hidden]) {
+    display: grid !important;
+  }
+
+  main {
+    padding-top: 20px !important;
+    padding-bottom: 28px !important;
+  }
+
+  main .p-8,
+  main .p-6,
+  main .md\:p-8,
+  main .md\:p-12 {
+    padding: 18px !important;
+  }
+
+  main .py-16 {
+    padding-top: 40px !important;
+    padding-bottom: 40px !important;
+  }
+
+  main .pt-16 {
+    padding-top: 36px !important;
+  }
+
+  main .pb-24 {
+    padding-bottom: 48px !important;
+  }
+
+  main .mb-12 {
+    margin-bottom: 28px !important;
+  }
+
+  main .grid.grid-cols-2 {
+    grid-template-columns: 1fr !important;
+  }
+
+  main .sticky {
+    position: static !important;
+    top: auto !important;
+  }
+
+  main .flex.items-center.justify-between,
+  main .flex.items-start.justify-between,
+  main .flex.items-end.justify-between,
+  main .flex.md\:items-center.md\:justify-between,
+  main .flex.md\:items-start.md\:justify-between {
+    align-items: flex-start !important;
+    flex-wrap: wrap;
+  }
+
+  main .text-right,
+  main .md\:text-right {
+    text-align: left !important;
+  }
+
+  main .max-w-\[200px\],
+  main .truncate {
+    max-width: 100% !important;
+  }
+
+  main .overflow-x-auto {
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: thin;
+  }
+
+  main button,
+  main a {
+    min-height: 40px;
+  }
+
+  main button[type="submit"],
+  main a[class*="bg-action-blue"],
+  main button[class*="bg-action-blue"] {
+    min-height: 46px;
+  }
+
+  main [class*="aspect-"] img,
+  main img.object-cover {
+    min-height: 0;
+  }
+
+  main img.w-40,
+  main img.w-32,
+  main img.md\:w-40,
+  main img.md\:w-32 {
+    width: 100% !important;
+  }
+
+  main img.h-32,
+  main img.h-24 {
+    height: auto !important;
+    aspect-ratio: 16 / 9;
+  }
+
+  body > .w-full.max-w-5xl {
+    border-radius: 8px !important;
+  }
+
+  body > .w-full.max-w-5xl > .grid > div {
+    padding: 18px !important;
+  }
+
+  footer {
+    padding: 24px 16px !important;
+    text-align: center;
+  }
+}
+
+@media (max-width: 640px) {
+  body {
+    font-size: 15px;
+  }
+
+  main .rounded-xl {
+    border-radius: 8px !important;
+  }
+
+  main .space-y-8 > :not([hidden]) ~ :not([hidden]) {
+    margin-top: 24px !important;
+  }
+
+  main .space-y-6 > :not([hidden]) ~ :not([hidden]) {
+    margin-top: 18px !important;
+  }
+
+  main .space-y-4 > :not([hidden]) ~ :not([hidden]) {
+    margin-top: 14px !important;
+  }
+
+  main .flex.gap-2,
+  main .flex.gap-3,
+  main .flex.gap-4 {
+    flex-wrap: wrap;
+  }
+
+  main .flex.gap-2 > button,
+  main .flex.gap-3 > button,
+  main .flex.gap-4 > button,
+  main .flex.gap-2 > a,
+  main .flex.gap-3 > a,
+  main .flex.gap-4 > a {
+    flex: 1 1 auto;
+  }
+
+  main [id$="Message"] {
+    overflow-wrap: anywhere;
+  }
+
+  main input[type="file"] {
+    padding: 12px !important;
+    font-size: 14px;
+  }
+
+  main [id="tab-dashboard"],
+  main [id="tab-users"],
+  main [id="tab-hotels"],
+  main [id="tab-bookings"],
+  main [id="tab-transactions"],
+  main [id="tab-activity"] {
+    flex: 0 0 auto;
+    white-space: nowrap;
+  }
+
+  main [id$="List"] article,
+  main [id$="List"] > div {
+    overflow-wrap: anywhere;
+  }
+}
+
+@media (max-width: 430px) {
+  .text-display-lg {
+    font-size: 30px !important;
+    line-height: 36px !important;
+  }
+
+  .text-headline-lg {
+    font-size: 24px !important;
+    line-height: 31px !important;
+  }
+
+  main .p-6,
+  main .p-5,
+  main .p-4 {
+    padding: 14px !important;
+  }
+
+  main .px-8 {
+    padding-left: 18px !important;
+    padding-right: 18px !important;
+  }
+
+  main .py-3 {
+    padding-top: 11px !important;
+    padding-bottom: 11px !important;
+  }
+}

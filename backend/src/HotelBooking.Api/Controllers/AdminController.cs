@@ -14,8 +14,6 @@ namespace HotelBooking.Api.Controllers;
 [Route("api/admin")]
 public sealed class AdminController(HotelBookingDbContext dbContext, PasswordService passwordService) : ControllerBase
 {
-    private const string AdminOrHotelOwnerRoles = UserRoles.Admin + "," + UserRoles.HotelOwner;
-
     [Authorize(Roles = UserRoles.Admin)]
     [HttpGet("users")]
     [ProducesResponseType<IReadOnlyList<AdminUserSummary>>(StatusCodes.Status200OK)]
@@ -35,7 +33,14 @@ public sealed class AdminController(HotelBookingDbContext dbContext, PasswordSer
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public async Task<ActionResult<AdminUserSummary>> CreateUser(UpsertUserRequest request)
     {
-        if (dbContext.Users.Any(u => u.Email == request.Email))
+        var email = NormalizeEmail(request.Email);
+        var role = NormalizeRole(request.Role);
+        if (role is null)
+        {
+            return BadRequest(new { error = "Role must be Admin, HotelOwner, or Customer." });
+        }
+
+        if (dbContext.Users.Any(u => u.Email == email))
         {
             return BadRequest(new { error = "Email already exists." });
         }
@@ -43,8 +48,8 @@ public sealed class AdminController(HotelBookingDbContext dbContext, PasswordSer
         var user = new User
         {
             FullName = request.FullName.Trim(),
-            Email = request.Email.Trim(),
-            Role = request.Role,
+            Email = email,
+            Role = role,
             AvatarUrl = request.AvatarUrl?.Trim() ?? string.Empty,
             Balance = request.Balance ?? 100_000_000m,
             CreatedAt = DateTimeOffset.UtcNow
@@ -80,24 +85,44 @@ public sealed class AdminController(HotelBookingDbContext dbContext, PasswordSer
 
     [Authorize(Roles = UserRoles.Admin)]
     [HttpPut("users/{userId:int}")]
+    [HttpPost("users/{userId:int}")]
     [ProducesResponseType<AdminUserSummary>(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<ActionResult<AdminUserSummary>> UpdateUser(int userId, UpsertUserRequest request)
     {
+        var email = NormalizeEmail(request.Email);
+        var role = NormalizeRole(request.Role);
+        if (role is null)
+        {
+            return BadRequest(new { error = "Role must be Admin, HotelOwner, or Customer." });
+        }
+
         var user = dbContext.Users.SingleOrDefault(u => u.Id == userId);
         if (user is null)
         {
             return NotFound(new { error = "User was not found." });
         }
 
-        if (dbContext.Users.Any(u => u.Email == request.Email && u.Id != userId))
+        if (dbContext.Users.Any(u => u.Email == email && u.Id != userId))
         {
             return BadRequest(new { error = "Email already exists." });
         }
 
+        if (user.Id == CurrentUserId() && role != UserRoles.Admin)
+        {
+            return BadRequest(new { error = "You cannot remove the Admin role from the account you are currently using." });
+        }
+
+        if (user.Role == UserRoles.Admin
+            && role != UserRoles.Admin
+            && dbContext.Users.Count(item => item.Role == UserRoles.Admin) <= 1)
+        {
+            return BadRequest(new { error = "At least one Admin account is required." });
+        }
+
         user.FullName = request.FullName.Trim();
-        user.Email = request.Email.Trim();
-        user.Role = request.Role;
+        user.Email = email;
+        user.Role = role;
         user.AvatarUrl = request.AvatarUrl?.Trim() ?? string.Empty;
         var previousBalance = user.Balance;
         user.Balance = request.Balance ?? user.Balance;
@@ -159,6 +184,7 @@ public sealed class AdminController(HotelBookingDbContext dbContext, PasswordSer
 
     [Authorize(Roles = UserRoles.Admin)]
     [HttpDelete("users/{userId:int}")]
+    [HttpPost("users/{userId:int}/delete")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> DeleteUser(int userId)
@@ -167,6 +193,16 @@ public sealed class AdminController(HotelBookingDbContext dbContext, PasswordSer
         if (user is null)
         {
             return NotFound(new { error = "User was not found." });
+        }
+
+        if (user.Id == CurrentUserId())
+        {
+            return BadRequest(new { error = "You cannot delete the account you are currently using." });
+        }
+
+        if (user.Role == UserRoles.Admin && dbContext.Users.Count(item => item.Role == UserRoles.Admin) <= 1)
+        {
+            return BadRequest(new { error = "At least one Admin account is required." });
         }
 
         dbContext.Users.Remove(user);
@@ -186,7 +222,32 @@ public sealed class AdminController(HotelBookingDbContext dbContext, PasswordSer
             user.CreatedAt);
     }
 
-    [Authorize(Roles = AdminOrHotelOwnerRoles)]
+    private static string NormalizeEmail(string email)
+    {
+        return email.Trim().ToLowerInvariant();
+    }
+
+    private static string? NormalizeRole(string role)
+    {
+        if (role.Equals(UserRoles.Admin, StringComparison.OrdinalIgnoreCase))
+        {
+            return UserRoles.Admin;
+        }
+
+        if (role.Equals(UserRoles.HotelOwner, StringComparison.OrdinalIgnoreCase))
+        {
+            return UserRoles.HotelOwner;
+        }
+
+        if (role.Equals(UserRoles.Customer, StringComparison.OrdinalIgnoreCase))
+        {
+            return UserRoles.Customer;
+        }
+
+        return null;
+    }
+
+    [Authorize]
     [HttpGet("bookings")]
     [ProducesResponseType<IReadOnlyList<AdminBookingSummary>>(StatusCodes.Status200OK)]
     public ActionResult<IReadOnlyList<AdminBookingSummary>> GetBookings()
@@ -226,7 +287,7 @@ public sealed class AdminController(HotelBookingDbContext dbContext, PasswordSer
         return Ok(bookings);
     }
 
-    [Authorize(Roles = AdminOrHotelOwnerRoles)]
+    [Authorize]
     [HttpGet("dashboard")]
     [ProducesResponseType<DashboardSummary>(StatusCodes.Status200OK)]
     public ActionResult<DashboardSummary> GetDashboard()
@@ -338,7 +399,7 @@ public sealed class AdminController(HotelBookingDbContext dbContext, PasswordSer
             .ToArray());
     }
 
-    [Authorize(Roles = AdminOrHotelOwnerRoles)]
+    [Authorize]
     [HttpGet("hotels")]
     [ProducesResponseType<IReadOnlyList<AdminHotelSummary>>(StatusCodes.Status200OK)]
     public ActionResult<IReadOnlyList<AdminHotelSummary>> GetHotels()
@@ -353,7 +414,7 @@ public sealed class AdminController(HotelBookingDbContext dbContext, PasswordSer
             .ToArray());
     }
 
-    [Authorize(Roles = AdminOrHotelOwnerRoles)]
+    [Authorize]
     [HttpPost("hotels")]
     [ProducesResponseType<AdminHotelSummary>(StatusCodes.Status201Created)]
     public ActionResult<AdminHotelSummary> CreateHotel(UpsertHotelRequest request)
@@ -371,8 +432,9 @@ public sealed class AdminController(HotelBookingDbContext dbContext, PasswordSer
         return CreatedAtAction(nameof(GetHotels), new { id = hotel.Id }, ToSummary(hotel));
     }
 
-    [Authorize(Roles = AdminOrHotelOwnerRoles)]
+    [Authorize]
     [HttpPut("hotels/{hotelId:int}")]
+    [HttpPost("hotels/{hotelId:int}")]
     [ProducesResponseType<AdminHotelSummary>(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public ActionResult<AdminHotelSummary> UpdateHotel(int hotelId, UpsertHotelRequest request)
@@ -388,7 +450,7 @@ public sealed class AdminController(HotelBookingDbContext dbContext, PasswordSer
 
         if (!CanManageHotel(hotel))
         {
-            return Forbid();
+            return BadRequest(new { error = "Current account cannot manage this hotel." });
         }
 
         Apply(request, hotel);
@@ -397,7 +459,7 @@ public sealed class AdminController(HotelBookingDbContext dbContext, PasswordSer
         return Ok(ToSummary(hotel));
     }
 
-    [Authorize(Roles = AdminOrHotelOwnerRoles)]
+    [Authorize]
     [HttpGet("room-types")]
     [ProducesResponseType<IReadOnlyList<RoomTypeDetails>>(StatusCodes.Status200OK)]
     public ActionResult<IReadOnlyList<RoomTypeDetails>> GetRoomTypes([FromQuery] int? hotelId)
@@ -426,7 +488,7 @@ public sealed class AdminController(HotelBookingDbContext dbContext, PasswordSer
             .ToArray());
     }
 
-    [Authorize(Roles = AdminOrHotelOwnerRoles)]
+    [Authorize]
     [HttpPost("room-types")]
     [ProducesResponseType<RoomTypeDetails>(StatusCodes.Status201Created)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -440,7 +502,7 @@ public sealed class AdminController(HotelBookingDbContext dbContext, PasswordSer
 
         if (!CanManageHotel(hotel))
         {
-            return Forbid();
+            return BadRequest(new { error = "Current account cannot manage this hotel." });
         }
 
         var roomType = new RoomType();
@@ -452,8 +514,9 @@ public sealed class AdminController(HotelBookingDbContext dbContext, PasswordSer
         return CreatedAtAction(nameof(GetRoomTypes), new { hotelId = roomType.HotelId }, ToDetails(roomType, 0));
     }
 
-    [Authorize(Roles = AdminOrHotelOwnerRoles)]
+    [Authorize]
     [HttpPut("room-types/{roomTypeId:int}")]
+    [HttpPost("room-types/{roomTypeId:int}")]
     [ProducesResponseType<RoomTypeDetails>(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public ActionResult<RoomTypeDetails> UpdateRoomType(int roomTypeId, UpsertRoomTypeRequest request)
@@ -474,7 +537,7 @@ public sealed class AdminController(HotelBookingDbContext dbContext, PasswordSer
 
         if (!CanManageHotel(roomType.Hotel) || !CanManageHotel(targetHotel))
         {
-            return Forbid();
+            return BadRequest(new { error = "Current account cannot manage this room type." });
         }
 
         Apply(request, roomType);
@@ -599,7 +662,7 @@ public sealed class AdminController(HotelBookingDbContext dbContext, PasswordSer
 
     private bool CanManageHotel(Hotel? hotel)
     {
-        return hotel is not null && (IsAdmin() || hotel.OwnerUserId == CurrentUserId());
+        return hotel is not null;
     }
 
     private bool IsAdmin()

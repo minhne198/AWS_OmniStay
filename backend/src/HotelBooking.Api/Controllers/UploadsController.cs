@@ -9,19 +9,25 @@ namespace HotelBooking.Api.Controllers;
 [Route("api")]
 public sealed class UploadsController(IWebHostEnvironment environment) : ControllerBase
 {
+    private const long MaxUploadBytes = 20 * 1024 * 1024;
+
     private static readonly HashSet<string> AllowedExtensions = new(StringComparer.OrdinalIgnoreCase)
     {
         ".jpg",
         ".jpeg",
+        ".jfif",
         ".png",
         ".webp",
-        ".gif"
+        ".gif",
+        ".bmp",
+        ".avif"
     };
 
     [Authorize]
+    [HttpPost("uploads/images")]
     [HttpPost("admin/uploads/images")]
     [Consumes("multipart/form-data")]
-    [RequestSizeLimit(5 * 1024 * 1024)]
+    [RequestSizeLimit(MaxUploadBytes)]
     [ProducesResponseType<AdminImageUploadResult>(StatusCodes.Status201Created)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public async Task<ActionResult<AdminImageUploadResult>> UploadImage([FromForm] IFormFile? file)
@@ -31,10 +37,15 @@ public sealed class UploadsController(IWebHostEnvironment environment) : Control
             return BadRequest(new { error = "Image file is required." });
         }
 
+        if (file.Length > MaxUploadBytes)
+        {
+            return BadRequest(new { error = "Image file must be 20 MB or smaller." });
+        }
+
         var extension = Path.GetExtension(file.FileName);
         if (!AllowedExtensions.Contains(extension))
         {
-            return BadRequest(new { error = "Only jpg, jpeg, png, webp, and gif images are supported." });
+            return BadRequest(new { error = "Only jpg, jpeg, jfif, png, webp, gif, bmp, and avif images are supported." });
         }
 
         var directory = ImageDirectory();
@@ -76,10 +87,12 @@ public sealed class UploadsController(IWebHostEnvironment environment) : Control
     {
         return Path.GetExtension(path).ToLowerInvariant() switch
         {
-            ".jpg" or ".jpeg" => "image/jpeg",
+            ".jpg" or ".jpeg" or ".jfif" => "image/jpeg",
             ".png" => "image/png",
             ".webp" => "image/webp",
             ".gif" => "image/gif",
+            ".bmp" => "image/bmp",
+            ".avif" => "image/avif",
             _ => "application/octet-stream"
         };
     }

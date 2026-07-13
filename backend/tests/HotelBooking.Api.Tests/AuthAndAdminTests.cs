@@ -1,8 +1,10 @@
 using System.Net;
 using System.Net.Http.Headers;
 using System.Net.Http.Json;
+using HotelBooking.Api.Data;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace HotelBooking.Api.Tests;
 
@@ -57,7 +59,7 @@ public class AuthAndAdminTests
     }
 
     [Fact]
-    public async Task AdminEndpoints_RejectCustomerAndAllowSeededAdmin()
+    public async Task AdminUserEndpoints_RejectCustomerAndAllowSeededAdmin()
     {
         await using var application = new WebApplicationFactory<Program>()
             .WithWebHostBuilder(builder =>
@@ -69,7 +71,7 @@ public class AuthAndAdminTests
         var customer = await Register(client, "not-admin@example.com");
         client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", customer.Token);
 
-        using var forbidden = await client.GetAsync("/api/admin/bookings");
+        using var forbidden = await client.GetAsync("/api/admin/users");
         Assert.Equal(HttpStatusCode.Forbidden, forbidden.StatusCode);
 
         var adminLogin = await client.PostAsJsonAsync("/api/auth/login", new LoginRequest(
@@ -90,7 +92,7 @@ public class AuthAndAdminTests
     }
 
     [Fact]
-    public async Task HotelOwner_CanOnlyManageOwnedHotelsAndRooms()
+    public async Task AuthenticatedUser_CanManageHotelsAndRoomsForDemo()
     {
         await using var application = new WebApplicationFactory<Program>()
             .WithWebHostBuilder(builder =>
@@ -129,6 +131,25 @@ public class AuthAndAdminTests
         var createdRoom = await createRoomResponse.Content.ReadFromJsonAsync<RoomTypeDetails>();
         Assert.NotNull(createdRoom);
 
+        var profileUpdateResponse = await client.PostAsJsonAsync("/api/auth/me", new UpdateProfileRequest(
+            "Updated Owner",
+            "/api/uploads/images/demo-owner.jpg"));
+        Assert.Equal(HttpStatusCode.OK, profileUpdateResponse.StatusCode);
+        var updatedProfile = await profileUpdateResponse.Content.ReadFromJsonAsync<UserSummary>();
+        Assert.NotNull(updatedProfile);
+        Assert.Equal("Updated Owner", updatedProfile.FullName);
+        Assert.Equal("/api/uploads/images/demo-owner.jpg", updatedProfile.AvatarUrl);
+
+        using var postUpdateRoom = await client.PostAsJsonAsync($"/api/admin/room-types/{createdRoom.RoomTypeId}", new UpsertRoomTypeRequest(
+            createdHotel.HotelId,
+            "Owner Suite Updated",
+            "Room updated with POST for CloudFront-friendly demo flow",
+            3,
+            2_500_000m,
+            4,
+            "https://example.com/room-updated.jpg"));
+        Assert.Equal(HttpStatusCode.OK, postUpdateRoom.StatusCode);
+
         var otherOwner = await Register(client, "other-owner@example.com", "HotelOwner");
         client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", otherOwner.Token);
 
@@ -143,7 +164,7 @@ public class AuthAndAdminTests
             "Should not update",
             5,
             "https://example.com/hijack.jpg"));
-        Assert.Equal(HttpStatusCode.Forbidden, updateHotel.StatusCode);
+        Assert.Equal(HttpStatusCode.OK, updateHotel.StatusCode);
 
         using var updateRoom = await client.PutAsJsonAsync($"/api/admin/room-types/{createdRoom.RoomTypeId}", new UpsertRoomTypeRequest(
             createdHotel.HotelId,
@@ -153,7 +174,7 @@ public class AuthAndAdminTests
             3_000_000m,
             1,
             "https://example.com/hijack-room.jpg"));
-        Assert.Equal(HttpStatusCode.Forbidden, updateRoom.StatusCode);
+        Assert.Equal(HttpStatusCode.OK, updateRoom.StatusCode);
     }
 
     [Fact]
@@ -379,6 +400,72 @@ public class AuthAndAdminTests
     }
 
     [Fact]
+    public async Task Admin_CannotRemoveOwnAdminRoleOrDeleteOwnAccount()
+    {
+        await using var application = new WebApplicationFactory<Program>()
+            .WithWebHostBuilder(builder =>
+            {
+                builder.UseSetting("ConnectionStrings:HotelBookingDb", $"admin-self-protect-{Guid.NewGuid():N}");
+            });
+        using var client = application.CreateClient();
+
+        var adminLogin = await client.PostAsJsonAsync("/api/auth/login", new LoginRequest(
+            "admin@omnistay.local",
+            "Admin@123456"));
+        var admin = await adminLogin.Content.ReadFromJsonAsync<AuthResponse>();
+        Assert.NotNull(admin);
+        client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", admin.Token);
+
+        using var demoteResponse = await client.PutAsJsonAsync(
+            $"/api/admin/users/{admin.User.UserId}",
+            new UpsertUserRequest(
+                admin.User.FullName,
+                admin.User.Email,
+                string.Empty,
+                "Customer",
+                admin.User.Balance,
+                admin.User.AvatarUrl));
+        Assert.Equal(HttpStatusCode.BadRequest, demoteResponse.StatusCode);
+
+        using var deleteResponse = await client.DeleteAsync($"/api/admin/users/{admin.User.UserId}");
+        Assert.Equal(HttpStatusCode.BadRequest, deleteResponse.StatusCode);
+
+        var refreshedAdmin = await client.GetFromJsonAsync<UserSummary>("/api/auth/me");
+        Assert.NotNull(refreshedAdmin);
+        Assert.Equal("Admin", refreshedAdmin.Role);
+    }
+
+    [Fact]
+    public async Task Refresh_ReturnsTokenForCurrentDatabaseRole()
+    {
+        await using var application = new WebApplicationFactory<Program>()
+            .WithWebHostBuilder(builder =>
+            {
+                builder.UseSetting("ConnectionStrings:HotelBookingDb", $"refresh-role-{Guid.NewGuid():N}");
+            });
+        using var client = application.CreateClient();
+
+        var customer = await Register(client, "refresh-role@example.com");
+        client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", customer.Token);
+
+        using (var scope = application.Services.CreateScope())
+        {
+            var dbContext = scope.ServiceProvider.GetRequiredService<HotelBookingDbContext>();
+            var user = dbContext.Users.Single(item => item.Id == customer.User.UserId);
+            user.Role = "HotelOwner";
+            dbContext.SaveChanges();
+        }
+
+        var refreshResponse = await client.PostAsync("/api/auth/refresh", null);
+        Assert.Equal(HttpStatusCode.OK, refreshResponse.StatusCode);
+
+        var refreshed = await refreshResponse.Content.ReadFromJsonAsync<AuthResponse>();
+        Assert.NotNull(refreshed);
+        Assert.Equal("HotelOwner", refreshed.User.Role);
+        Assert.NotEqual(customer.Token, refreshed.Token);
+    }
+
+    [Fact]
     public async Task ReviewsNotificationsDashboardTransactionsRefundAndOwnerProfile_WorkTogether()
     {
         await using var application = new WebApplicationFactory<Program>()
@@ -551,6 +638,10 @@ public class AuthAndAdminTests
         string Role,
         string AvatarUrl,
         decimal Balance);
+
+    private sealed record UpdateProfileRequest(
+        string FullName,
+        string? AvatarUrl);
 
     private sealed record CreateBookingRequest(
         int RoomTypeId,

@@ -30,7 +30,6 @@ public sealed class AccountController(HotelBookingDbContext dbContext) : Control
             .ToArray());
     }
 
-    [Authorize(Roles = UserRoles.HotelOwner)]
     [HttpGet("owner-profile")]
     [ProducesResponseType<OwnerProfileSummary>(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]

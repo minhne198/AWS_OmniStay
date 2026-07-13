@@ -1,10 +1,15 @@
 using HotelBooking.Api.Models;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace HotelBooking.Api.Data;
 
 public sealed class HotelBookingDbContext(DbContextOptions<HotelBookingDbContext> options) : DbContext(options)
 {
+    private static readonly ValueConverter<DateOnly, DateTime> DateOnlyConverter = new(
+        dateOnly => dateOnly.ToDateTime(TimeOnly.MinValue),
+        dateTime => DateOnly.FromDateTime(dateTime));
+
     public DbSet<Hotel> Hotels => Set<Hotel>();
 
     public DbSet<RoomType> RoomTypes => Set<RoomType>();
@@ -70,6 +75,8 @@ public sealed class HotelBookingDbContext(DbContextOptions<HotelBookingDbContext
             entity.Property(booking => booking.GuestEmail).HasMaxLength(200).IsRequired();
             entity.Property(booking => booking.Status).HasMaxLength(30).IsRequired();
             entity.Property(booking => booking.PaymentStatus).HasMaxLength(30).IsRequired();
+            entity.Property(booking => booking.CheckIn).HasConversion(DateOnlyConverter).HasColumnType("date");
+            entity.Property(booking => booking.CheckOut).HasConversion(DateOnlyConverter).HasColumnType("date");
             entity.Property(booking => booking.TotalPrice).HasPrecision(18, 2);
             entity.HasIndex(booking => booking.BookingCode).IsUnique();
             entity.HasIndex(booking => new { booking.RoomTypeId, booking.CheckIn, booking.CheckOut });

@@ -28,6 +28,7 @@ public sealed class NotificationsController(HotelBookingDbContext dbContext) : C
     }
 
     [HttpPut("{notificationId:int}/read")]
+    [HttpPost("{notificationId:int}/read")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public IActionResult MarkRead(int notificationId)
@@ -46,6 +47,7 @@ public sealed class NotificationsController(HotelBookingDbContext dbContext) : C
     }
 
     [HttpPut("read-all")]
+    [HttpPost("read-all")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     public IActionResult MarkAllRead()
     {

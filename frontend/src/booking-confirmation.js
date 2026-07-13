@@ -82,7 +82,13 @@
 
     const payButton = target.querySelector('[data-pay]');
     if (payButton) {
-      payButton.addEventListener('click', () => updateBooking(() => api.payBooking(booking.bookingCode)));
+      payButton.addEventListener('click', () => {
+        if (!confirmPayment(booking)) {
+          return;
+        }
+
+        updateBooking(() => api.payBooking(booking.bookingCode));
+      });
     }
 
     const cancelButton = target.querySelector('[data-cancel]');
@@ -138,6 +144,10 @@
     } catch (error) {
       ui.renderMessage(target, error.message, 'error');
     }
+  }
+
+  function confirmPayment(booking) {
+    return window.confirm(`Xac nhan thanh toan booking ${booking.bookingCode} voi so tien ${ui.formatCurrency(booking.totalPrice)}? So du tai khoan se bi tru sau khi xac nhan.`);
   }
 
   loadBooking();

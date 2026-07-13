@@ -13,18 +13,17 @@ public static class AdminUserSeeder
         var dbContext = scope.ServiceProvider.GetRequiredService<HotelBookingDbContext>();
         var passwordService = scope.ServiceProvider.GetRequiredService<PasswordService>();
 
-        if (dbContext.Users.Any(user => user.Role == UserRoles.Admin))
-        {
-            return;
-        }
-
         var email = configuration["Admin:Email"] ?? "admin@omnistay.local";
         var fullName = configuration["Admin:FullName"] ?? "OmniStay Admin";
         var password = configuration["Admin:SeedPassword"] ?? "Admin@123456";
         var normalizedEmail = email.Trim().ToLowerInvariant();
 
-        var user = dbContext.Users
-            .SingleOrDefault(item => item.Email == normalizedEmail);
+        var seedAdminMatches = dbContext.Users
+            .Where(item => item.Email == normalizedEmail)
+            .OrderBy(item => item.Id)
+            .ToArray();
+
+        var user = seedAdminMatches.FirstOrDefault();
 
         if (user is null)
         {
@@ -41,13 +40,18 @@ public static class AdminUserSeeder
         }
         else
         {
-            user.Role = UserRoles.Admin;
-            user.AvatarUrl ??= string.Empty;
-            if (user.Balance <= 0)
+            foreach (var seedAdmin in seedAdminMatches)
             {
-                user.Balance = 100_000_000m;
+                seedAdmin.FullName = string.IsNullOrWhiteSpace(seedAdmin.FullName) ? fullName : seedAdmin.FullName;
+                seedAdmin.Role = UserRoles.Admin;
+                seedAdmin.AvatarUrl ??= string.Empty;
+                if (seedAdmin.Balance <= 0)
+                {
+                    seedAdmin.Balance = 100_000_000m;
+                }
+
+                dbContext.Entry(seedAdmin).State = EntityState.Modified;
             }
-            dbContext.Entry(user).State = EntityState.Modified;
         }
 
         dbContext.SaveChanges();

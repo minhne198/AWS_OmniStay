@@ -1,7 +1,7 @@
 (function () {
     const api = window.OmniStayApi;
     const ui = window.OmniStaySession;
-    const session = ui.requireAuth({ roles: ['Admin', 'HotelOwner'] });
+    const session = ui.requireAuth();
     if (!session) {
         return;
     }
@@ -48,6 +48,7 @@
         userFullName: document.getElementById('userFullName'),
         userEmail: document.getElementById('userEmail'),
         userPassword: document.getElementById('userPassword'),
+        userPasswordConfirm: document.getElementById('userPasswordConfirm'),
         userRole: document.getElementById('userRole'),
         userBalance: document.getElementById('userBalance'),
         userSubmit: document.getElementById('userSubmit'),
@@ -256,6 +257,7 @@
         elements.userFullName.value = '';
         elements.userEmail.value = '';
         elements.userPassword.value = '';
+        elements.userPasswordConfirm.value = '';
         elements.userRole.value = 'Customer';
         elements.userBalance.value = '100000000';
         elements.userSubmit.textContent = 'Tạo người dùng';
@@ -345,6 +347,7 @@
                     elements.userFullName.value = user.fullName;
                     elements.userEmail.value = user.email;
                     elements.userPassword.value = '';
+                    elements.userPasswordConfirm.value = '';
                     elements.userRole.value = user.role;
                     elements.userBalance.value = user.balance || 0;
                     elements.userSubmit.textContent = 'Cập nhật người dùng';
@@ -735,6 +738,14 @@
             role: elements.userRole.value,
             balance: Number(elements.userBalance.value || 0)
         };
+        const passwordConfirm = elements.userPasswordConfirm.value.trim();
+
+        if (data.password || passwordConfirm) {
+            if (data.password !== passwordConfirm) {
+                renderUserMessage('Mật khẩu nhập lại không khớp!', 'error');
+                return;
+            }
+        }
 
         if (elements.userId.value) {
             // Update

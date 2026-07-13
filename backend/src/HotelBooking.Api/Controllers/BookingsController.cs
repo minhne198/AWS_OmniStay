@@ -88,6 +88,7 @@ public sealed class BookingsController(IHotelBookingService hotelBookingService)
 
     [Authorize]
     [HttpDelete("{code}")]
+    [HttpPost("{code}/cancel")]
     [ProducesResponseType<BookingConfirmation>(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public ActionResult<BookingConfirmation> Cancel(string code)

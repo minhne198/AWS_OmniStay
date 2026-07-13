@@ -85,7 +85,27 @@ public sealed class AuthController(
     }
 
     [Authorize]
+    [HttpPost("refresh")]
+    [ProducesResponseType<AuthResponse>(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public ActionResult<AuthResponse> Refresh()
+    {
+        var user = dbContext.Users
+            .AsNoTracking()
+            .SingleOrDefault(item => item.Id == CurrentUserId());
+
+        if (user is null)
+        {
+            return NotFound(new { error = "User was not found." });
+        }
+
+        var summary = ToSummary(user);
+        return Ok(new AuthResponse(jwtTokenService.CreateToken(summary), summary));
+    }
+
+    [Authorize]
     [HttpPut("me")]
+    [HttpPost("me")]
     [ProducesResponseType<UserSummary>(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public ActionResult<UserSummary> UpdateMe(UpdateProfileRequest request)
@@ -105,6 +125,7 @@ public sealed class AuthController(
 
     [Authorize]
     [HttpPut("me/password")]
+    [HttpPost("me/password")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
