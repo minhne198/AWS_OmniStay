@@ -328,6 +328,12 @@
         body: JSON.stringify(payload)
       });
     },
+    updateBankAccount(payload) {
+      return request('/auth/me/bank-account', {
+        method: 'POST',
+        body: JSON.stringify(payload)
+      });
+    },
     changePassword(payload) {
       return request('/auth/me/password', {
         method: 'POST',
@@ -362,13 +368,22 @@
     getBookingByCode(bookingCode) {
       return request(`/bookings/${encodeURIComponent(bookingCode)}`);
     },
+    getBookingByPayOsOrderCode(orderCode) {
+      return request(`/bookings/payments/payos/${encodeURIComponent(orderCode)}`);
+    },
     getMyBookings() {
       return request('/bookings/my');
     },
     payBooking(bookingCode) {
       return request(`/bookings/${encodeURIComponent(bookingCode)}/pay`, {
         method: 'POST',
-        body: JSON.stringify({ paymentMethod: 'DemoCard' })
+        body: JSON.stringify({ paymentMethod: 'Balance' })
+      });
+    },
+    createPayOsPayment(bookingCode, payload) {
+      return request(`/bookings/${encodeURIComponent(bookingCode)}/payments/payos`, {
+        method: 'POST',
+        body: JSON.stringify(payload || {})
       });
     },
     cancelBooking(bookingCode) {
@@ -483,6 +498,36 @@
     },
     getMyBalanceTransactions() {
       return request('/account/balance-transactions/my');
+    },
+    createPayOsTopUp(payload) {
+      return request('/account/balance/top-up/payos', {
+        method: 'POST',
+        body: JSON.stringify(payload)
+      });
+    },
+    getMyWithdrawals() {
+      return request('/account/withdrawals/my');
+    },
+    createWithdrawal(payload) {
+      return request('/account/withdrawals', {
+        method: 'POST',
+        body: JSON.stringify(payload)
+      });
+    },
+    getAdminWithdrawals() {
+      return request('/admin/withdrawals');
+    },
+    completeAdminWithdrawal(withdrawalRequestId, payload) {
+      return request(`/admin/withdrawals/${encodeURIComponent(withdrawalRequestId)}/complete`, {
+        method: 'POST',
+        body: JSON.stringify(payload || {})
+      });
+    },
+    rejectAdminWithdrawal(withdrawalRequestId, payload) {
+      return request(`/admin/withdrawals/${encodeURIComponent(withdrawalRequestId)}/reject`, {
+        method: 'POST',
+        body: JSON.stringify(payload || {})
+      });
     },
     getOwnerProfile() {
       return request('/account/owner-profile');

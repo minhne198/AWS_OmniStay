@@ -58,7 +58,7 @@ public sealed record UpsertRoomTypeRequest(
     [Required, MaxLength(100)] string Name,
     [Required, MaxLength(2000)] string Description,
     [Range(1, 20)] int MaxGuests,
-    [Range(0, 1_000_000_000)] decimal PricePerNight,
+    [Range(2_000, 1_000_000_000)] decimal PricePerNight,
     [Range(0, 10_000)] int TotalRooms,
     [Required, MaxLength(500)] string ImageUrl,
     bool IsHidden = false);

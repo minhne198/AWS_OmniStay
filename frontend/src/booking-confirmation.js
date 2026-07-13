@@ -8,11 +8,15 @@
 
   ui.hydrateNav('bookings');
 
+  const query = new URLSearchParams(window.location.search);
   const params = ui.readSearchParams();
+  const bookingCode = resolveBookingCode();
+  const payOsOrderCode = query.get('orderCode') || '';
+  const paymentState = query.get('payment') || '';
   const target = document.getElementById('confirmationPanel');
 
   async function loadBooking() {
-    if (!params.code) {
+    if (!bookingCode && !payOsOrderCode) {
       ui.renderMessage(target, 'Thiếu mã booking.', 'error');
       return;
     }
@@ -20,7 +24,9 @@
     ui.renderMessage(target, 'Đang tải booking...', 'muted');
 
     try {
-      const booking = await api.getBookingByCode(params.code);
+      const booking = bookingCode
+        ? await api.getBookingByCode(bookingCode)
+        : await api.getBookingByPayOsOrderCode(payOsOrderCode);
       renderBooking(booking);
     } catch (error) {
       ui.renderMessage(target, error.message, 'error');
@@ -50,10 +56,15 @@
         <div class="bg-surface-container-low border border-outline-variant rounded-lg p-4"><dt class="text-label-sm font-label-sm text-outline uppercase tracking-wider">Thanh toán</dt><dd class="mt-2"><span class="px-2 py-1 rounded-full text-label-sm font-label-sm ${statusToneClass(booking.paymentStatus)}">${ui.statusLabel(booking.paymentStatus)}</span></dd></div>
       </dl>
       <div class="flex flex-wrap gap-3">
-        ${booking.paymentStatus === 'Pending' ? '<button class="bg-action-blue hover:bg-primary-container text-white font-label-md text-label-md px-6 py-3 rounded-lg transition-colors" type="button" data-pay>Thanh toán</button>' : ''}
+        ${booking.paymentStatus === 'Pending' ? `
+          <button class="bg-action-blue hover:bg-primary-container text-white font-label-md text-label-md px-6 py-3 rounded-lg transition-colors" type="button" data-payos>Thanh toan truc tiep (payOS)</button>
+          <button class="bg-surface-container-high hover:bg-surface-container-highest text-on-surface font-label-md text-label-md px-6 py-3 rounded-lg transition-colors" type="button" data-pay-balance>Thanh toan bang so du</button>
+        ` : ''}
         ${booking.status !== 'Cancelled' && booking.canCancel !== false ? '<button class="bg-surface-container-high hover:bg-error-container text-on-surface font-label-md text-label-md px-6 py-3 rounded-lg transition-colors" type="button" data-cancel>Hủy booking</button>' : ''}
         <a class="bg-surface-container-low hover:bg-surface-container-high text-on-surface font-label-md text-label-md px-6 py-3 rounded-lg transition-colors" href="booking-lookup.html">Booking của tôi</a>
       </div>
+      ${paymentState === 'payos-return' && booking.paymentStatus === 'Pending' ? '<div class="bg-highlight-gold/15 text-on-surface border border-highlight-gold/40 rounded-xl p-4">Neu ban vua thanh toan qua payOS, he thong dang cho webhook xac nhan tu ngan hang.</div>' : ''}
+      ${paymentState === 'payos-cancel' && booking.paymentStatus === 'Pending' ? '<div class="bg-surface-container-low border border-outline-variant rounded-xl p-4 text-on-surface-variant">Ban da quay lai tu payOS. Booking van dang cho thanh toan.</div>' : ''}
       ${booking.canReview ? `
         <form id="reviewForm" class="bg-surface-container-low border border-outline-variant rounded-xl p-5 space-y-4">
           <div>
@@ -80,10 +91,17 @@
       ` : booking.hasReview ? '<div class="bg-success-green/10 text-success-green border border-success-green/30 rounded-xl p-4">Bạn đã đánh giá booking này.</div>' : ''}
     `;
 
-    const payButton = target.querySelector('[data-pay]');
-    if (payButton) {
-      payButton.addEventListener('click', () => {
-        if (!confirmPayment(booking)) {
+    const payOsButton = target.querySelector('[data-payos]');
+    if (payOsButton) {
+      payOsButton.addEventListener('click', () => {
+        startPayOsPayment(booking);
+      });
+    }
+
+    const balancePayButton = target.querySelector('[data-pay-balance]');
+    if (balancePayButton) {
+      balancePayButton.addEventListener('click', () => {
+        if (!confirmBalancePayment(booking)) {
           return;
         }
 
@@ -131,6 +149,7 @@
       Confirmed: 'bg-success-green/10 text-success-green',
       Paid: 'bg-success-green/10 text-success-green',
       Refunded: 'bg-success-green/10 text-success-green',
+      RefundPending: 'bg-highlight-gold/20 text-on-surface',
       Cancelled: 'bg-error-container text-error'
     }[value] || 'bg-surface-container-high text-on-surface-variant';
   }
@@ -146,8 +165,39 @@
     }
   }
 
-  function confirmPayment(booking) {
-    return window.confirm(`Xac nhan thanh toan booking ${booking.bookingCode} voi so tien ${ui.formatCurrency(booking.totalPrice)}? So du tai khoan se bi tru sau khi xac nhan.`);
+  async function startPayOsPayment(booking) {
+    ui.renderMessage(target, 'Dang tao link thanh toan payOS...', 'muted');
+
+    try {
+      const payment = await api.createPayOsPayment(booking.bookingCode, {
+        returnUrl: bookingUrl(booking.bookingCode, 'payos-return'),
+        cancelUrl: bookingUrl(booking.bookingCode, 'payos-cancel')
+      });
+      window.location.href = payment.checkoutUrl;
+    } catch (error) {
+      ui.renderMessage(target, error.message, 'error');
+    }
+  }
+
+  function bookingUrl(bookingCode, state) {
+    const url = new URL('booking-confirmation.html', window.location.href);
+    url.searchParams.set('bookingCode', bookingCode);
+    url.searchParams.set('payment', state);
+    return url.toString();
+  }
+
+  function resolveBookingCode() {
+    const explicitBookingCode = query.get('bookingCode') || '';
+    if (explicitBookingCode) {
+      return explicitBookingCode;
+    }
+
+    const legacyCode = params.code || query.get('code') || '';
+    return /^BK\d{8}-\d{3,}$/i.test(legacyCode) ? legacyCode : '';
+  }
+
+  function confirmBalancePayment(booking) {
+    return window.confirm(`Xac nhan thanh toan booking ${booking.bookingCode} bang so du voi so tien ${ui.formatCurrency(booking.totalPrice)}? So du tai khoan se bi tru sau khi xac nhan.`);
   }
 
   loadBooking();

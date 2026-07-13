@@ -14,6 +14,12 @@ public sealed class User
 
     public string AvatarUrl { get; set; } = string.Empty;
 
+    public string BankName { get; set; } = string.Empty;
+
+    public string BankAccountNumber { get; set; } = string.Empty;
+
+    public string BankAccountHolder { get; set; } = string.Empty;
+
     public decimal Balance { get; set; } = 100_000_000m;
 
     public DateTimeOffset CreatedAt { get; set; }
@@ -27,4 +33,8 @@ public sealed class User
     public List<Notification> Notifications { get; set; } = [];
 
     public List<BalanceTransaction> BalanceTransactions { get; set; } = [];
+
+    public List<PaymentTransaction> PaymentTransactions { get; set; } = [];
+
+    public List<WithdrawalRequest> WithdrawalRequests { get; set; } = [];
 }

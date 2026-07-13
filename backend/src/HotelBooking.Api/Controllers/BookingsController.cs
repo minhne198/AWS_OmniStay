@@ -87,6 +87,63 @@ public sealed class BookingsController(IHotelBookingService hotelBookingService)
     }
 
     [Authorize]
+    [HttpGet("payments/payos/{orderCode:long}")]
+    [ProducesResponseType<BookingConfirmation>(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public ActionResult<BookingConfirmation> GetByPayOsOrderCode(long orderCode)
+    {
+        var booking = hotelBookingService.GetBookingByPayOsOrderCode(
+            orderCode,
+            CurrentUserId(),
+            User.IsInRole(UserRoles.Admin));
+        if (booking is null)
+        {
+            return NotFound(new { error = "Booking was not found." });
+        }
+
+        return Ok(booking);
+    }
+
+    [Authorize]
+    [HttpPost("{code}/payments/payos")]
+    [ProducesResponseType<PayOsPaymentLinkResponse>(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public async Task<ActionResult<PayOsPaymentLinkResponse>> CreatePayOsPayment(
+        string code,
+        CreatePayOsPaymentRequest? request,
+        CancellationToken cancellationToken)
+    {
+        var returnUrl = SafeAbsoluteHttpUrl(request?.ReturnUrl)
+            ?? DefaultBookingUrl(code, "payos-return");
+        var cancelUrl = SafeAbsoluteHttpUrl(request?.CancelUrl)
+            ?? DefaultBookingUrl(code, "payos-cancel");
+
+        PayOsPaymentLinkResponse? payment;
+        try
+        {
+            payment = await hotelBookingService.CreatePayOsPaymentAsync(
+                code,
+                CurrentUserId(),
+                User.IsInRole(UserRoles.Admin),
+                returnUrl,
+                cancelUrl,
+                cancellationToken);
+        }
+        catch (InvalidOperationException ex)
+        {
+            return BadRequest(new { error = ex.Message });
+        }
+
+        if (payment is null)
+        {
+            return NotFound(new { error = "Booking was not found." });
+        }
+
+        return Ok(payment);
+    }
+
+    [Authorize]
     [HttpDelete("{code}")]
     [HttpPost("{code}/cancel")]
     [ProducesResponseType<BookingConfirmation>(StatusCodes.Status200OK)]
@@ -123,5 +180,23 @@ public sealed class BookingsController(IHotelBookingService hotelBookingService)
     private int CurrentUserId()
     {
         return int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier) ?? "0");
+    }
+
+    private string DefaultBookingUrl(string code, string paymentState)
+    {
+        var origin = $"{Request.Scheme}://{Request.Host}";
+        return $"{origin}/public/booking-confirmation.html?bookingCode={Uri.EscapeDataString(code)}&payment={Uri.EscapeDataString(paymentState)}";
+    }
+
+    private static string? SafeAbsoluteHttpUrl(string? value)
+    {
+        if (!Uri.TryCreate(value, UriKind.Absolute, out var uri))
+        {
+            return null;
+        }
+
+        return uri.Scheme == Uri.UriSchemeHttp || uri.Scheme == Uri.UriSchemeHttps
+            ? uri.ToString()
+            : null;
     }
 }

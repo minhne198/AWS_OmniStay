@@ -376,6 +376,120 @@ public sealed class AdminController(HotelBookingDbContext dbContext, PasswordSer
     }
 
     [Authorize(Roles = UserRoles.Admin)]
+    [HttpGet("withdrawals")]
+    [ProducesResponseType<IReadOnlyList<WithdrawalRequestSummary>>(StatusCodes.Status200OK)]
+    public ActionResult<IReadOnlyList<WithdrawalRequestSummary>> GetWithdrawals()
+    {
+        return Ok(dbContext.WithdrawalRequests
+            .AsNoTracking()
+            .Include(request => request.User)
+            .OrderBy(request => request.Status == WithdrawalRequestStatuses.Pending ? 0 : 1)
+            .ThenByDescending(request => request.RequestedAt)
+            .Take(200)
+            .ToArray()
+            .Select(ToWithdrawalSummary)
+            .ToArray());
+    }
+
+    [Authorize(Roles = UserRoles.Admin)]
+    [HttpPost("withdrawals/{withdrawalRequestId:int}/complete")]
+    [ProducesResponseType<WithdrawalRequestSummary>(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public ActionResult<WithdrawalRequestSummary> CompleteWithdrawal(
+        int withdrawalRequestId,
+        CompleteWithdrawalRequest request)
+    {
+        var withdrawal = dbContext.WithdrawalRequests
+            .Include(item => item.User)
+            .SingleOrDefault(item => item.Id == withdrawalRequestId);
+        if (withdrawal?.User is null)
+        {
+            return NotFound(new { error = "Withdrawal request was not found." });
+        }
+
+        if (withdrawal.Status != WithdrawalRequestStatuses.Pending)
+        {
+            return BadRequest(new { error = "Withdrawal request is not pending." });
+        }
+
+        if (withdrawal.User.Balance < withdrawal.Amount)
+        {
+            return BadRequest(new { error = "User balance is not enough to complete this withdrawal." });
+        }
+
+        withdrawal.User.Balance -= withdrawal.Amount;
+        withdrawal.Status = WithdrawalRequestStatuses.Completed;
+        withdrawal.AdminNote = request.AdminNote?.Trim() ?? string.Empty;
+        withdrawal.CompletedAt = DateTimeOffset.UtcNow;
+        withdrawal.CompletedByAdminId = CurrentUserId();
+
+        AddBalanceTransaction(
+            withdrawal.User,
+            null,
+            -withdrawal.Amount,
+            "WithdrawalCompleted",
+            $"Rut tien ve {withdrawal.BankName} - {withdrawal.BankAccountNumber}");
+        AddUserNotification(
+            withdrawal.UserId,
+            "WithdrawalCompleted",
+            "Lenh rut tien da hoan tat",
+            $"Admin da xac nhan lenh rut {withdrawal.Amount:N0} VND.",
+            "/public/profile.html");
+        AddAdminActivity(
+            "WithdrawalCompleted",
+            "Da xac nhan rut tien",
+            $"{withdrawal.User.Email} da duoc xac nhan rut {withdrawal.Amount:N0} VND.",
+            "/public/admin.html");
+
+        dbContext.SaveChanges();
+        return Ok(ToWithdrawalSummary(withdrawal));
+    }
+
+    [Authorize(Roles = UserRoles.Admin)]
+    [HttpPost("withdrawals/{withdrawalRequestId:int}/reject")]
+    [ProducesResponseType<WithdrawalRequestSummary>(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public ActionResult<WithdrawalRequestSummary> RejectWithdrawal(
+        int withdrawalRequestId,
+        CompleteWithdrawalRequest request)
+    {
+        var withdrawal = dbContext.WithdrawalRequests
+            .Include(item => item.User)
+            .SingleOrDefault(item => item.Id == withdrawalRequestId);
+        if (withdrawal?.User is null)
+        {
+            return NotFound(new { error = "Withdrawal request was not found." });
+        }
+
+        if (withdrawal.Status != WithdrawalRequestStatuses.Pending)
+        {
+            return BadRequest(new { error = "Withdrawal request is not pending." });
+        }
+
+        withdrawal.Status = WithdrawalRequestStatuses.Rejected;
+        withdrawal.AdminNote = request.AdminNote?.Trim() ?? string.Empty;
+        withdrawal.CompletedAt = DateTimeOffset.UtcNow;
+        withdrawal.CompletedByAdminId = CurrentUserId();
+
+        AddUserNotification(
+            withdrawal.UserId,
+            "WithdrawalRejected",
+            "Lenh rut tien bi tu choi",
+            $"Lenh rut {withdrawal.Amount:N0} VND da bi tu choi.",
+            "/public/profile.html");
+        AddAdminActivity(
+            "WithdrawalRejected",
+            "Tu choi rut tien",
+            $"{withdrawal.User.Email} bi tu choi lenh rut {withdrawal.Amount:N0} VND.",
+            "/public/admin.html");
+
+        dbContext.SaveChanges();
+        return Ok(ToWithdrawalSummary(withdrawal));
+    }
+
+    [Authorize(Roles = UserRoles.Admin)]
     [HttpGet("activity")]
     [ProducesResponseType<IReadOnlyList<AdminActivitySummary>>(StatusCodes.Status200OK)]
     public ActionResult<IReadOnlyList<AdminActivitySummary>> GetActivity()
@@ -613,6 +727,24 @@ public sealed class AdminController(HotelBookingDbContext dbContext, PasswordSer
             transaction.CreatedAt);
     }
 
+    private static WithdrawalRequestSummary ToWithdrawalSummary(WithdrawalRequest request)
+    {
+        return new WithdrawalRequestSummary(
+            request.Id,
+            request.UserId,
+            request.User?.Email ?? string.Empty,
+            request.User?.FullName ?? string.Empty,
+            request.Amount,
+            request.Status,
+            request.BankName,
+            request.BankAccountNumber,
+            request.BankAccountHolder,
+            request.Note,
+            request.AdminNote,
+            request.RequestedAt,
+            request.CompletedAt);
+    }
+
     private int ActiveBookedRooms(int roomTypeId)
     {
         return dbContext.Bookings.Count(booking =>
@@ -708,6 +840,20 @@ public sealed class AdminController(HotelBookingDbContext dbContext, PasswordSer
                 CreatedAt = DateTimeOffset.UtcNow
             });
         }
+    }
+
+    private void AddUserNotification(int userId, string type, string title, string message, string linkUrl)
+    {
+        dbContext.Notifications.Add(new Notification
+        {
+            UserId = userId,
+            Type = type,
+            Title = title,
+            Message = message,
+            LinkUrl = linkUrl,
+            IsRead = false,
+            CreatedAt = DateTimeOffset.UtcNow
+        });
     }
 
     private int CurrentUserId()

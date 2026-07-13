@@ -1,4 +1,5 @@
 using System.Globalization;
+using System.Text.Json;
 using HotelBooking.Api.Contracts;
 using HotelBooking.Api.Data;
 using HotelBooking.Api.Models;
@@ -6,7 +7,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace HotelBooking.Api.Services;
 
-public sealed class EfCoreHotelBookingService(HotelBookingDbContext dbContext) : IHotelBookingService
+public sealed class EfCoreHotelBookingService(HotelBookingDbContext dbContext, PayOsPaymentClient payOsClient) : IHotelBookingService
 {
     public HotelDetails? GetHotelById(int hotelId)
     {
@@ -242,6 +243,30 @@ public sealed class EfCoreHotelBookingService(HotelBookingDbContext dbContext) :
         return booking?.RoomType?.Hotel is null ? null : ToConfirmation(booking, booking.RoomType);
     }
 
+    public BookingConfirmation? GetBookingByPayOsOrderCode(long orderCode, int userId, bool isAdmin = false)
+    {
+        var query = dbContext.PaymentTransactions
+            .AsNoTracking()
+            .Include(transaction => transaction.Booking)
+            .ThenInclude(booking => booking!.RoomType)
+            .ThenInclude(roomType => roomType!.Hotel)
+            .Where(transaction => transaction.Provider == PaymentProviders.PayOs)
+            .Where(transaction => transaction.OrderCode == orderCode)
+            .Select(transaction => transaction.Booking!);
+
+        if (!isAdmin)
+        {
+            query = query.Where(booking => booking.UserId == userId);
+        }
+
+        var booking = query
+            .OrderByDescending(item => item.CreatedAt)
+            .ThenByDescending(item => item.Id)
+            .FirstOrDefault();
+
+        return booking?.RoomType?.Hotel is null ? null : ToConfirmation(booking, booking.RoomType);
+    }
+
     public IReadOnlyList<BookingConfirmation> GetBookingsForUser(int userId)
     {
         return dbContext.Bookings
@@ -271,43 +296,203 @@ public sealed class EfCoreHotelBookingService(HotelBookingDbContext dbContext) :
 
         if (booking.PaymentStatus != PaymentStatuses.Paid)
         {
-            var payer = booking.User;
-            if (payer is not null)
-            {
-                if (payer.Balance < booking.TotalPrice)
-                {
-                    throw new InvalidOperationException("Số dư không đủ để thanh toán booking này.");
-                }
-
-                payer.Balance -= booking.TotalPrice;
-                AddBalanceTransaction(
-                    payer,
-                    booking,
-                    -booking.TotalPrice,
-                    "BookingPayment",
-                    $"Thanh toán booking {booking.BookingCode}");
-            }
-
-            var owner = booking.RoomType.Hotel?.Owner;
-            if (owner is not null && owner.Id != payer?.Id)
-            {
-                owner.Balance += booking.TotalPrice;
-                AddBalanceTransaction(
-                    owner,
-                    booking,
-                    booking.TotalPrice,
-                    "OwnerBookingCredit",
-                    $"Doanh thu booking {booking.BookingCode}");
-            }
-
-            booking.Status = BookingStatuses.Confirmed;
-            booking.PaymentStatus = PaymentStatuses.Paid;
-            booking.PaidAt = DateTimeOffset.UtcNow;
-            AddPaymentNotifications(booking);
+            CompleteBookingPayment(booking, deductPayerBalance: true);
             dbContext.SaveChanges();
         }
 
         return ToConfirmation(booking, booking.RoomType);
+    }
+
+    public async Task<PayOsPaymentLinkResponse?> CreatePayOsPaymentAsync(
+        string bookingCode,
+        int userId,
+        bool isAdmin,
+        string returnUrl,
+        string cancelUrl,
+        CancellationToken cancellationToken = default)
+    {
+        if (!payOsClient.Options.IsConfigured)
+        {
+            throw new InvalidOperationException("PayOS chua duoc cau hinh tren server.");
+        }
+
+        var booking = FindMutableBooking(bookingCode, userId, isAdmin);
+        if (booking?.RoomType?.Hotel is null)
+        {
+            return null;
+        }
+
+        if (booking.Status == BookingStatuses.Cancelled)
+        {
+            throw new InvalidOperationException("Booking da bi huy, khong the tao thanh toan payOS.");
+        }
+
+        if (booking.PaymentStatus == PaymentStatuses.Paid)
+        {
+            throw new InvalidOperationException("Booking nay da duoc thanh toan.");
+        }
+
+        var now = DateTimeOffset.UtcNow;
+        var transaction = new PaymentTransaction
+        {
+            BookingId = booking.Id,
+            UserId = booking.UserId,
+            Provider = PaymentProviders.PayOs,
+            Purpose = PaymentTransactionPurposes.BookingPayment,
+            OrderCode = CreatePayOsOrderCode(),
+            Amount = booking.TotalPrice,
+            Currency = "VND",
+            Status = PaymentTransactionStatuses.Pending,
+            CreatedAt = now,
+            UpdatedAt = now
+        };
+        transaction.Description = CreatePayOsDescription(transaction.OrderCode);
+
+        dbContext.PaymentTransactions.Add(transaction);
+        dbContext.SaveChanges();
+
+        try
+        {
+            var payOsResult = await payOsClient.CreatePaymentLinkAsync(
+                transaction,
+                returnUrl,
+                cancelUrl,
+                cancellationToken);
+
+            transaction.PaymentLinkId = payOsResult.PaymentLinkId;
+            transaction.CheckoutUrl = payOsResult.CheckoutUrl;
+            transaction.QrCode = payOsResult.QrCode;
+            transaction.UpdatedAt = DateTimeOffset.UtcNow;
+            dbContext.SaveChanges();
+        }
+        catch (Exception ex) when (ex is InvalidOperationException or HttpRequestException or TaskCanceledException)
+        {
+            transaction.Status = PaymentTransactionStatuses.Failed;
+            transaction.FailureReason = ex.Message;
+            transaction.UpdatedAt = DateTimeOffset.UtcNow;
+            dbContext.SaveChanges();
+            throw;
+        }
+
+        return new PayOsPaymentLinkResponse(
+            booking.BookingCode,
+            transaction.Provider,
+            transaction.OrderCode,
+            transaction.Amount,
+            transaction.Currency,
+            transaction.Status,
+            transaction.CheckoutUrl,
+            transaction.QrCode);
+    }
+
+    public Task<PayOsWebhookResult> ProcessPayOsWebhookAsync(
+        JsonElement data,
+        string? signature,
+        CancellationToken cancellationToken = default)
+    {
+        _ = cancellationToken;
+
+        if (!payOsClient.IsValidWebhookSignature(data, signature))
+        {
+            return Task.FromResult(new PayOsWebhookResult(false, "Invalid payOS signature."));
+        }
+
+        if (!TryGetInt64(data, "orderCode", out var orderCode))
+        {
+            return Task.FromResult(new PayOsWebhookResult(false, "Missing payOS orderCode."));
+        }
+
+        var transaction = dbContext.PaymentTransactions
+            .Include(item => item.User)
+            .Include(item => item.Booking)
+            .ThenInclude(booking => booking!.User)
+            .Include(item => item.Booking)
+            .ThenInclude(booking => booking!.RoomType)
+            .ThenInclude(roomType => roomType!.Hotel)
+            .ThenInclude(hotel => hotel!.Owner)
+            .SingleOrDefault(item => item.Provider == PaymentProviders.PayOs && item.OrderCode == orderCode);
+
+        if (transaction is null)
+        {
+            return Task.FromResult(new PayOsWebhookResult(true, "No matching local payOS transaction."));
+        }
+
+        if (transaction.Status == PaymentTransactionStatuses.Paid)
+        {
+            return Task.FromResult(new PayOsWebhookResult(true, "Transaction was already paid."));
+        }
+
+        var providerCode = GetString(data, "code");
+        if (providerCode != "00")
+        {
+            transaction.Status = PaymentTransactionStatuses.Failed;
+            transaction.FailureReason = GetString(data, "desc") ?? "PayOS payment was not successful.";
+            transaction.UpdatedAt = DateTimeOffset.UtcNow;
+            dbContext.SaveChanges();
+            return Task.FromResult(new PayOsWebhookResult(true, "PayOS transaction marked failed."));
+        }
+
+        if (!TryGetDecimal(data, "amount", out var amount) || amount != transaction.Amount)
+        {
+            transaction.Status = PaymentTransactionStatuses.Failed;
+            transaction.FailureReason = "PayOS amount does not match booking total.";
+            transaction.UpdatedAt = DateTimeOffset.UtcNow;
+            dbContext.SaveChanges();
+            return Task.FromResult(new PayOsWebhookResult(false, "PayOS amount does not match booking total."));
+        }
+
+        var now = DateTimeOffset.UtcNow;
+        transaction.Status = PaymentTransactionStatuses.Paid;
+        transaction.ProviderReference = GetString(data, "reference") ?? string.Empty;
+        transaction.PaymentLinkId = GetString(data, "paymentLinkId") ?? transaction.PaymentLinkId;
+        transaction.PaidAt = now;
+        transaction.UpdatedAt = now;
+
+        if (transaction.Purpose == PaymentTransactionPurposes.BalanceTopUp)
+        {
+            if (transaction.User is null)
+            {
+                transaction.Status = PaymentTransactionStatuses.Failed;
+                transaction.FailureReason = "Top-up transaction has no user.";
+                transaction.UpdatedAt = DateTimeOffset.UtcNow;
+                dbContext.SaveChanges();
+                return Task.FromResult(new PayOsWebhookResult(false, "Top-up transaction has no user."));
+            }
+
+            transaction.User.Balance += transaction.Amount;
+            AddBalanceTransaction(
+                transaction.User,
+                null,
+                transaction.Amount,
+                "PayOsTopUp",
+                $"Nap tien payOS order {transaction.OrderCode}");
+            AddNotification(
+                transaction.User.Id,
+                "BalanceTopUpPaid",
+                "Nap tien thanh cong",
+                $"Tai khoan da duoc cong {transaction.Amount:N0} VND.",
+                "/public/profile.html");
+            AddNotificationForAdmins(
+                "BalanceTopUpPaid",
+                "Khach nap tien thanh cong",
+                $"{transaction.User.Email} da nap {transaction.Amount:N0} VND qua payOS.",
+                "/public/admin.html");
+        }
+        else if (transaction.Booking?.RoomType?.Hotel is null)
+        {
+            transaction.Status = PaymentTransactionStatuses.Failed;
+            transaction.FailureReason = "Booking payment transaction has no booking.";
+            transaction.UpdatedAt = DateTimeOffset.UtcNow;
+            dbContext.SaveChanges();
+            return Task.FromResult(new PayOsWebhookResult(false, "Booking payment transaction has no booking."));
+        }
+        else if (transaction.Booking.PaymentStatus != PaymentStatuses.Paid)
+        {
+            CompleteBookingPayment(transaction.Booking, deductPayerBalance: false);
+        }
+
+        dbContext.SaveChanges();
+        return Task.FromResult(new PayOsWebhookResult(true, "PayOS transaction accepted."));
     }
 
     public BookingConfirmation? CancelBooking(string bookingCode, int userId, bool isAdmin = false)
@@ -558,6 +743,43 @@ public sealed class EfCoreHotelBookingService(HotelBookingDbContext dbContext) :
         });
     }
 
+    private void CompleteBookingPayment(Booking booking, bool deductPayerBalance)
+    {
+        var payer = booking.User;
+        if (payer is not null && deductPayerBalance)
+        {
+            if (payer.Balance < booking.TotalPrice)
+            {
+                throw new InvalidOperationException("So du khong du de thanh toan booking nay.");
+            }
+
+            payer.Balance -= booking.TotalPrice;
+            AddBalanceTransaction(
+                payer,
+                booking,
+                -booking.TotalPrice,
+                "BookingPayment",
+                $"Thanh toan booking {booking.BookingCode}");
+        }
+
+        var owner = booking.RoomType?.Hotel?.Owner;
+        if (owner is not null && owner.Id != payer?.Id)
+        {
+            owner.Balance += booking.TotalPrice;
+            AddBalanceTransaction(
+                owner,
+                booking,
+                booking.TotalPrice,
+                "OwnerBookingCredit",
+                $"Doanh thu booking {booking.BookingCode}");
+        }
+
+        booking.Status = BookingStatuses.Confirmed;
+        booking.PaymentStatus = PaymentStatuses.Paid;
+        booking.PaidAt = DateTimeOffset.UtcNow;
+        AddPaymentNotifications(booking);
+    }
+
     private void AddBookingCreatedNotifications(Booking booking, RoomType roomType)
     {
         var hotel = roomType.Hotel
@@ -688,6 +910,7 @@ public sealed class EfCoreHotelBookingService(HotelBookingDbContext dbContext) :
 
         var query = dbContext.Bookings
             .Include(item => item.User)
+            .Include(item => item.PaymentTransactions)
             .Include(item => item.RoomType)
             .ThenInclude(roomType => roomType!.Hotel)
             .ThenInclude(hotel => hotel!.Owner)
@@ -702,5 +925,67 @@ public sealed class EfCoreHotelBookingService(HotelBookingDbContext dbContext) :
             .OrderByDescending(item => item.CreatedAt)
             .ThenByDescending(item => item.Id)
             .FirstOrDefault();
+    }
+
+    private long CreatePayOsOrderCode()
+    {
+        var candidate = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
+        while (dbContext.PaymentTransactions.Any(transaction => transaction.OrderCode == candidate))
+        {
+            candidate++;
+        }
+
+        return candidate;
+    }
+
+    private static string CreatePayOsDescription(long orderCode)
+    {
+        return $"OMNI{Math.Abs(orderCode % 100000):00000}";
+    }
+
+    private static string? GetString(JsonElement data, string propertyName)
+    {
+        if (!data.TryGetProperty(propertyName, out var property))
+        {
+            return null;
+        }
+
+        return property.ValueKind == JsonValueKind.String
+            ? property.GetString()
+            : property.GetRawText();
+    }
+
+    private static bool TryGetInt64(JsonElement data, string propertyName, out long value)
+    {
+        value = 0;
+        if (!data.TryGetProperty(propertyName, out var property))
+        {
+            return false;
+        }
+
+        if (property.ValueKind == JsonValueKind.Number)
+        {
+            return property.TryGetInt64(out value);
+        }
+
+        return property.ValueKind == JsonValueKind.String
+            && long.TryParse(property.GetString(), NumberStyles.Integer, CultureInfo.InvariantCulture, out value);
+    }
+
+    private static bool TryGetDecimal(JsonElement data, string propertyName, out decimal value)
+    {
+        value = 0;
+        if (!data.TryGetProperty(propertyName, out var property))
+        {
+            return false;
+        }
+
+        if (property.ValueKind == JsonValueKind.Number)
+        {
+            return property.TryGetDecimal(out value);
+        }
+
+        return property.ValueKind == JsonValueKind.String
+            && decimal.TryParse(property.GetString(), NumberStyles.Number, CultureInfo.InvariantCulture, out value);
     }
 }

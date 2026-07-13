@@ -5,6 +5,9 @@ CREATE TABLE IF NOT EXISTS Users (
     PasswordHash VARCHAR(500) NOT NULL,
     Role VARCHAR(30) NOT NULL,
     AvatarUrl VARCHAR(500) NOT NULL DEFAULT '',
+    BankName VARCHAR(100) NOT NULL DEFAULT '',
+    BankAccountNumber VARCHAR(50) NOT NULL DEFAULT '',
+    BankAccountHolder VARCHAR(200) NOT NULL DEFAULT '',
     Balance DECIMAL(18, 2) NOT NULL DEFAULT 100000000.00,
     CreatedAt DATETIME(6) NOT NULL,
     CONSTRAINT PK_Users PRIMARY KEY (Id),
@@ -116,3 +119,53 @@ CREATE TABLE IF NOT EXISTS BalanceTransactions (
 
 CREATE INDEX IX_BalanceTransactions_UserId_CreatedAt ON BalanceTransactions (UserId, CreatedAt);
 CREATE INDEX IX_BalanceTransactions_BookingId ON BalanceTransactions (BookingId);
+
+CREATE TABLE IF NOT EXISTS PaymentTransactions (
+    Id INT NOT NULL AUTO_INCREMENT,
+    BookingId INT NULL,
+    UserId INT NULL,
+    Provider VARCHAR(30) NOT NULL,
+    Purpose VARCHAR(30) NOT NULL,
+    OrderCode BIGINT NOT NULL,
+    Amount DECIMAL(18, 2) NOT NULL,
+    Currency VARCHAR(10) NOT NULL,
+    Status VARCHAR(30) NOT NULL,
+    Description VARCHAR(100) NOT NULL,
+    PaymentLinkId VARCHAR(100) NOT NULL,
+    CheckoutUrl VARCHAR(1000) NOT NULL,
+    QrCode VARCHAR(1000) NOT NULL,
+    ProviderReference VARCHAR(100) NOT NULL,
+    FailureReason VARCHAR(1000) NOT NULL,
+    CreatedAt DATETIME(6) NOT NULL,
+    UpdatedAt DATETIME(6) NOT NULL,
+    PaidAt DATETIME(6) NULL,
+    CancelledAt DATETIME(6) NULL,
+    CONSTRAINT PK_PaymentTransactions PRIMARY KEY (Id),
+    CONSTRAINT UX_PaymentTransactions_OrderCode UNIQUE (OrderCode),
+    CONSTRAINT FK_PaymentTransactions_Bookings_BookingId FOREIGN KEY (BookingId) REFERENCES Bookings (Id) ON DELETE SET NULL,
+    CONSTRAINT FK_PaymentTransactions_Users_UserId FOREIGN KEY (UserId) REFERENCES Users (Id) ON DELETE SET NULL
+);
+
+CREATE INDEX IX_PaymentTransactions_BookingId_Provider_Status ON PaymentTransactions (BookingId, Provider, Status);
+CREATE INDEX IX_PaymentTransactions_UserId_Provider_Purpose_Status ON PaymentTransactions (UserId, Provider, Purpose, Status);
+
+CREATE TABLE IF NOT EXISTS WithdrawalRequests (
+    Id INT NOT NULL AUTO_INCREMENT,
+    UserId INT NOT NULL,
+    Amount DECIMAL(18, 2) NOT NULL,
+    Status VARCHAR(30) NOT NULL,
+    BankName VARCHAR(100) NOT NULL,
+    BankAccountNumber VARCHAR(50) NOT NULL,
+    BankAccountHolder VARCHAR(200) NOT NULL,
+    Note VARCHAR(1000) NOT NULL,
+    AdminNote VARCHAR(1000) NOT NULL,
+    RequestedAt DATETIME(6) NOT NULL,
+    CompletedAt DATETIME(6) NULL,
+    CompletedByAdminId INT NULL,
+    CONSTRAINT PK_WithdrawalRequests PRIMARY KEY (Id),
+    CONSTRAINT FK_WithdrawalRequests_Users_UserId FOREIGN KEY (UserId) REFERENCES Users (Id) ON DELETE CASCADE,
+    CONSTRAINT FK_WithdrawalRequests_Users_CompletedByAdminId FOREIGN KEY (CompletedByAdminId) REFERENCES Users (Id) ON DELETE SET NULL
+);
+
+CREATE INDEX IX_WithdrawalRequests_Status_RequestedAt ON WithdrawalRequests (Status, RequestedAt);
+CREATE INDEX IX_WithdrawalRequests_UserId_RequestedAt ON WithdrawalRequests (UserId, RequestedAt);

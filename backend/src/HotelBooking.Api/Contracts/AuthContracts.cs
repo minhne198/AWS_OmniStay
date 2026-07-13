@@ -22,11 +22,19 @@ public sealed record UserSummary(
     string Email,
     string Role,
     string AvatarUrl,
+    string BankName,
+    string BankAccountNumber,
+    string BankAccountHolder,
     decimal Balance);
 
 public sealed record UpdateProfileRequest(
     [Required, MaxLength(200)] string FullName,
     [MaxLength(500)] string? AvatarUrl);
+
+public sealed record UpdateBankAccountRequest(
+    [MaxLength(100)] string? BankName,
+    [MaxLength(50)] string? BankAccountNumber,
+    [MaxLength(200)] string? BankAccountHolder);
 
 public sealed record ChangePasswordRequest(
     [Required, MaxLength(100)] string CurrentPassword,

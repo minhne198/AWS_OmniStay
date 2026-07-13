@@ -49,20 +49,34 @@
         </div>
         <div class="flex flex-wrap gap-2 md:justify-end">
           <a class="bg-surface-container-high hover:bg-surface-container-highest text-on-surface font-label-md text-label-md px-4 py-2 rounded-lg transition-colors" href="booking-confirmation.html?code=${encodeURIComponent(booking.bookingCode)}">Chi tiết</a>
-          ${booking.paymentStatus === 'Pending' ? `<button class="bg-action-blue hover:bg-primary-container text-white font-label-md text-label-md px-4 py-2 rounded-lg transition-colors" type="button" data-pay="${ui.escapeHtml(booking.bookingCode)}">Thanh toán</button>` : ''}
+          ${booking.paymentStatus === 'Pending' ? `
+            <button class="bg-action-blue hover:bg-primary-container text-white font-label-md text-label-md px-4 py-2 rounded-lg transition-colors" type="button" data-payos="${ui.escapeHtml(booking.bookingCode)}">payOS</button>
+            <button class="bg-surface-container-high hover:bg-surface-container-highest text-on-surface font-label-md text-label-md px-4 py-2 rounded-lg transition-colors" type="button" data-pay-balance="${ui.escapeHtml(booking.bookingCode)}">So du</button>
+          ` : ''}
           ${booking.status !== 'Cancelled' && booking.canCancel !== false ? `<button class="bg-error-container hover:bg-error text-error hover:text-white font-label-md text-label-md px-4 py-2 rounded-lg transition-colors" type="button" data-cancel="${ui.escapeHtml(booking.bookingCode)}">Hủy</button>` : ''}
         </div>
       </article>
     `).join('');
 
-    list.querySelectorAll('[data-pay]').forEach((button) => {
+    list.querySelectorAll('[data-payos]').forEach((button) => {
       button.addEventListener('click', () => {
-        const booking = bookings.find((item) => item.bookingCode === button.dataset.pay);
-        if (!booking || !confirmPayment(booking)) {
+        const booking = bookings.find((item) => item.bookingCode === button.dataset.payos);
+        if (!booking) {
           return;
         }
 
-        updateBooking(() => api.payBooking(button.dataset.pay));
+        startPayOsPayment(booking);
+      });
+    });
+
+    list.querySelectorAll('[data-pay-balance]').forEach((button) => {
+      button.addEventListener('click', () => {
+        const booking = bookings.find((item) => item.bookingCode === button.dataset.payBalance);
+        if (!booking || !confirmBalancePayment(booking)) {
+          return;
+        }
+
+        updateBooking(() => api.payBooking(button.dataset.payBalance));
       });
     });
 
@@ -95,12 +109,35 @@
       Pending: 'bg-highlight-gold/20 text-on-surface',
       Confirmed: 'bg-success-green/10 text-success-green',
       Paid: 'bg-success-green/10 text-success-green',
+      Refunded: 'bg-success-green/10 text-success-green',
+      RefundPending: 'bg-highlight-gold/20 text-on-surface',
       Cancelled: 'bg-error-container text-error'
     }[value] || 'bg-surface-container-high text-on-surface-variant';
   }
 
-  function confirmPayment(booking) {
-    return window.confirm(`Xac nhan thanh toan booking ${booking.bookingCode} voi so tien ${ui.formatCurrency(booking.totalPrice)}? So du tai khoan se bi tru sau khi xac nhan.`);
+  async function startPayOsPayment(booking) {
+    ui.renderMessage(list, 'Dang tao link thanh toan payOS...', 'muted');
+
+    try {
+      const payment = await api.createPayOsPayment(booking.bookingCode, {
+        returnUrl: bookingUrl(booking.bookingCode, 'payos-return'),
+        cancelUrl: bookingUrl(booking.bookingCode, 'payos-cancel')
+      });
+      window.location.href = payment.checkoutUrl;
+    } catch (error) {
+      ui.renderMessage(list, error.message, 'error');
+    }
+  }
+
+  function bookingUrl(bookingCode, state) {
+    const url = new URL('booking-confirmation.html', window.location.href);
+    url.searchParams.set('bookingCode', bookingCode);
+    url.searchParams.set('payment', state);
+    return url.toString();
+  }
+
+  function confirmBalancePayment(booking) {
+    return window.confirm(`Xac nhan thanh toan booking ${booking.bookingCode} bang so du voi so tien ${ui.formatCurrency(booking.totalPrice)}? So du tai khoan se bi tru sau khi xac nhan.`);
   }
 
   loadMyBookings();

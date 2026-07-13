@@ -1,6 +1,6 @@
 namespace HotelBooking.Api.Models;
 
-public static class PaymentStatuses
+public static class PaymentTransactionStatuses
 {
     public const string Pending = "Pending";
 
@@ -8,7 +8,5 @@ public static class PaymentStatuses
 
     public const string Cancelled = "Cancelled";
 
-    public const string Refunded = "Refunded";
-
-    public const string RefundPending = "RefundPending";
+    public const string Failed = "Failed";
 }

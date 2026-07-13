@@ -124,6 +124,27 @@ public sealed class AuthController(
     }
 
     [Authorize]
+    [HttpPut("me/bank-account")]
+    [HttpPost("me/bank-account")]
+    [ProducesResponseType<UserSummary>(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public ActionResult<UserSummary> UpdateBankAccount(UpdateBankAccountRequest request)
+    {
+        var user = dbContext.Users.SingleOrDefault(item => item.Id == CurrentUserId());
+        if (user is null)
+        {
+            return NotFound(new { error = "User was not found." });
+        }
+
+        user.BankName = request.BankName?.Trim() ?? string.Empty;
+        user.BankAccountNumber = request.BankAccountNumber?.Trim() ?? string.Empty;
+        user.BankAccountHolder = request.BankAccountHolder?.Trim() ?? string.Empty;
+        dbContext.SaveChanges();
+
+        return Ok(ToSummary(user));
+    }
+
+    [Authorize]
     [HttpPut("me/password")]
     [HttpPost("me/password")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
@@ -175,6 +196,15 @@ public sealed class AuthController(
 
     private static UserSummary ToSummary(User user)
     {
-        return new UserSummary(user.Id, user.FullName, user.Email, user.Role, user.AvatarUrl, user.Balance);
+        return new UserSummary(
+            user.Id,
+            user.FullName,
+            user.Email,
+            user.Role,
+            user.AvatarUrl,
+            user.BankName,
+            user.BankAccountNumber,
+            user.BankAccountHolder,
+            user.Balance);
     }
 }

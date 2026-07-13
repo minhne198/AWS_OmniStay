@@ -1,4 +1,5 @@
 using HotelBooking.Api.Contracts;
+using System.Text.Json;
 
 namespace HotelBooking.Api.Services;
 
@@ -71,6 +72,11 @@ public sealed class CachedHotelBookingService(
         return inner.GetBookingByCode(bookingCode);
     }
 
+    public BookingConfirmation? GetBookingByPayOsOrderCode(long orderCode, int userId, bool isAdmin = false)
+    {
+        return inner.GetBookingByPayOsOrderCode(orderCode, userId, isAdmin);
+    }
+
     public IReadOnlyList<BookingConfirmation> GetBookingsForUser(int userId)
     {
         return inner.GetBookingsForUser(userId);
@@ -80,6 +86,31 @@ public sealed class CachedHotelBookingService(
     {
         var result = inner.ConfirmMockPayment(bookingCode, userId, isAdmin);
         if (result is not null)
+        {
+            hotelSearchCache.ClearSearchResults();
+        }
+
+        return result;
+    }
+
+    public Task<PayOsPaymentLinkResponse?> CreatePayOsPaymentAsync(
+        string bookingCode,
+        int userId,
+        bool isAdmin,
+        string returnUrl,
+        string cancelUrl,
+        CancellationToken cancellationToken = default)
+    {
+        return inner.CreatePayOsPaymentAsync(bookingCode, userId, isAdmin, returnUrl, cancelUrl, cancellationToken);
+    }
+
+    public async Task<PayOsWebhookResult> ProcessPayOsWebhookAsync(
+        JsonElement data,
+        string? signature,
+        CancellationToken cancellationToken = default)
+    {
+        var result = await inner.ProcessPayOsWebhookAsync(data, signature, cancellationToken);
+        if (result.Accepted)
         {
             hotelSearchCache.ClearSearchResults();
         }

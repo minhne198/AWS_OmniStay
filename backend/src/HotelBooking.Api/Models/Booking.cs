@@ -37,4 +37,6 @@ public sealed class Booking
     public HotelReview? Review { get; set; }
 
     public List<BalanceTransaction> BalanceTransactions { get; set; } = [];
+
+    public List<PaymentTransaction> PaymentTransactions { get; set; } = [];
 }

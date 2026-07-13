@@ -417,7 +417,8 @@
       Cancelled: 'Đã hủy',
       Pending: 'Chờ thanh toán',
       Paid: 'Đã thanh toán',
-      Refunded: 'Đã hoàn tiền'
+      Refunded: 'Đã hoàn tiền',
+      RefundPending: 'Chờ hoàn tiền'
     }[value] || value;
   }
 
@@ -436,6 +437,7 @@
       Confirmed: 'status-good',
       Paid: 'status-good',
       Refunded: 'status-good',
+      RefundPending: 'status-pending',
       Cancelled: 'status-bad'
     }[value] || 'status-muted';
   }

@@ -8,6 +8,7 @@
 
     ui.hydrateNav('admin');
     const isAdmin = session.user.role === 'Admin';
+    const minRoomPrice = 2000;
 
     // State
     let state = {
@@ -17,6 +18,7 @@
         users: [],
         dashboard: null,
         transactions: [],
+        withdrawals: [],
         activity: [],
         selectedHotelId: null
     };
@@ -29,12 +31,14 @@
         tabHotels: document.getElementById('tab-hotels'),
         tabBookings: document.getElementById('tab-bookings'),
         tabTransactions: document.getElementById('tab-transactions'),
+        tabWithdrawals: document.getElementById('tab-withdrawals'),
         tabActivity: document.getElementById('tab-activity'),
         tabContentDashboard: document.getElementById('tab-content-dashboard'),
         tabContentUsers: document.getElementById('tab-content-users'),
         tabContentHotels: document.getElementById('tab-content-hotels'),
         tabContentBookings: document.getElementById('tab-content-bookings'),
         tabContentTransactions: document.getElementById('tab-content-transactions'),
+        tabContentWithdrawals: document.getElementById('tab-content-withdrawals'),
         tabContentActivity: document.getElementById('tab-content-activity'),
 
         // Dashboard
@@ -96,6 +100,7 @@
 
         // Transactions and activity
         adminTransactionsList: document.getElementById('adminTransactionsList'),
+        adminWithdrawalsList: document.getElementById('adminWithdrawalsList'),
         adminActivityList: document.getElementById('adminActivityList')
     };
 
@@ -108,14 +113,14 @@
         }
 
         // Reset all tabs
-        [elements.tabDashboard, elements.tabUsers, elements.tabHotels, elements.tabBookings, elements.tabTransactions, elements.tabActivity].forEach(t => {
+        [elements.tabDashboard, elements.tabUsers, elements.tabHotels, elements.tabBookings, elements.tabTransactions, elements.tabWithdrawals, elements.tabActivity].forEach(t => {
             if (!t) return;
             t.classList.remove('border-booking-blue', 'text-booking-blue');
             t.classList.add('border-transparent', 'text-on-surface-variant');
         });
 
         // Hide all content
-        [elements.tabContentDashboard, elements.tabContentUsers, elements.tabContentHotels, elements.tabContentBookings, elements.tabContentTransactions, elements.tabContentActivity].forEach(c => {
+        [elements.tabContentDashboard, elements.tabContentUsers, elements.tabContentHotels, elements.tabContentBookings, elements.tabContentTransactions, elements.tabContentWithdrawals, elements.tabContentActivity].forEach(c => {
             if (!c) return;
             c.classList.add('hidden');
         });
@@ -141,6 +146,10 @@
             elements.tabTransactions.classList.remove('border-transparent', 'text-on-surface-variant');
             elements.tabTransactions.classList.add('border-booking-blue', 'text-booking-blue');
             elements.tabContentTransactions.classList.remove('hidden');
+        } else if (tab === 'withdrawals') {
+            elements.tabWithdrawals.classList.remove('border-transparent', 'text-on-surface-variant');
+            elements.tabWithdrawals.classList.add('border-booking-blue', 'text-booking-blue');
+            elements.tabContentWithdrawals.classList.remove('hidden');
         } else if (tab === 'activity') {
             elements.tabActivity.classList.remove('border-transparent', 'text-on-surface-variant');
             elements.tabActivity.classList.add('border-booking-blue', 'text-booking-blue');
@@ -629,6 +638,92 @@
         `).join('');
     }
 
+    function renderWithdrawals() {
+        if (!elements.adminWithdrawalsList) return;
+        if (state.withdrawals.length === 0) {
+            elements.adminWithdrawalsList.innerHTML = '<p class="text-on-surface-variant">Chua co yeu cau rut tien.</p>';
+            return;
+        }
+
+        elements.adminWithdrawalsList.innerHTML = state.withdrawals.map((item) => `
+            <article class="bg-surface-container-low border border-outline-variant rounded-xl p-4 flex flex-col gap-4">
+                <div class="flex flex-col md:flex-row md:items-start md:justify-between gap-3">
+                    <div>
+                        <div class="flex items-center gap-2">
+                            <p class="text-label-md font-label-md text-on-surface">${ui.escapeHtml(item.userEmail)}</p>
+                            <span class="px-2 py-1 rounded-full text-label-sm font-label-sm ${withdrawalStatusClass(item.status)}">${withdrawalStatusLabel(item.status)}</span>
+                        </div>
+                        <p class="text-headline-md font-headline-md text-primary mt-1">${ui.formatCurrency(item.amount || 0)}</p>
+                        <p class="text-body-sm text-on-surface-variant mt-1">${ui.escapeHtml(item.bankName)} - ${ui.escapeHtml(item.bankAccountNumber)} - ${ui.escapeHtml(item.bankAccountHolder)}</p>
+                        ${item.note ? `<p class="text-body-sm text-on-surface-variant mt-1">Ghi chu: ${ui.escapeHtml(item.note)}</p>` : ''}
+                        ${item.adminNote ? `<p class="text-body-sm text-on-surface-variant mt-1">Admin: ${ui.escapeHtml(item.adminNote)}</p>` : ''}
+                    </div>
+                    <div class="md:text-right">
+                        <p class="text-label-sm font-label-sm text-on-surface-variant">Tao: ${ui.formatDate(item.requestedAt)}</p>
+                        ${item.completedAt ? `<p class="text-label-sm font-label-sm text-on-surface-variant">Xu ly: ${ui.formatDate(item.completedAt)}</p>` : ''}
+                    </div>
+                </div>
+                ${item.status === 'Pending' ? `
+                    <div class="flex flex-wrap gap-2">
+                        <button class="px-4 py-2 bg-success-green text-white rounded-lg hover:bg-success-green/90 transition-colors font-label-md text-label-sm" data-complete-withdrawal="${item.withdrawalRequestId}">Da chuyen tien, xac nhan</button>
+                        <button class="px-4 py-2 bg-error-container text-error rounded-lg hover:bg-error hover:text-on-error transition-colors font-label-md text-label-sm" data-reject-withdrawal="${item.withdrawalRequestId}">Tu choi</button>
+                    </div>
+                ` : ''}
+            </article>
+        `).join('');
+
+        state.withdrawals.forEach((item) => {
+            const completeButton = document.querySelector(`[data-complete-withdrawal="${item.withdrawalRequestId}"]`);
+            const rejectButton = document.querySelector(`[data-reject-withdrawal="${item.withdrawalRequestId}"]`);
+
+            if (completeButton) {
+                completeButton.addEventListener('click', async () => {
+                    const confirmed = window.confirm(`Xac nhan da chuyen ${ui.formatCurrency(item.amount || 0)} cho ${item.userEmail}? So du nguoi dung se bi tru sau khi xac nhan.`);
+                    if (!confirmed) return;
+                    try {
+                        await api.completeAdminWithdrawal(item.withdrawalRequestId, {
+                            adminNote: 'Admin da chuyen tien thu cong'
+                        });
+                        await Promise.all([loadWithdrawals(), loadTransactions(), loadUsers()]);
+                    } catch (err) {
+                        alert(err.message);
+                    }
+                });
+            }
+
+            if (rejectButton) {
+                rejectButton.addEventListener('click', async () => {
+                    const confirmed = window.confirm(`Tu choi lenh rut ${ui.formatCurrency(item.amount || 0)} cua ${item.userEmail}?`);
+                    if (!confirmed) return;
+                    try {
+                        await api.rejectAdminWithdrawal(item.withdrawalRequestId, {
+                            adminNote: 'Admin tu choi lenh rut tien'
+                        });
+                        await loadWithdrawals();
+                    } catch (err) {
+                        alert(err.message);
+                    }
+                });
+            }
+        });
+    }
+
+    function withdrawalStatusLabel(status) {
+        return {
+            Pending: 'Cho xu ly',
+            Completed: 'Da hoan tat',
+            Rejected: 'Bi tu choi'
+        }[status] || status;
+    }
+
+    function withdrawalStatusClass(status) {
+        return {
+            Pending: 'bg-highlight-gold/20 text-on-surface',
+            Completed: 'bg-success-green/10 text-success-green',
+            Rejected: 'bg-error-container text-error'
+        }[status] || 'bg-surface-container-high text-on-surface-variant';
+    }
+
     function renderActivity() {
         if (!elements.adminActivityList) return;
         if (state.activity.length === 0) {
@@ -656,10 +751,12 @@
             AdminBalanceSet: 'Số dư ban đầu',
             AdminBalanceAdjustment: 'Admin chỉnh số dư',
             TestTopUp: 'Nạp tiền test',
+            PayOsTopUp: 'Nạp tiền payOS',
             BookingPayment: 'Trừ tiền booking',
             OwnerBookingCredit: 'Cộng tiền cho chủ KS',
             BookingRefund: 'Hoàn tiền booking',
-            OwnerBookingReversal: 'Trừ lại booking hủy'
+            OwnerBookingReversal: 'Trừ lại booking hủy',
+            WithdrawalCompleted: 'Rút tiền'
         }[type] || type;
     }
 
@@ -715,6 +812,16 @@
             renderTransactions();
         } catch (err) {
             console.error('Failed to load transactions:', err);
+        }
+    }
+
+    async function loadWithdrawals() {
+        if (!isAdmin) return;
+        try {
+            state.withdrawals = await api.getAdminWithdrawals();
+            renderWithdrawals();
+        } catch (err) {
+            console.error('Failed to load withdrawals:', err);
         }
     }
 
@@ -821,6 +928,11 @@
             isHidden: elements.roomIsHidden.checked
         };
 
+        if (!Number.isFinite(data.pricePerNight) || data.pricePerNight < minRoomPrice) {
+            renderRoomMessage(`Gia moi dem toi thieu la ${ui.formatCurrency(minRoomPrice)}.`, 'error');
+            return;
+        }
+
         if (elements.roomTypeId.value) {
             // Update
             try {
@@ -865,6 +977,7 @@
     elements.tabHotels.addEventListener('click', () => switchTab('hotels'));
     elements.tabBookings.addEventListener('click', () => switchTab('bookings'));
     elements.tabTransactions.addEventListener('click', () => switchTab('transactions'));
+    elements.tabWithdrawals.addEventListener('click', () => switchTab('withdrawals'));
     elements.tabActivity.addEventListener('click', () => switchTab('activity'));
 
     // Close room section
@@ -876,6 +989,7 @@
     if (!isAdmin) {
         elements.tabUsers.hidden = true;
         elements.tabTransactions.hidden = true;
+        elements.tabWithdrawals.hidden = true;
         elements.tabActivity.hidden = true;
         switchTab('dashboard');
         Promise.all([
@@ -891,6 +1005,7 @@
             loadHotels(),
             loadBookings(),
             loadTransactions(),
+            loadWithdrawals(),
             loadActivity()
         ]);
     }

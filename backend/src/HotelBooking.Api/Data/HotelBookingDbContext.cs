@@ -24,6 +24,10 @@ public sealed class HotelBookingDbContext(DbContextOptions<HotelBookingDbContext
 
     public DbSet<BalanceTransaction> BalanceTransactions => Set<BalanceTransaction>();
 
+    public DbSet<PaymentTransaction> PaymentTransactions => Set<PaymentTransaction>();
+
+    public DbSet<WithdrawalRequest> WithdrawalRequests => Set<WithdrawalRequest>();
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.Entity<User>(entity =>
@@ -34,6 +38,9 @@ public sealed class HotelBookingDbContext(DbContextOptions<HotelBookingDbContext
             entity.Property(user => user.PasswordHash).HasMaxLength(500).IsRequired();
             entity.Property(user => user.Role).HasMaxLength(30).IsRequired();
             entity.Property(user => user.AvatarUrl).HasMaxLength(500).IsRequired();
+            entity.Property(user => user.BankName).HasMaxLength(100).IsRequired();
+            entity.Property(user => user.BankAccountNumber).HasMaxLength(50).IsRequired();
+            entity.Property(user => user.BankAccountHolder).HasMaxLength(200).IsRequired();
             entity.Property(user => user.Balance).HasPrecision(18, 2);
             entity.HasIndex(user => user.Email).IsUnique();
         });
@@ -141,6 +148,55 @@ public sealed class HotelBookingDbContext(DbContextOptions<HotelBookingDbContext
             entity.HasOne(transaction => transaction.Booking)
                 .WithMany(booking => booking.BalanceTransactions)
                 .HasForeignKey(transaction => transaction.BookingId)
+                .OnDelete(DeleteBehavior.SetNull);
+        });
+
+        modelBuilder.Entity<PaymentTransaction>(entity =>
+        {
+            entity.HasKey(transaction => transaction.Id);
+            entity.Property(transaction => transaction.Provider).HasMaxLength(30).IsRequired();
+            entity.Property(transaction => transaction.Purpose).HasMaxLength(30).IsRequired();
+            entity.Property(transaction => transaction.Amount).HasPrecision(18, 2);
+            entity.Property(transaction => transaction.Currency).HasMaxLength(10).IsRequired();
+            entity.Property(transaction => transaction.Status).HasMaxLength(30).IsRequired();
+            entity.Property(transaction => transaction.Description).HasMaxLength(100).IsRequired();
+            entity.Property(transaction => transaction.PaymentLinkId).HasMaxLength(100).IsRequired();
+            entity.Property(transaction => transaction.CheckoutUrl).HasMaxLength(1_000).IsRequired();
+            entity.Property(transaction => transaction.QrCode).HasMaxLength(1_000).IsRequired();
+            entity.Property(transaction => transaction.ProviderReference).HasMaxLength(100).IsRequired();
+            entity.Property(transaction => transaction.FailureReason).HasMaxLength(1_000).IsRequired();
+            entity.HasIndex(transaction => transaction.OrderCode).IsUnique();
+            entity.HasIndex(transaction => new { transaction.BookingId, transaction.Provider, transaction.Status });
+            entity.HasIndex(transaction => new { transaction.UserId, transaction.Provider, transaction.Purpose, transaction.Status });
+            entity.HasOne(transaction => transaction.Booking)
+                .WithMany(booking => booking.PaymentTransactions)
+                .HasForeignKey(transaction => transaction.BookingId)
+                .OnDelete(DeleteBehavior.SetNull);
+            entity.HasOne(transaction => transaction.User)
+                .WithMany(user => user.PaymentTransactions)
+                .HasForeignKey(transaction => transaction.UserId)
+                .OnDelete(DeleteBehavior.SetNull);
+        });
+
+        modelBuilder.Entity<WithdrawalRequest>(entity =>
+        {
+            entity.HasKey(request => request.Id);
+            entity.Property(request => request.Amount).HasPrecision(18, 2);
+            entity.Property(request => request.Status).HasMaxLength(30).IsRequired();
+            entity.Property(request => request.BankName).HasMaxLength(100).IsRequired();
+            entity.Property(request => request.BankAccountNumber).HasMaxLength(50).IsRequired();
+            entity.Property(request => request.BankAccountHolder).HasMaxLength(200).IsRequired();
+            entity.Property(request => request.Note).HasMaxLength(1_000).IsRequired();
+            entity.Property(request => request.AdminNote).HasMaxLength(1_000).IsRequired();
+            entity.HasIndex(request => new { request.Status, request.RequestedAt });
+            entity.HasIndex(request => new { request.UserId, request.RequestedAt });
+            entity.HasOne(request => request.User)
+                .WithMany(user => user.WithdrawalRequests)
+                .HasForeignKey(request => request.UserId)
+                .OnDelete(DeleteBehavior.Cascade);
+            entity.HasOne(request => request.CompletedByAdmin)
+                .WithMany()
+                .HasForeignKey(request => request.CompletedByAdminId)
                 .OnDelete(DeleteBehavior.SetNull);
         });
 

@@ -1,329 +1,395 @@
 # OmniStay feature inventory
 
-File này liệt kê toàn bộ tính năng web hiện có của OmniStay tính đến ngày 2026-07-11.
+Updated: 2026-07-14
 
-## Vai trò người dùng
+This file summarizes the current website features after the payOS, wallet, withdrawal, refund-to-balance, and room minimum price updates.
 
-OmniStay hiện có 3 vai trò:
+## User roles
 
-- `Customer`: khách đặt phòng.
-- `HotelOwner`: chủ khách sạn.
-- `Admin`: quản trị hệ thống.
+OmniStay has three roles:
 
-## Trang public và xác thực
+- `Customer`: searches, books, pays, reviews, manages wallet balance, and requests withdrawals.
+- `HotelOwner`: manages owned hotels/rooms, sees owned bookings/revenue, manages wallet balance, and requests withdrawals.
+- `Admin`: manages all users, hotels, bookings, balances, withdrawals, activity, and system status.
 
-### Đăng nhập
+## Public and authentication
 
-- Trang đăng nhập `public/index.html`.
-- Đăng nhập bằng email/password.
-- Lưu session bằng JWT trong localStorage.
-- Điều hướng sau login theo vai trò.
-- Không còn hiển thị dòng API trên màn hình login.
-- Không còn auto-fill email/password mẫu trên form login.
+### Login
 
-### Đăng ký
+- Page: `frontend/public/index.html`.
+- Email/password login.
+- JWT session stored in localStorage.
+- Role-aware navigation after login.
+- No demo credentials auto-fill on the login form.
 
-- Trang đăng ký `public/register.html`.
-- Người dùng nhập họ tên, email, mật khẩu.
-- Người dùng chọn vai trò khi đăng ký:
-  - Khách hàng.
-  - Chủ khách sạn.
-- Tài khoản mới được cấp sẵn `100.000.000 VND` để test booking.
+### Register
 
-### Header/nav theo vai trò
+- Page: `frontend/public/register.html`.
+- Users enter full name, email, and password.
+- Users can register as:
+  - Customer.
+  - Hotel owner.
+- New accounts receive an initial demo balance of `100,000,000 VND`.
+- Self-registering as Admin is blocked.
 
-- Header đồng bộ trên các trang chính.
-- Hiển thị tên người dùng và vai trò.
-- Có nút đăng xuất.
-- Có link trang cá nhân ở góc phải.
-- Có link thông báo kèm số thông báo chưa đọc.
-- Hotel owner có thêm link trang chủ khách sạn.
-- Admin có thêm link admin/system status.
-- Customer và hotel owner không thấy system status.
+### Shared navigation
 
-## Tính năng Customer
+- Shared top nav across main pages.
+- Shows user name and role.
+- Logout button.
+- Profile link.
+- Notification link with unread count.
+- Hotel owner sees owner/profile management links.
+- Admin sees admin/system links.
+- Customer and hotel owner do not see system status.
 
-### Tìm phòng
+## Customer features
 
-- Trang home `public/home.html`.
-- Tìm theo thành phố.
-- Chọn ngày nhận phòng/trả phòng.
-- Nhập số khách.
-- Tìm theo tên khách sạn.
-- Dữ liệu phòng lấy từ backend/database.
-- Có kiểm tra số phòng còn trống theo khoảng ngày.
-- Phòng bị ẩn không hiển thị cho khách.
+### Search rooms
 
-### Kết quả tìm kiếm
+- Page: `frontend/public/home.html`.
+- Search by city.
+- Select check-in and check-out dates.
+- Enter guest count.
+- Search by hotel or room keyword.
+- Availability is calculated from real bookings in the backend.
+- Hidden rooms are excluded from public search.
 
-- Trang kết quả `public/search.html`.
-- Hiển thị danh sách khách sạn/phòng phù hợp.
-- Hiển thị ảnh, tên khách sạn, thành phố, loại phòng, giá, số khách tối đa.
-- Hiển thị điểm đánh giá trung bình và số review.
-- Có sort/filter theo điểm đánh giá.
-- Có điều hướng sang trang chi tiết khách sạn.
+### Search results
 
-### Chi tiết khách sạn
+- Page: `frontend/public/search.html`.
+- Shows matching hotel/room cards.
+- Displays image, hotel name, city, room type, price, max guests, available rooms, rating, and review count.
+- Supports price/rating sorting.
+- Links to hotel detail.
 
-- Trang `public/hotel-detail.html`.
-- Hiển thị thông tin khách sạn.
-- Hiển thị danh sách phòng thuộc khách sạn.
-- Hiển thị trạng thái còn phòng/đã đặt.
-- Hiển thị review khách sạn.
-- Có nút tiếp tục đặt phòng.
+### Hotel detail
 
-### Đặt phòng
+- Page: `frontend/public/hotel-detail.html`.
+- Shows hotel information.
+- Lists room types under the hotel.
+- Shows available/booked status.
+- Shows hotel reviews.
+- Allows the customer to continue to booking.
 
-- Trang `public/booking.html`.
-- Hiển thị tóm tắt khách sạn/phòng/ngày/số khách/giá.
-- Khách nhập thông tin người đặt.
-- Tạo booking thật qua API.
-- Booking mới ở trạng thái chờ thanh toán.
+### Booking creation
 
-### Xác nhận booking
+- Page: `frontend/public/booking.html`.
+- Shows booking summary: hotel, room, dates, nights, guests, and total price.
+- Customer enters guest information.
+- Creates a real booking through the API.
+- New bookings start as pending payment.
 
-- Trang `public/booking-confirmation.html`.
-- Hiển thị mã booking.
-- Hiển thị khách sạn, phòng, ngày ở, số đêm, số khách, tổng tiền.
-- Hiển thị trạng thái booking và thanh toán.
-- Có nút `Thanh toán`.
-- Có nút `Hủy booking` nếu booking còn được hủy.
-- Khi bấm hủy sẽ hỏi xác nhận trước.
-- Có form đánh giá sau khi booking đã thanh toán và đủ điều kiện review.
+### Booking confirmation
 
-### Booking của tôi
+- Page: `frontend/public/booking-confirmation.html`.
+- Shows booking code, hotel, room, dates, nights, guests, total price, booking status, and payment status.
+- Supports balance payment.
+- Supports payOS direct payment.
+- Supports canceling bookings when allowed.
+- Shows review form after eligible paid bookings.
+- Handles payOS return/cancel redirects without confusing payOS `code=00` with OmniStay booking codes.
+- Can recover booking confirmation from payOS `orderCode`.
 
-- Trang `public/booking-lookup.html`.
-- Khách xem danh sách booking của chính mình.
-- Có tra cứu booking theo mã.
-- Có thanh toán booking đang pending.
-- Có hủy booking nếu còn được hủy.
-- Khi bấm hủy sẽ hỏi xác nhận trước.
+### My bookings
 
-### Thanh toán và số dư
+- Page: `frontend/public/booking-lookup.html`.
+- Shows current user's bookings.
+- Supports lookup by booking code.
+- Supports paying pending bookings by:
+  - Balance.
+  - payOS.
+- Supports canceling bookings when allowed.
 
-- Thanh toán bằng luồng demo/mock payment.
-- Khi thanh toán thành công:
-  - Booking chuyển sang đã xác nhận/đã thanh toán.
-  - Số dư customer bị trừ.
-  - Số dư hotel owner được cộng.
-  - Giao dịch số dư được ghi log.
+### Payments
 
-### Hủy phòng và hoàn tiền
+- Balance payment remains available.
+- payOS direct payment is available for pending bookings.
+- payOS payments go to the platform/admin merchant account.
+- payOS webhook verifies checksum before marking transactions as paid.
+- Booking payOS success:
+  - Booking becomes paid.
+  - Customer balance is not deducted.
+  - Hotel owner receives internal balance credit for payout tracking.
+  - Balance/payment transactions are logged.
 
-- Chỉ được hủy khi còn hơn 24 giờ trước ngày nhận phòng.
-- Nếu booking chưa thanh toán: booking chuyển trạng thái đã hủy.
-- Nếu booking đã thanh toán:
-  - Hoàn tiền cho customer.
-  - Trừ lại doanh thu của hotel owner.
-  - Payment status chuyển hoàn tiền.
-  - Ghi transaction log.
-  - Gửi thông báo cho các bên liên quan.
+### Cancellation and refund
 
-### Đánh giá khách sạn
+- Bookings can be canceled only when the cancellation rule allows it.
+- Unpaid booking cancellation marks the booking canceled.
+- Paid booking cancellation:
+  - Refunds customer to OmniStay balance.
+  - Reverses hotel owner booking credit when applicable.
+  - Marks payment status as refunded.
+  - Writes balance transaction logs.
+  - Sends notifications.
+- Refunds for payOS-paid bookings also go to customer balance, so customers can withdraw.
 
-- Customer đã thanh toán booking có thể đánh giá khách sạn.
-- Đánh giá gồm số sao và nhận xét.
-- Mỗi booking chỉ được đánh giá một lần.
-- Điểm đánh giá ảnh hưởng dữ liệu hiển thị ở search/hotel detail.
+### Reviews
 
-### Trang cá nhân
+- Customers can review hotels after eligible paid bookings.
+- Review includes rating and comment.
+- One review per booking.
+- Reviews affect search/detail display data.
 
-- Trang `public/profile.html`.
-- Xem thông tin tài khoản.
-- Sửa họ tên.
-- Đổi avatar bằng URL.
-- Đổi mật khẩu.
-- Xem số dư hiện tại.
-- Xem lịch sử giao dịch số dư của chính mình.
+### Profile and wallet
 
-### Thông báo
+- Page: `frontend/public/profile.html`.
+- Shows account information.
+- Allows full name update.
+- Allows avatar update by URL/upload flow already used by the app.
+- Allows password change.
+- Shows current balance.
+- Shows personal balance transaction history.
+- Stores linked bank account information:
+  - Bank name.
+  - Bank account number.
+  - Bank account holder.
+- Supports payOS top-up:
+  - User enters amount.
+  - App creates payOS checkout/QR.
+  - Verified webhook credits user balance.
+- Supports withdrawal request:
+  - User enters amount and optional note.
+  - Request starts as `Pending`.
+  - Admin receives notification.
+  - Balance is deducted only after admin confirms manual transfer.
+- Customers, hotel owners, and admins all have wallet/bank fields.
 
-- Trang `public/notifications.html`.
-- Xem danh sách thông báo.
-- Đánh dấu từng thông báo đã đọc.
-- Đánh dấu tất cả đã đọc.
-- Customer nhận thông báo khi:
-  - Booking được tạo.
-  - Booking thanh toán thành công.
-  - Booking bị hủy.
+### Notifications
 
-## Tính năng Hotel Owner
+- Page: `frontend/public/notifications.html`.
+- Shows notifications.
+- Mark one notification as read.
+- Mark all notifications as read.
+- Customers receive notifications for booking, payment, cancellation, refund, top-up, and withdrawal events.
 
-### Đăng ký/làm chủ khách sạn
+## Hotel owner features
 
-- Người dùng có thể đăng ký vai trò chủ khách sạn.
-- Hotel owner có quyền tạo khách sạn.
-- Hotel owner chỉ quản lý dữ liệu thuộc quyền sở hữu của mình.
+### Owner registration and scope
 
-### Quản lý khách sạn
+- Users can register as hotel owners.
+- Hotel owners can create hotels.
+- Hotel owners only manage data for hotels they own.
+- Owner scope is enforced by `Hotels.OwnerUserId`.
 
-- Dùng trang `public/admin.html` ở phạm vi owner.
-- Tạo khách sạn mới.
-- Sửa khách sạn đã tạo.
-- Chọn thành phố từ danh sách tỉnh/thành có dấu.
-- Nhập ảnh bằng URL.
-- Upload file ảnh.
-- Xem danh sách khách sạn của mình.
+### Manage hotels
 
-### Quản lý phòng
+- Page: `frontend/public/admin.html` in owner scope.
+- Create hotels.
+- Edit owned hotels.
+- Select city from the app city list.
+- Use image URL or image upload.
+- View owned hotels.
 
-- Tạo loại phòng cho khách sạn của mình.
-- Sửa loại phòng.
-- Nhập tên phòng, mô tả, số khách tối đa, giá mỗi đêm, tổng số phòng, ảnh.
-- Xem số phòng đã đặt và số phòng còn trống.
-- Ẩn/mở phòng.
-- Phòng ẩn không xuất hiện trong kết quả tìm kiếm của khách.
+### Manage rooms
 
-### Quản lý booking của khách
+- Create room types for owned hotels.
+- Edit room types.
+- Fields include name, description, max guests, price per night, total rooms, image, and hidden status.
+- Minimum room price is `2,000 VND`.
+- The admin/owner room price input supports entering `2000`.
+- View booked rooms and available rooms.
+- Hide/show rooms.
+- Hidden rooms do not appear in customer search.
 
-- Xem booking thuộc các khách sạn của mình.
-- Thấy khách nào đã booking phòng của mình.
-- Thấy trạng thái booking/thanh toán.
-- Dữ liệu booking của owner được giới hạn theo `OwnerUserId`.
+### Owner bookings
 
-### Dashboard chủ khách sạn
+- View bookings for owned hotels.
+- See customer, hotel, room, stay dates, total price, booking status, and payment status.
+- Owner cannot see unrelated hotels/bookings.
 
-- Xem doanh thu.
-- Xem số booking.
-- Xem phòng được đặt nhiều nhất.
-- Xem tỷ lệ phòng trống/đã đặt.
-- Xem doanh thu theo ngày/tháng trong phạm vi khách sạn của mình.
+### Owner dashboard
 
-### Trang chi tiết chủ khách sạn
+- Revenue summary in owner scope.
+- Booking count.
+- Most booked room.
+- Total rooms, booked rooms, and occupancy.
+- Revenue by day/month for owned hotels.
 
-- Trang `public/owner-profile.html`.
-- Hiển thị profile chủ khách sạn.
-- Hiển thị danh sách khách sạn đang sở hữu.
-- Hiển thị tổng doanh thu.
-- Hiển thị trạng thái xác minh.
+### Owner profile
 
-### Số dư và thông báo của chủ
+- Page: `frontend/public/owner-profile.html`.
+- Shows owner profile.
+- Shows owned hotels.
+- Shows total revenue.
+- Shows verification status.
 
-- Khi khách thanh toán booking, owner được cộng số dư.
-- Khi khách hủy booking đã thanh toán, owner bị trừ lại số dư.
-- Owner có lịch sử giao dịch số dư.
-- Owner nhận thông báo khi:
-  - Có booking mới.
-  - Booking được thanh toán.
-  - Booking bị hủy.
-  - Khách đánh giá khách sạn.
+### Owner wallet
 
-## Tính năng Admin
+- Hotel owners receive internal balance credits from booking payments.
+- Owner balance is reversed when paid bookings are canceled/refunded.
+- Owners can add bank information.
+- Owners can request withdrawals.
+- Admin manually transfers outside the app, then confirms in OmniStay to deduct the owner balance.
 
-### Quản lý user
+## Admin features
 
-- Trang `public/admin.html`.
-- Xem danh sách user.
-- Tạo user.
-- Sửa user.
-- Xóa user.
-- Gán vai trò.
-- Sửa avatar.
-- Chỉnh số dư.
-- Nạp tiền test.
-- Mỗi lần chỉnh/nạp số dư có ghi balance transaction và activity log.
+### User management
 
-### Quản lý khách sạn/phòng
+- Page: `frontend/public/admin.html`.
+- View users.
+- Create users.
+- Edit users.
+- Delete users.
+- Assign roles.
+- Edit avatar.
+- Set/update balance.
+- Create test top-ups.
+- Balance edits are logged as balance transactions and admin activity.
 
-- Admin thấy toàn bộ khách sạn.
-- Tạo/sửa khách sạn.
-- Tạo/sửa phòng.
-- Upload ảnh.
-- Ẩn/mở phòng.
-- Gán/nhìn owner của khách sạn qua dữ liệu backend.
+### Hotel and room management
 
-### Quản lý booking
+- Admin sees all hotels.
+- Create/edit hotels.
+- Create/edit rooms.
+- Upload images.
+- Hide/show rooms.
+- Assign/view owners through backend data.
+- Room minimum price is `2,000 VND`.
 
-- Admin xem toàn bộ booking.
-- Xem thông tin khách đặt, khách sạn, phòng, ngày ở, tổng tiền, trạng thái booking/thanh toán.
-- Admin có quyền rộng hơn customer/owner trong các luồng backend cần quản trị.
+### Booking management
 
-### Dashboard admin
+- Admin sees all bookings.
+- Shows guest, hotel, room, stay dates, total price, booking status, and payment status.
+- Admin has broader management visibility than customer/owner.
 
-- Tổng doanh thu.
-- Tổng số booking.
-- Phòng được đặt nhiều nhất.
-- Tổng số phòng.
-- Số phòng đã đặt.
-- Tỷ lệ lấp đầy.
-- Doanh thu theo ngày.
-- Doanh thu theo tháng.
+### Admin dashboard
 
-### Lịch sử giao dịch số dư
+- Total revenue.
+- Booking count.
+- Most booked room.
+- Total rooms.
+- Booked rooms.
+- Occupancy rate.
+- Revenue by day.
+- Revenue by month.
 
-- Admin xem danh sách transaction toàn hệ thống.
-- Các loại transaction hiện có:
-  - Cấp số dư ban đầu.
-  - Admin chỉnh số dư.
-  - Nạp tiền test.
-  - Trừ tiền booking.
-  - Cộng doanh thu cho chủ khách sạn.
-  - Hoàn tiền booking.
-  - Trừ lại doanh thu booking hủy.
+### Balance transactions
 
-### Lịch sử hoạt động
+- Admin can view all balance transactions.
+- Transaction types include:
+  - Initial balance grant.
+  - Admin balance set/adjustment.
+  - Test top-up.
+  - Booking payment.
+  - Owner booking credit.
+  - Booking refund.
+  - Owner booking reversal.
+  - payOS top-up.
+  - Withdrawal completed.
 
-- Admin xem activity log.
-- Các hoạt động chính được ghi lại qua notification/activity:
-  - Tạo số dư ban đầu.
-  - Chỉnh số dư.
-  - Nạp tiền test.
-  - Booking mới.
-  - Thanh toán.
-  - Hủy booking.
-  - Review mới.
+### Withdrawal management
+
+- Admin has a `Rut tien` tab in `frontend/public/admin.html`.
+- Admin sees all withdrawal requests.
+- Pending withdrawal shows user email, amount, bank name, account number, account holder, note, and requested time.
+- Admin manually transfers money outside OmniStay.
+- Admin then clicks confirm:
+  - Withdrawal becomes completed.
+  - User balance is deducted.
+  - Balance transaction is written.
+  - User receives notification.
+- Admin can reject a pending withdrawal:
+  - User balance is not deducted.
+  - User receives notification.
+
+### Activity log
+
+- Admin can view activity log.
+- Activity is based on notification/activity records.
+- Main activity types include:
+  - Initial balance.
+  - Balance edits.
+  - Test top-up.
+  - Booking created.
+  - Payment.
+  - Cancellation.
+  - Review.
+  - payOS top-up.
+  - Withdrawal requested/completed/rejected.
 
 ### System status
 
-- Trang `public/system-status.html`.
-- Chỉ admin thấy link trong menu.
-- Hiển thị trạng thái health/AWS runtime.
-- Dùng để kiểm tra backend, database, Redis và config AWS.
+- Page: `frontend/public/system-status.html`.
+- Only Admin sees the link.
+- Shows backend health/AWS runtime status.
+- Used to inspect API, database, Redis, and AWS configuration.
 
-## Tính năng backend/API
+## Backend/API features
 
-### API chính
+### Auth APIs
 
-- Auth:
-  - `POST /api/auth/register`
-  - `POST /api/auth/login`
-  - `GET /api/auth/me`
-  - `PUT /api/auth/me`
-  - `PUT /api/auth/me/password`
-- Hotels:
-  - `GET /api/hotels/search`
-  - `GET /api/hotels/{hotelId}`
-  - `GET /api/hotels/{hotelId}/rooms`
-  - `GET /api/hotels/{hotelId}/reviews`
-  - `POST /api/hotels/{hotelId}/reviews`
-- Bookings:
-  - `POST /api/bookings`
-  - `GET /api/bookings/{code}`
-  - `GET /api/bookings/my`
-  - `POST /api/bookings/{code}/pay`
-  - `DELETE /api/bookings/{code}`
-- Admin:
-  - Users.
-  - Hotels.
-  - Room types.
-  - Bookings.
-  - Dashboard.
-  - Balance transactions.
-  - Activity.
-  - Image upload.
-- Notifications:
-  - `GET /api/notifications/my`
-  - Mark read.
-  - Mark all read.
-- Account:
-  - My balance transactions.
-  - Owner profile.
-- Health:
-  - `/health`
-  - `/health/aws`
+- `POST /api/auth/register`
+- `POST /api/auth/login`
+- `GET /api/auth/me`
+- `PUT /api/auth/me`
+- `POST /api/auth/me`
+- `PUT /api/auth/me/password`
+- `POST /api/auth/me/bank-account`
+- `PUT /api/auth/me/bank-account`
 
-### Data model
+### Hotel and review APIs
+
+- `GET /api/hotels/search`
+- `GET /api/hotels/{hotelId}`
+- `GET /api/hotels/{hotelId}/rooms`
+- `GET /api/hotels/{hotelId}/reviews`
+- `POST /api/hotels/{hotelId}/reviews`
+
+### Booking APIs
+
+- `POST /api/bookings`
+- `GET /api/bookings/{code}`
+- `GET /api/bookings/my`
+- `POST /api/bookings/{code}/pay`
+- `DELETE /api/bookings/{code}`
+- `POST /api/bookings/{bookingCode}/payments/payos`
+- `GET /api/bookings/payments/payos/{orderCode}`
+
+### payOS APIs
+
+- `POST /api/payments/payos/webhook`
+- Webhook signature is verified with `PayOS__ChecksumKey`.
+- Booking payment and wallet top-up are separated by payment transaction purpose.
+
+### Account/wallet APIs
+
+- `GET /api/account/balance-transactions/my`
+- `POST /api/account/balance/top-up/payos`
+- `GET /api/account/withdrawals/my`
+- `POST /api/account/withdrawals`
+- `GET /api/account/owner-profile`
+
+### Admin APIs
+
+- Users.
+- Hotels.
+- Room types.
+- Bookings.
+- Dashboard.
+- Balance transactions.
+- Activity.
+- Image upload.
+- Withdrawals:
+  - `GET /api/admin/withdrawals`
+  - `POST /api/admin/withdrawals/{id}/complete`
+  - `POST /api/admin/withdrawals/{id}/reject`
+
+### Notifications APIs
+
+- `GET /api/notifications/my`
+- Mark read.
+- Mark all read.
+
+### Health APIs
+
+- `/health`
+- `/health/aws`
+
+## Data model
+
+Main tables/models:
 
 - `Users`
 - `Hotels`
@@ -332,66 +398,93 @@ OmniStay hiện có 3 vai trò:
 - `HotelReviews`
 - `Notifications`
 - `BalanceTransactions`
+- `PaymentTransactions`
+- `WithdrawalRequests`
 
-### Auth và phân quyền
+Important user fields:
+
+- `Balance`
+- `AvatarUrl`
+- `BankName`
+- `BankAccountNumber`
+- `BankAccountHolder`
+
+Important payment fields:
+
+- `Provider`
+- `Purpose`
+- `OrderCode`
+- `Status`
+- `BookingId`
+- `UserId`
+
+## Auth and authorization
 
 - JWT auth.
 - Role-based authorization.
 - Customer/owner/admin scope.
-- Owner scope dựa trên `Hotels.OwnerUserId`.
+- Owner data scope is based on `Hotels.OwnerUserId`.
+- Admin-only APIs are protected.
 
-### Cache và database
+## Cache and database
 
-- Local development dùng in-memory store.
-- Production hỗ trợ MySQL qua EF Core.
-- Search cache hỗ trợ Redis/Valkey.
-- Có schema MySQL trong:
+- Local/test development uses EF Core in-memory database.
+- Production supports MySQL through EF Core.
+- Search cache supports Redis/Valkey.
+- MySQL schema is maintained in:
 
 ```text
 backend/src/HotelBooking.Api/Data/schema.mysql.sql
 ```
 
-### Upload ảnh
+## Image upload
 
-- Upload file ảnh qua multipart/form-data.
-- Hỗ trợ extension:
+- Multipart image upload is available.
+- Supported extensions:
   - jpg
   - jpeg
   - png
   - webp
   - gif
-- Giới hạn file 5 MB.
-- Hiện lưu cục bộ trên API server.
+- File limit: 5 MB.
+- Current storage is local API server storage.
+- This is not yet durable enough for production Auto Scaling without shared storage/S3 image handling.
 
-## Tính năng AWS/demo
+## AWS/demo deployment
 
-### Frontend hosting
+### Frontend
 
-- Frontend static files trong `frontend/public`, `frontend/src`, `frontend/assets`.
-- Production đã từng deploy lên S3 private bucket.
-- CloudFront dùng Origin Access Control cho S3.
-- CloudFront default root object trỏ về `public/index.html`.
+- Static frontend files live in:
+  - `frontend/public`
+  - `frontend/src`
+  - `frontend/assets`
+- Production frontend is hosted from private S3 behind CloudFront.
+- CloudFront default root object points to `public/index.html`.
 
-### Backend hosting
+### Backend
 
-- ASP.NET Core API chạy trên EC2.
-- Đặt sau Application Load Balancer.
-- Có Auto Scaling Group.
-- Health check qua `/health`.
+- ASP.NET Core API runs on EC2.
+- The service is `omnistay-api`.
+- Backend artifact zip is published as `omnistay-api.zip`.
+- Health checks use `/health`.
 
 ### Database/cache
 
-- RDS MySQL cho dữ liệu bền vững.
-- ElastiCache Redis/Valkey cho cache kết quả tìm kiếm.
+- RDS MySQL stores persistent data.
+- ElastiCache Redis/Valkey can cache search results.
 
-### Monitoring/evidence
+### Current deploy artifacts
 
-- Có health endpoint `/health/aws`.
-- Có tài liệu/runbook AWS trong `docs/runbooks`.
-- Có load-testing folder cho Locust.
-- Có kế hoạch CloudWatch dashboard/evidence.
+Latest local artifacts for the 2026-07-14 wallet/payOS/price2000 build:
 
-## Trang frontend hiện có
+```text
+artifacts/omnistay-api.zip
+artifacts/omnistay-api-20260714-wallet-price2000.zip
+artifacts/omnistay-frontend-20260714-wallet-price2000
+artifacts/omnistay-frontend-20260714-wallet-price2000.zip
+```
+
+## Frontend pages
 
 ```text
 frontend/public/index.html
@@ -409,10 +502,11 @@ frontend/public/admin.html
 frontend/public/system-status.html
 ```
 
-## Ghi chú giới hạn hiện tại
+## Current limitations
 
-- Các tính năng mới nhất đang chắc chắn ở local; cần deploy lại AWS để CloudFront có bản mới.
-- Upload ảnh local chưa phải giải pháp bền vững cho production/ASG.
-- Cần QA thủ công thêm trên mobile/responsive.
-- Cần test kỹ phân quyền giữa nhiều hotel owner khác nhau.
-- Cần cập nhật schema MySQL production trước khi chạy API mới trên AWS.
+- payOS refund is not automated through payOS API yet; cancellation refunds go to OmniStay balance.
+- Admin/manual payout is still required for withdrawals and owner settlement.
+- Production database must be migrated before running the new API build.
+- Local uploaded images are not durable across multiple EC2 instances.
+- More mobile/responsive QA is still useful.
+- More cross-owner authorization QA is still useful.

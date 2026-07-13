@@ -73,6 +73,7 @@ builder.Services.AddSingleton<RedisConnectionFactory>();
 builder.Services.AddSingleton<IHotelSearchCache, RedisHotelSearchCache>();
 builder.Services.AddSingleton<PasswordService>();
 builder.Services.AddSingleton<JwtTokenService>();
+builder.Services.AddHttpClient<PayOsPaymentClient>();
 builder.Services.AddScoped<EfCoreHotelBookingService>();
 builder.Services.AddScoped<IHotelBookingService, CachedHotelBookingService>();
 

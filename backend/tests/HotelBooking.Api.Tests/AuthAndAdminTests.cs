@@ -1,7 +1,10 @@
 using System.Net;
 using System.Net.Http.Headers;
 using System.Net.Http.Json;
+using System.Security.Cryptography;
+using System.Text;
 using HotelBooking.Api.Data;
+using HotelBooking.Api.Models;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.Extensions.DependencyInjection;
@@ -240,6 +243,238 @@ public class AuthAndAdminTests
         var ownerAfterPayment = await client.GetFromJsonAsync<UserSummary>("/api/auth/me");
         Assert.NotNull(ownerAfterPayment);
         Assert.Equal(105_000_000m, ownerAfterPayment.Balance);
+    }
+
+    [Fact]
+    public async Task PayOsWebhook_ConfirmsBookingWithoutDeductingCustomerBalance()
+    {
+        const string checksumKey = "test-payos-checksum-key";
+        await using var application = new WebApplicationFactory<Program>()
+            .WithWebHostBuilder(builder =>
+            {
+                builder.UseSetting("ConnectionStrings:HotelBookingDb", $"payos-webhook-{Guid.NewGuid():N}");
+                builder.UseSetting("PayOS:ClientId", "test-client-id");
+                builder.UseSetting("PayOS:ApiKey", "test-api-key");
+                builder.UseSetting("PayOS:ChecksumKey", checksumKey);
+            });
+        using var client = application.CreateClient();
+
+        var owner = await Register(client, "payos-owner@example.com", "HotelOwner");
+        client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", owner.Token);
+
+        var hotelResponse = await client.PostAsJsonAsync("/api/admin/hotels", new UpsertHotelRequest(
+            "PayOS Resort",
+            "Da Nang",
+            "1 PayOS Street",
+            "Owner payout test",
+            4,
+            "https://example.com/payos-hotel.jpg"));
+        var hotel = await hotelResponse.Content.ReadFromJsonAsync<AdminHotelSummary>();
+        Assert.NotNull(hotel);
+
+        var roomResponse = await client.PostAsJsonAsync("/api/admin/room-types", new UpsertRoomTypeRequest(
+            hotel.HotelId,
+            "PayOS Room",
+            "External payment test",
+            2,
+            2_500_000m,
+            2,
+            "https://example.com/payos-room.jpg"));
+        var room = await roomResponse.Content.ReadFromJsonAsync<RoomTypeDetails>();
+        Assert.NotNull(room);
+
+        var customer = await Register(client, "payos-customer@example.com");
+        client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", customer.Token);
+
+        var bookingResponse = await client.PostAsJsonAsync("/api/bookings", new CreateBookingRequest(
+            room.RoomTypeId,
+            "PayOS Customer",
+            "payos-customer@example.com",
+            new DateOnly(2026, 12, 15),
+            new DateOnly(2026, 12, 17),
+            2));
+        Assert.Equal(HttpStatusCode.Created, bookingResponse.StatusCode);
+
+        var booking = await bookingResponse.Content.ReadFromJsonAsync<BookingConfirmation>();
+        Assert.NotNull(booking);
+        Assert.Equal(5_000_000m, booking.TotalPrice);
+
+        const long orderCode = 260714000001;
+        using (var scope = application.Services.CreateScope())
+        {
+            var dbContext = scope.ServiceProvider.GetRequiredService<HotelBookingDbContext>();
+            var persistedBooking = dbContext.Bookings.Single(item => item.BookingCode == booking.BookingCode);
+            dbContext.PaymentTransactions.Add(new PaymentTransaction
+            {
+                BookingId = persistedBooking.Id,
+                UserId = customer.User.UserId,
+                Provider = PaymentProviders.PayOs,
+                Purpose = PaymentTransactionPurposes.BookingPayment,
+                OrderCode = orderCode,
+                Amount = booking.TotalPrice,
+                Currency = "VND",
+                Status = PaymentTransactionStatuses.Pending,
+                Description = "OMNI00001",
+                PaymentLinkId = "payos-link-1",
+                CheckoutUrl = "https://pay.payos.vn/web/payos-link-1",
+                QrCode = "qr",
+                ProviderReference = string.Empty,
+                FailureReason = string.Empty,
+                CreatedAt = DateTimeOffset.UtcNow,
+                UpdatedAt = DateTimeOffset.UtcNow
+            });
+            dbContext.SaveChanges();
+        }
+
+        var webhookData = new SortedDictionary<string, string>(StringComparer.Ordinal)
+        {
+            ["accountNumber"] = "12345678",
+            ["amount"] = "5000000",
+            ["code"] = "00",
+            ["currency"] = "VND",
+            ["desc"] = "Thanh cong",
+            ["description"] = "OMNI00001",
+            ["orderCode"] = orderCode.ToString(),
+            ["paymentLinkId"] = "payos-link-1",
+            ["reference"] = "TF260714000001",
+            ["transactionDateTime"] = "2026-07-14 10:00:00"
+        };
+        var signature = PayOsSignature(webhookData, checksumKey);
+
+        using var webhookResponse = await client.PostAsJsonAsync("/api/payments/payos/webhook", new
+        {
+            code = "00",
+            desc = "success",
+            success = true,
+            data = webhookData,
+            signature
+        });
+        Assert.Equal(HttpStatusCode.OK, webhookResponse.StatusCode);
+
+        var paidBooking = await client.GetFromJsonAsync<BookingConfirmation>($"/api/bookings/{booking.BookingCode}");
+        Assert.NotNull(paidBooking);
+        Assert.Equal("Confirmed", paidBooking.Status);
+        Assert.Equal("Paid", paidBooking.PaymentStatus);
+
+        var customerAfterPayment = await client.GetFromJsonAsync<UserSummary>("/api/auth/me");
+        Assert.NotNull(customerAfterPayment);
+        Assert.Equal(100_000_000m, customerAfterPayment.Balance);
+
+        client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", owner.Token);
+        var ownerAfterPayment = await client.GetFromJsonAsync<UserSummary>("/api/auth/me");
+        Assert.NotNull(ownerAfterPayment);
+        Assert.Equal(105_000_000m, ownerAfterPayment.Balance);
+    }
+
+    [Fact]
+    public async Task PayOsTopUpAndWithdrawal_AdminConfirmationAdjustsBalance()
+    {
+        const string checksumKey = "test-payos-checksum-key";
+        await using var application = new WebApplicationFactory<Program>()
+            .WithWebHostBuilder(builder =>
+            {
+                builder.UseSetting("ConnectionStrings:HotelBookingDb", $"wallet-flow-{Guid.NewGuid():N}");
+                builder.UseSetting("PayOS:ClientId", "test-client-id");
+                builder.UseSetting("PayOS:ApiKey", "test-api-key");
+                builder.UseSetting("PayOS:ChecksumKey", checksumKey);
+            });
+        using var client = application.CreateClient();
+
+        var customer = await Register(client, "wallet-customer@example.com");
+        client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", customer.Token);
+
+        using var bankResponse = await client.PostAsJsonAsync("/api/auth/me/bank-account", new
+        {
+            bankName = "Vietcombank",
+            bankAccountNumber = "0123456789",
+            bankAccountHolder = "Wallet Customer"
+        });
+        Assert.Equal(HttpStatusCode.OK, bankResponse.StatusCode);
+
+        const long orderCode = 260714000002;
+        using (var scope = application.Services.CreateScope())
+        {
+            var dbContext = scope.ServiceProvider.GetRequiredService<HotelBookingDbContext>();
+            dbContext.PaymentTransactions.Add(new PaymentTransaction
+            {
+                UserId = customer.User.UserId,
+                Provider = PaymentProviders.PayOs,
+                Purpose = PaymentTransactionPurposes.BalanceTopUp,
+                OrderCode = orderCode,
+                Amount = 2_000_000m,
+                Currency = "VND",
+                Status = PaymentTransactionStatuses.Pending,
+                Description = "OMNITOPUP0002",
+                PaymentLinkId = "payos-topup-1",
+                CheckoutUrl = "https://pay.payos.vn/web/payos-topup-1",
+                QrCode = "qr",
+                ProviderReference = string.Empty,
+                FailureReason = string.Empty,
+                CreatedAt = DateTimeOffset.UtcNow,
+                UpdatedAt = DateTimeOffset.UtcNow
+            });
+            dbContext.SaveChanges();
+        }
+
+        var webhookData = new SortedDictionary<string, string>(StringComparer.Ordinal)
+        {
+            ["accountNumber"] = "12345678",
+            ["amount"] = "2000000",
+            ["code"] = "00",
+            ["currency"] = "VND",
+            ["desc"] = "Thanh cong",
+            ["description"] = "OMNITOPUP0002",
+            ["orderCode"] = orderCode.ToString(),
+            ["paymentLinkId"] = "payos-topup-1",
+            ["reference"] = "TF260714000002",
+            ["transactionDateTime"] = "2026-07-14 10:05:00"
+        };
+        var signature = PayOsSignature(webhookData, checksumKey);
+
+        using var webhookResponse = await client.PostAsJsonAsync("/api/payments/payos/webhook", new
+        {
+            code = "00",
+            desc = "success",
+            success = true,
+            data = webhookData,
+            signature
+        });
+        Assert.Equal(HttpStatusCode.OK, webhookResponse.StatusCode);
+
+        var afterTopUp = await client.GetFromJsonAsync<UserSummary>("/api/auth/me");
+        Assert.NotNull(afterTopUp);
+        Assert.Equal(102_000_000m, afterTopUp.Balance);
+
+        using var withdrawalResponse = await client.PostAsJsonAsync("/api/account/withdrawals", new
+        {
+            amount = 1_500_000m,
+            note = "Rut ve ngan hang"
+        });
+        var withdrawalBody = await withdrawalResponse.Content.ReadAsStringAsync();
+        Assert.True(withdrawalResponse.StatusCode == HttpStatusCode.Created, withdrawalBody);
+        var withdrawal = await withdrawalResponse.Content.ReadFromJsonAsync<WithdrawalRequestSummary>();
+        Assert.NotNull(withdrawal);
+        Assert.Equal("Pending", withdrawal.Status);
+
+        var adminLogin = await client.PostAsJsonAsync("/api/auth/login", new LoginRequest(
+            "admin@omnistay.local",
+            "Admin@123456"));
+        var admin = await adminLogin.Content.ReadFromJsonAsync<AuthResponse>();
+        Assert.NotNull(admin);
+        client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", admin.Token);
+
+        using var completeResponse = await client.PostAsJsonAsync(
+            $"/api/admin/withdrawals/{withdrawal.WithdrawalRequestId}/complete",
+            new { adminNote = "Da chuyen khoan thu cong" });
+        Assert.Equal(HttpStatusCode.OK, completeResponse.StatusCode);
+        var completed = await completeResponse.Content.ReadFromJsonAsync<WithdrawalRequestSummary>();
+        Assert.NotNull(completed);
+        Assert.Equal("Completed", completed.Status);
+
+        client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", customer.Token);
+        var afterWithdrawal = await client.GetFromJsonAsync<UserSummary>("/api/auth/me");
+        Assert.NotNull(afterWithdrawal);
+        Assert.Equal(100_500_000m, afterWithdrawal.Balance);
     }
 
     [Fact]
@@ -625,6 +860,14 @@ public class AuthAndAdminTests
         return auth;
     }
 
+    private static string PayOsSignature(SortedDictionary<string, string> data, string checksumKey)
+    {
+        var signedData = string.Join('&', data.Select(item => $"{item.Key}={item.Value}"));
+        using var hmac = new HMACSHA256(Encoding.UTF8.GetBytes(checksumKey));
+        var hash = hmac.ComputeHash(Encoding.UTF8.GetBytes(signedData));
+        return Convert.ToHexString(hash).ToLowerInvariant();
+    }
+
     private sealed record RegisterRequest(string FullName, string Email, string Password, string? Role = null);
 
     private sealed record LoginRequest(string Email, string Password);
@@ -805,6 +1048,21 @@ public class AuthAndAdminTests
         string Message,
         string LinkUrl,
         DateTimeOffset CreatedAt);
+
+    private sealed record WithdrawalRequestSummary(
+        int WithdrawalRequestId,
+        int UserId,
+        string UserEmail,
+        string UserFullName,
+        decimal Amount,
+        string Status,
+        string BankName,
+        string BankAccountNumber,
+        string BankAccountHolder,
+        string Note,
+        string AdminNote,
+        DateTimeOffset RequestedAt,
+        DateTimeOffset? CompletedAt);
 
     private sealed record OwnerHotelProfileSummary(
         int HotelId,
